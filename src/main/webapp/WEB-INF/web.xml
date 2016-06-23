@@ -2,31 +2,50 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
   <servlet>		
-    <servlet-name>get-txc</servlet-name>		
-    <servlet-class>org.mercycorps.translationcards.txcmaker.GetTxcServlet</servlet-class>		
+    <servlet-name>get-txc</servlet-name>
+    <servlet-class>org.mercycorps.translationcards.txcmaker.GetTxcServlet</servlet-class>
   </servlet>		
   <servlet-mapping>		
-    <servlet-name>get-txc</servlet-name>		
-    <url-pattern>/get-txc</url-pattern>		
+    <servlet-name>get-txc</servlet-name>
+    <url-pattern>/get-txc</url-pattern>
   </servlet-mapping>		
 		
   <servlet>		
-    <servlet-name>oauth2callback</servlet-name>		
-    <servlet-class>org.mercycorps.translationcards.txcmaker.OAuth2Callback</servlet-class>		
+    <servlet-name>oauth2callback</servlet-name>
+    <servlet-class>org.mercycorps.translationcards.txcmaker.OAuth2Callback</servlet-class>
   </servlet>		
   <servlet-mapping>		
-    <servlet-name>oauth2callback</servlet-name>		
-    <url-pattern>/oauth2callback</url-pattern>		
-  </servlet-mapping>		
+    <servlet-name>oauth2callback</servlet-name>
+    <url-pattern>/oauth2callback</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>builder-task-handler</servlet-name>
+      <servlet-class>org.mercycorps.translationcards.txcmaker.TxcBuilderTaskHandler</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>builder-task-handler</servlet-name>
+      <url-pattern>/tasks/txc-build</url-pattern>
+  </servlet-mapping>
 		
   <security-constraint>		
-      <web-resource-collection>		
-          <web-resource-name>all</web-resource-name>		
-          <url-pattern>/*</url-pattern>		
-      </web-resource-collection>		
-      <auth-constraint>		
-          <role-name>*</role-name>		
-      </auth-constraint>		
+      <web-resource-collection>
+          <web-resource-name>all</web-resource-name>
+          <url-pattern>/*</url-pattern>
+      </web-resource-collection>
+      <auth-constraint>
+          <role-name>*</role-name>
+      </auth-constraint>
   </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>tasks</web-resource-name>
+            <url-pattern>/tasks/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 
 </web-app>
