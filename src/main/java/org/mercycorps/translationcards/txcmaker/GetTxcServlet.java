@@ -36,6 +36,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,7 +61,7 @@ public class GetTxcServlet extends HttpServlet {
   private GcsService gcsService = GcsServiceFactory.createGcsService();
 
   @Override
-  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
     // We don't actually need the Drive service yet, but we authenticate in advance because
     // otherwise OAuth will send them back here anyway.
     Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, getUserId(), true);
@@ -67,7 +69,8 @@ public class GetTxcServlet extends HttpServlet {
       // We've already redirected.
       return;
     }
-    displayForm(resp);
+    RequestDispatcher view = req.getRequestDispatcher("/form.jsp");
+    view.forward(req, resp);
   }
 
   @Override
@@ -117,21 +120,6 @@ public class GetTxcServlet extends HttpServlet {
           "That said, the file is being assembled and should arrive in Drive in a minute or two.");
       resp.getWriter().println("</p>");
     }
-  }
-
-  private void displayForm(HttpServletResponse resp) throws IOException {
-    resp.getWriter().println(
-        "<form method=\"post\">" +
-        "<p>Doc ID: <input type=\"text\" name=\"docId\" /><br />" +
-        "Audio directory ID: <input type=\"text\" name=\"audioDirId\" /><br />" +
-        "Deck name: <input type=\"text\" name=\"deckName\" /><br />" +
-        "Publisher: <input type=\"text\" name=\"publisher\" /><br />" +
-        "Deck ID: <input type=\"text\" name=\"deckId\" /><br />" +
-        "License URL: <input type=\"text\" name=\"licenseUrl\" /><br />" +
-        "Locked: <input type=\"checkbox\" name=\"locked\" /><br />" +
-        "<input type=\"submit\" /></p>" +
-        "</form>"
-    );
   }
 
   private String getUserId() {
