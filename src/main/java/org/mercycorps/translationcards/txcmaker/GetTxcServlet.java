@@ -54,7 +54,6 @@ public class GetTxcServlet extends HttpServlet {
   private static final String SRC_HEADER_FILENAME = "Filename";
 
   private static final int BUFFER_SIZE = 1024;
-  private static final String GCS_BUCKET_NAME = "nworden-txcmaker2.google.com.a.appspot.com";
 
   private byte[] buffer = new byte[BUFFER_SIZE];
   private GcsService gcsService = GcsServiceFactory.createGcsService();
