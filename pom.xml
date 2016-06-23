@@ -9,7 +9,7 @@
     <artifactId>txcmaker</artifactId>
 
     <properties>
-        <app.id>APP-ID-HERE</app.id>
+        <app.id>translation-cards</app.id>
         <app.version>1</app.version>
         <appengine.version>1.9.38</appengine.version>
         <gcloud.plugin.version>2.0.9.74.v20150814</gcloud.plugin.version>
