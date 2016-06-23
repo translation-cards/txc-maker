@@ -55,7 +55,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
   private static final String SRC_HEADER_FILENAME = "Filename";
 
   private static final int BUFFER_SIZE = 1024;
-  private static final String GCS_BUCKET_NAME = "nworden-txcmaker2.google.com.a.appspot.com";
+  private static final String GCS_BUCKET_NAME = "txc-maker-staging";
 
   private static final Pattern FILE_URL_MATCHER = Pattern.compile(
       "https?://docs.google.com/spreadsheets/d/(.*?)(/.*)?$");
