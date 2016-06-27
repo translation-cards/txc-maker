@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="org.mercycorps.translationcards.txcmaker.FieldType" %>
 
 <html>
 
