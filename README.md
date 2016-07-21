@@ -7,7 +7,7 @@
 4. Install the latest version of [Docker](https://docs.docker.com/engine/installation/) (v1.12)
 5. Run the following command to start your development environment. Be sure to replace `[absolute path]` with the absolute path to your project directory. On Windows, you must allow access to your drive via Docker->Settings->Shared Drives.
 
-  `docker run -ti --name txcmaker-develop -p 8080:8080 -v [absolute path]:/app atamrat/txc-maker bash`
+  `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -v [absolute path]:/app atamrat/txc-maker bash`
 
  * This command runs a container in interactive mode (`run -ti`)
  * It gives a name to the container (`--name txcmaker-develop`)
