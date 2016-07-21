@@ -4,23 +4,27 @@
 1. Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 2. Clone the [txc-maker repo](https://github.com/translation-cards/txc-maker.git)
 3. Check out the hackathon branch: `git checkout women-hack-syria`
-4. Install the latest version of [Docker](https://docs.docker.com/engine/installation/) (v1.12)
-5. Run the following command to start your development environment. Be sure to replace `[absolute path]` with the absolute path to your project directory. On Windows, you must allow access to your drive via Docker->Settings->Shared Drives.
+4. Get the `client_secrets.json` file and copy it into the directory `src/main/webapp/WEB-INF/`.
+5. Install the latest version of [Docker](https://docs.docker.com/engine/installation/) (v1.12)
+6. Run the following command to start your development environment. Be sure to replace `[absolute path]` with the absolute path to your project directory. On Windows, you must allow access to your drive via Docker->Settings->Shared Drives.
 
   `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -v [absolute path]:/app atamrat/txc-maker bash`
 
  * This command runs a container in interactive mode (`run -ti`)
  * It gives a name to the container (`--name txcmaker-develop`)
  * It forwards standard web ports for the container (`-p 8080:8080`)
+ * It forwards the debugging ports for the container (`-p 8000:8000`)
  * It mounts the project directory (`-v [absolute path]:/app`)
  * It uses an image for the container `atamrat/txc-maker`
  * It opens up a shell on the newly running container (`bash`)
-6. You should now have a command prompt open inside the development container, which is based off Debian Jessie. Move into the project directory: `cd /app`.
+7. You should now have a command prompt open inside the development container, which is based off Debian Jessie. Move into the project directory: `cd /app`.
  * If you exit the container by typing `exit`, you can enter it again by running `docker start -i txcmaker-develop`
-7. The webapp is built and deployed with Maven and Google AppEngine. The following tasks will be useful:
+8. The webapp is built and deployed with Maven and Google AppEngine. The following tasks will be useful:
  * To run the webapp locally, use `mvn appengine:devserver`
  * To deploy the webapp, use `mvn appengine:update`
  * To clean, use `mvn clean`
+9. To debug the application, add the following flags to your debuggers configuration:
+    `-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n`
 
 
 ## Building and Running
