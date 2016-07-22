@@ -21,6 +21,7 @@
  * If you exit the container by typing `exit`, you can enter it again by running `docker start -i txcmaker-develop`
 8. The webapp is built and deployed with Maven and Google AppEngine. The following tasks will be useful:
  * To run the webapp locally, use `mvn appengine:devserver`
+   * This hosts the app at `localhost:8080/get-txc`
  * To deploy the webapp, use `mvn appengine:update`
  * To clean, use `mvn clean`
 9. To debug the application, add the following flags to your debuggers configuration:
