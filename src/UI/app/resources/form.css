@@ -1,0 +1,30 @@
+
+
+body {
+  background-color: #efefef;
+}
+
+.formBody {
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  padding: 2em;
+}
+
+.deckMakerHeader {
+  background-color: #01579b;
+}
+
+form p {
+  line-height: 0em;
+}
+
+h6 {
+    font-weight: bold;
+}
+
+.submitButton {
+  color: white;
+  background-color: #01579b;
+}

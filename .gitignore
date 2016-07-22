@@ -1,5 +1,7 @@
 target
 src/main/webapp/WEB-INF/client_secrets.json
+src/UI/node_modules/
+src/UI/app/bower_components/
 .idea/
-*.iml
-**/.DS_Store
+.vscode/
+*.iml**/.DS_Store
