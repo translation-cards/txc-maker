@@ -4,4 +4,8 @@ src/UI/node_modules/
 src/UI/app/bower_components/
 .idea/
 .vscode/
-*.iml**/.DS_Store
+*.iml
+**/.DS_Store
+npm-debug.log
+capture.js
+error.txt

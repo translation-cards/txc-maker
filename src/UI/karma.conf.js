@@ -8,8 +8,16 @@ module.exports = function(config) {
       'bower_components/angular/angular.js',
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'components/**/*.js',
-      'view*/**/*.js'
+
+      // First, load the module
+      'views/deckImport/deckImport.ctrl.js',
+      'views/deckImport/deckImport.spec.js',
+      // Then, load dependencies of the module
+      'components/helloWorld/helloWorldService.js',
+      'components/helloWorld/helloWorldService.mock.js',
+
+      // Lastly, load the app
+      'app.js'
     ],
 
     autoWatch: true,

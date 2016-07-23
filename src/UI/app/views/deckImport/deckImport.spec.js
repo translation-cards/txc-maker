@@ -1,16 +1,38 @@
 'use strict';
 
-describe('txcmaker.deckImport module', function() {
+describe('txcmaker.deckImport', function() {
 
-  beforeEach(module('txcmaker.deckImport'));
+  describe('DeckImportCtrl', function(){
 
-  describe('deckImport controller', function(){
+    var controller, scope, service;
 
-    it('should ....', inject(function($controller) {
-      //spec body
-      var deckImportCtrl = $controller('DeckImportCtrl');
-      expect(deckImportCtrl).toBeDefined();
+    // Load the needed modules
+    beforeEach(module('txcmaker.deckImport'));
+    beforeEach(module('mock.helloWorldService'));
+
+    // Initialize the controller with its dependencies
+    beforeEach(inject(function($controller, $rootScope, _helloWorldService_) {
+      scope = $rootScope.$new();
+      service = _helloWorldService_;
+
+      controller = $controller('DeckImportCtrl', {
+        $scope: scope,
+        helloWorldService: _helloWorldService_
+      });
     }));
+
+    // Resolve mocked promises
+    beforeEach(function() {
+      scope.$apply();
+    })
+
+    it('should be defined', function() {
+      expect(controller).toBeDefined();
+    });
+
+    it('should get some text', function() {
+      expect(scope.myWelcome).toBe("stubbed text");
+    })
 
   });
 });
