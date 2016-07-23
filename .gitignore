@@ -9,3 +9,4 @@ src/UI/app/bower_components/
 npm-debug.log
 capture.js
 error.txt
+apiConfig.js
