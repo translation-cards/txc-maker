@@ -21,7 +21,7 @@
   },
   "scripts": {
     "config": "grunt ngconstant:development",
-    "postinstall": "bower install",
+    "postinstall": "bower install --allow-root",
     "prestart": "npm install",
     "start": "http-server -a 0.0.0.0 -p 8554 -c-1 ./app",
     "pretest": "npm install",

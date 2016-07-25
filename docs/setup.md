@@ -7,7 +7,9 @@ The frontend is being written in AngularJS. We have setup a folder `src/UI`, in 
 ## 1. Get the source code
 
 1. Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-2. Clone the [txc-maker repo](https://github.com/translation-cards/txc-maker.git)
+2. Fork and clone the [txc-maker repo](https://github.com/translation-cards/txc-maker.git)
+3. Get the `client_secrets.json` file from a Translation Cards team member and copy it into the directory `src/main/webapp/WEB-INF/`
+ * For the Women Hack Syria hackathon, this file will be distributed at the event.
 
 ## 2. Local setup
 
@@ -25,19 +27,23 @@ The webapp is built and deployed with Maven and Google AppEngine. The following 
 
    * To run locally, use `mvn appengine:devserver` from the project root
     * Access the app at http://localhost:8080/get-txc
-   * To deploy, use `mvn appengine:update`
-    * You will be asked to authenticate by following a URL and pasting a code into the terminal.
-    * Access the app at http://translation-cards-dev.appspot.com/get-txc
 
 ## 4. Run the (frontend part of the) application
 
 From the `src/UI` directory:
 
 * `npm install` : install dependencies
-* `npm run config` : configure your Java backend location
- * Set the API_LOCATION variable if needed
+ * `npm install --unsafe-perm` : use this if using docker
+* `npm run config` : configure your Java backend location, defaults to http://localhost:8080
+ * Set the API_LOCATION environment variable if the backend is not running on your machine
 * `npm run test` : Run the Jasmine tests through Karma. Connect to http://localhost:9876 to debug with your browser.
 * `npm run start` : Start a simple server which serves the files.
+
+## Debug configuration (optional)
+
+To debug the Java server, add the following flags to your debugger's configuration:
+
+`-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n`
 
 ## Docker Setup (optional)
 
@@ -49,7 +55,7 @@ Depending on your system, you will have to install a different version of Docker
 
 1. Using the terminal, go into the base project directory and run the following command:
 
-   `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txc-maker bash`
+   `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txcmaker bash`
 
    Be sure to replace `[absolute path]` with the absolute path to your project directory. Find the explanation for this command below.
 
@@ -76,7 +82,7 @@ Where [ip address] is the ip address you recorded from the docker-machine comman
 
 The command to run the development environment's container is a mouthful. Here is a basic explanation of its parts:
 
-`docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txc-maker bash`
+`docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txcmaker bash`
 
 * This command runs a container in interactive mode (`run -ti`)
 * It gives a name to the container (`--name txcmaker-develop`)
@@ -86,13 +92,7 @@ The command to run the development environment's container is a mouthful. Here i
  * `-p 8554:8554` : web port for the Nodejs server
  * `-p 9876:9876` : debug port for Karma test runner
 * It mounts the project directory (`-v [absolute path]:/app`)
-* It uses an image for the container `atamrat/txc-maker`
+* It uses an image for the container `atamrat/txcmaker`
 * It opens up a shell on the newly running container (`bash`)
 
 See the [Docker run reference](https://docs.docker.com/engine/reference/run/) for additional details.
-
-## Debug configuration
-
-To debug the application, add the following flags to your debugger's configuration:
-
-`-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n`
