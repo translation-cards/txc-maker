@@ -14,9 +14,18 @@
   <body>
 
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-      <header class="mdl-layout__header deckMakerHeader">
-        <div class="mdl-layout__header-row">
-          <h4>Deck Maker: Import Data</h4>
+      <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary deckMakerHeader">
+        <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+        </div>
+        <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+          <h3>TXC Maker: Import Data</h3>
+        </div>
+        <div class="mdl-layout--large-screen-only mdl-layout__header-row">
+        </div>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
+          <a href="#overview" class="mdl-layout__tab">Decks</a>
+          <a href="#features" class="mdl-layout__tab is-active">Import</a>
+          <a href="#features" class="mdl-layout__tab">FAQ</a>
         </div>
       </header>
 
@@ -47,15 +56,15 @@
                 <label class="mdl-textfield__label" for="deckId">Deck ID</label>
               </div>
 
-              <h6>Document ID</h6>
-              <p>[explanation]</p>
+              <h6>Spreadsheet URL</h6>
+              <p>URL of the Google spreadsheet containing deck information.</p>
               <div class="mdl-textfield mdl-js-textfield">
                 <input class="mdl-textfield__input" type="text" id="docId" name="docId">
                 <label class="mdl-textfield__label" for="docId">Document ID</label>
               </div>
 
-              <h6>Audio Directory ID</h6>
-              <p>[explanation]</p>
+              <h6>Audio Directory URL</h6>
+              <p>URL of the Google Drive folder containing the audio files.</p>
               <div class="mdl-textfield mdl-js-textfield">
                 <input class="mdl-textfield__input" type="text" id="audioDirId" name="audioDirId">
                 <label class="mdl-textfield__label" for="audioDirId">Audio Directory ID</label>
