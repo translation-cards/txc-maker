@@ -1,41 +1,66 @@
 # Development Environment Setup
 
+The Deck Maker runs on a Java server hosted in Google AppEngine. It interacts with AppEngine services for storage and task management, and utilizes the Google Drive API to pull translation files and deploy finished decks.
+
+The frontend is being written in AngularJS. We have setup a folder `src/UI`, in which web pages can be developed without worrying about integration with the Google services.
+
 ## 1. Get the source code
 
 1. Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 2. Clone the [txc-maker repo](https://github.com/translation-cards/txc-maker.git)
-3. Get the `client_secrets.json` file from a Translation Cards team member and copy it into the directory `src/main/webapp/WEB-INF/`
 
+## 2. Local setup
 
-## 2. Install Docker
+Install the following:
 
-We have created a [Docker](https://www.docker.com/what-docker) image that contains the development environment. Depending on your system, you will have to install a different version of Docker. If you don't want to use Docker or can't get it to work, see the list of tools and dependencies to install below.
+1. Java 7 SDK
+2. Maven >3.1
+3. Node.js v6
 
- Docker runs natively several Linux distributions. Find the instructions [here](https://docs.docker.com/engine/installation/linux/ubuntulinux/).
+Alternatively, follow the Docker setup below. It allows you to install and run the app without managing conflicting versions of the above dependencies. It also provides you with a pre-configured image of the environment, so the app should run out of the box.
 
- For Max OS X, Docker has a native application in beta. If your system doesn't meet the requirements in the installation instructions, you will have to install the Docker Toolbox. There is additional information about Docker Toolbox below. Find the instructions [here](https://docs.docker.com/engine/installation/mac/).
+## 3. Run the (whole) application
 
- Certain versions of Windows 10 also have a native Docker application in beta. Otherwise, Windows users should install Docker Toolbox. Find the instructions [here](https://docs.docker.com/engine/installation/windows/).
+The webapp is built and deployed with Maven and Google AppEngine. The following commands will be useful:
 
- ## 3. Run the application
+   * To run locally, use `mvn appengine:devserver` from the project root
+    * Access the app at http://localhost:8080/get-txc
+   * To deploy, use `mvn appengine:update`
+    * You will be asked to authenticate by following a URL and pasting a code into the terminal.
+    * Access the app at http://translation-cards-dev.appspot.com/get-txc
+
+## 4. Run the (frontend part of the) application
+
+From the `src/UI` directory:
+
+* `npm install` : install dependencies
+* `npm run config` : configure your Java backend location
+ * Set the API_LOCATION variable if needed
+* `npm run test` : Run the Jasmine tests through Karma. Connect to http://localhost:9876 to debug with your browser.
+* `npm run start` : Start a simple server which serves the files.
+
+## Docker Setup (optional)
+
+We have created a [Docker](https://www.docker.com/what-docker) image that contains the development environment, which is based off of Debian Jessie.
+
+Depending on your system, you will have to install a different version of Docker. If you're unable to install Docker v1.12, please read the section on Docker Toolbox.
+
+1. [Install Docker](https://docs.docker.com/engine/installation/).
+
 1. Using the terminal, go into the base project directory and run the following command:
 
-  `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -v [absolute path]:/app atamrat/txc-maker bash`
+   `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txc-maker bash`
 
-  Be sure to replace `[absolute path]` with the absolute path to your project directory. On Windows, you must allow access to your drive via Docker->Settings->Shared Drives before running. Find the explanation for this command below.
+   Be sure to replace `[absolute path]` with the absolute path to your project directory. Find the explanation for this command below.
 
-7. You should now have a command prompt open inside the development container, which is based off Debian Jessie. Move into the project directory: `cd /app`.
-   * If you exit the container by typing `exit`, you can enter it again by running
+2. You should now have a command prompt open inside the development container. Move into the project directory: `cd /app` and continue with the instructions to run the app.
+  * If you exit the container by typing `exit`, you can enter it again by running
 
-    `docker start -i txcmaker-develop`
-8. The webapp is built and deployed with Maven and Google AppEngine. The following commands will be useful:
-   * To run locally, use `mvn appengine:devserver`
-    * Access the app at http://localhost:8080
-   * To deploy, use `mvn appengine:update`
-    * Access the app at http://translation-cards-dev.appspot.com
-   * To clean, use `mvn clean`
+   `docker start -i txcmaker-develop`
 
-## Appendix
+### Docker on Windows
+
+* You must allow access to your drive via Docker->Settings->Shared Drives before running (requires administrator access).
 
 ### Docker Toolbox
 
@@ -45,25 +70,28 @@ You will have to modify your hosts file for the application to work. In the Dock
 
   `[ip address] translation-cards-docker.com`
 
-Where [ip address] is the ip address you recorded from the docker-machine command above. Now, after following the instructions in section 3, the application should be accessible at http://translation-cards-docker.com
+Where [ip address] is the ip address you recorded from the docker-machine command above. Now, after following the instructions in section 3, the application should be accessible at http://translation-cards-docker.com. In the above steps, you will have to use this URL (or the IP of your docker machine) instead of localhost.
 
 ### Docker Command
 
 The command to run the development environment's container is a mouthful. Here is a basic explanation of its parts:
 
-`docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -v [absolute path]:/app atamrat/txc-maker bash`
+`docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txc-maker bash`
 
 * This command runs a container in interactive mode (`run -ti`)
 * It gives a name to the container (`--name txcmaker-develop`)
-* It forwards standard web ports for the container (`-p 8080:8080`)
-* It forwards the debugging ports for the container (`-p 8000:8000`)
+* It publishes/forwards various ports:
+ * `-p 8080:8080` : web port for the Java server
+ * `-p 8000:8000` : debug port for the Java server
+ * `-p 8554:8554` : web port for the Nodejs server
+ * `-p 9876:9876` : debug port for Karma test runner
 * It mounts the project directory (`-v [absolute path]:/app`)
 * It uses an image for the container `atamrat/txc-maker`
 * It opens up a shell on the newly running container (`bash`)
 
 See the [Docker run reference](https://docs.docker.com/engine/reference/run/) for additional details.
 
-### Debug configuration
+## Debug configuration
 
 To debug the application, add the following flags to your debugger's configuration:
 
