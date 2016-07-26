@@ -4,4 +4,4 @@ This is a tool for making content for the [Translation Cards](https://github.com
 
 See the [setup](https://github.com/translation-cards/txc-maker/blob/master/docs/setup.md) document for details on how to set up the development environment.
 
-See the [workflow](https://github.com/translation-cards/txc-maker/blob/master/WORKFLOW.md) document for details on how we develop for this tool.
+See the [workflow](https://github.com/translation-cards/txc-maker/blob/master/docs/workflow.md) document for details on how we develop for this tool.
