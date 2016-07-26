@@ -71,7 +71,7 @@ public class GetTxcServlet extends HttpServlet {
       // We've already redirected.
       return;
     }
-    RequestDispatcher view = req.getRequestDispatcher("/form.jsp");
+    RequestDispatcher view = req.getRequestDispatcher("/index.html");
     view.forward(req, resp);
   }
 

@@ -17,9 +17,12 @@
     "karma-jasmine": "^0.3.8",
     "karma-junit-reporter": "^0.4.1",
     "karma-phantomjs-launcher": "^1.0.1",
-    "protractor": "^3.2.2"
+    "protractor": "^3.2.2",
+    "sync-files": "^1.0.3",
+    "watch": "^0.19.1"
   },
   "scripts": {
+    "copy_watch": "watch 'sync-files --no-delete app/ ../../target/txcmaker-1.0-SNAPSHOT' app/",
     "config": "grunt ngconstant:development",
     "postinstall": "bower install --allow-root",
     "prestart": "npm install",
