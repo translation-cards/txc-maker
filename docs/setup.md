@@ -13,13 +13,11 @@ The frontend is being written in AngularJS. We have setup a folder `src/UI`, in 
 
 ## 2. Local setup
 
-Install the following:
+You should install the following dependencies on your machine. Alternatively, follow the Docker setup below. It allows you to install and run the app without managing conflicting versions of the above dependencies. It also provides you with a pre-configured image of the environment, so the app should run out of the box.
 
 1. Java 7 SDK
 2. Maven >3.1
 3. Node.js v6
-
-Alternatively, follow the Docker setup below. It allows you to install and run the app without managing conflicting versions of the above dependencies. It also provides you with a pre-configured image of the environment, so the app should run out of the box.
 
 ## 3. Run the (whole) application
 
@@ -49,7 +47,7 @@ To debug the Java server, add the following flags to your debugger's configurati
 
 We have created a [Docker](https://www.docker.com/what-docker) image that contains the development environment, which is based off of Debian Jessie.
 
-Depending on your system, you will have to install a different version of Docker. If you're unable to install Docker v1.12, please read the section on Docker Toolbox.
+Depending on your system, you will have to install a different version of Docker. If you're unable to install Docker v1.12, please read the section on Docker Toolbox. Setting up and running Docker is not always straightforward, so proceed at your own risk.
 
 1. [Install Docker](https://docs.docker.com/engine/installation/).
 
