@@ -64,7 +64,9 @@ public class GetTxcServlet extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
     // We don't actually need the Drive service yet, but we authenticate in advance because
     // otherwise OAuth will send them back here anyway.
-    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, getUserId(), true);
+
+    String sessionId=req.getSession(true).getId();
+    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, sessionId, true);
     if (drive == null) {
       // We've already redirected.
       return;
@@ -75,8 +77,8 @@ public class GetTxcServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    String userid = getUserId();
-    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, userid, false);
+    String sessionId=req.getSession(true).getId();
+    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, sessionId, false);
     if (drive == null) {
       resp.getWriter().println("You haven't provided Drive authentication.");
       return;
@@ -84,7 +86,7 @@ public class GetTxcServlet extends HttpServlet {
 
     List<String> warnings = new ArrayList<String>();
     List<String> errors = new ArrayList<String>();
-    verify(userid, req, resp, warnings, errors);
+    verify(sessionId, req, resp, warnings, errors);
     if (errors.size() != 0) {
       resp.getWriter().println("<p>");
       for (String error : errors) {
@@ -97,7 +99,7 @@ public class GetTxcServlet extends HttpServlet {
 
     Queue queue = QueueFactory.getQueue("queue-txc-building");
     TaskOptions taskOptions = TaskOptions.Builder.withUrl("/tasks/txc-build")
-        .param("userid", userid)
+        .param("sessionId", sessionId)
         .param("deckName", req.getParameter("deckName"))
         .param("publisher", req.getParameter("publisher"))
         .param("deckId", req.getParameter("deckId"))
@@ -127,9 +129,10 @@ public class GetTxcServlet extends HttpServlet {
     return userService.getCurrentUser().getUserId();
   }
 
-  private void verify(String userid, HttpServletRequest req, HttpServletResponse resp,
+  private void verify(String sessionId, HttpServletRequest req, HttpServletResponse resp,
       List<String> warnings, List<String> errors) throws IOException {
-    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, userid, false);
+
+    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, sessionId, false);
     String audioDirId = TxcPortingUtility.getAudioDirId(req);
     ChildList audioList = drive.children().list(audioDirId).execute();
     Map<String, String> audioFileIds = new HashMap<String, String>();

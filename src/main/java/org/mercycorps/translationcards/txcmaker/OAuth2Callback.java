@@ -61,4 +61,8 @@ public class OAuth2Callback extends AbstractAppEngineAuthorizationCodeCallbackSe
   protected AuthorizationCodeFlow initializeFlow() throws IOException {
     return AuthUtils.newFlow(getServletContext());
   }
+  @Override
+  protected String getUserId(HttpServletRequest req) throws ServletException, IOException {
+    return req.getSession(false).getId();
+  }
 }

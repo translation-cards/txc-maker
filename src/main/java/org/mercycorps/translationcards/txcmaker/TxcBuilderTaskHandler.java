@@ -73,7 +73,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
   private void produceTxcJson(HttpServletRequest req, HttpServletResponse resp)
       throws IOException {
     Drive drive = AuthUtils.getDriveOrOAuth(
-        getServletContext(), req, resp, req.getParameter("userid"), false);
+        getServletContext(), req, resp, req.getParameter("sessionId"), false);
     Random random = new Random();
     GcsFilename gcsFilename = new GcsFilename(
         GCS_BUCKET_NAME, String.format("tmp-txc-%d", random.nextInt()));

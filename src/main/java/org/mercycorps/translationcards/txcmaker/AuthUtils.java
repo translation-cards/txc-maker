@@ -47,10 +47,10 @@ class AuthUtils {
 
   static Drive getDriveOrOAuth(
       ServletContext context, HttpServletRequest req, HttpServletResponse resp,
-      String userId, boolean orOAuth)
+      String sessionId, boolean orOAuth)
       throws IOException {
     AuthorizationCodeFlow flow = AuthUtils.newFlow(context);
-    Credential credential = flow.loadCredential(userId);
+    Credential credential = flow.loadCredential(sessionId);
     if (credential == null) {
       if (orOAuth) {
         String url = flow.newAuthorizationUrl()
