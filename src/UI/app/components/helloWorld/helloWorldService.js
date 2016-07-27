@@ -1,8 +1,8 @@
 angular.module('txcmaker.deckImport')
-.service('helloWorldService', function($http, API) {
+.service('helloWorldService', function($http) {
     this.getText = function () {
         return $http({
-        url: 'http://' + API.location + '/helloWorld',
+        url: '/helloWorld',
         method: "GET",
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
