@@ -1,5 +1,11 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
+import com.google.appengine.repackaged.com.google.gson.Gson;
+import com.google.common.base.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,4 +72,5 @@ public class Deck {
     languageLookup.get(language).addCard(card);
     return this;
   }
+
 }

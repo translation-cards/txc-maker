@@ -1,28 +1,18 @@
-package org.mercycorps.translationcards.txcmaker.servlet;
+package org.mercycorps.translationcards.txcmaker.service;
 
-import com.google.appengine.repackaged.com.google.gson.Gson;
+
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class PreviewServlet extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Deck deck = createStubbedDeck();
-        String json = new Gson().toJson(deck);
+public class DeckService {
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(json);
-
+    public Deck get(int id) {
+        return createStubbedDeck();
     }
 
     private Deck createStubbedDeck() {
@@ -54,5 +44,10 @@ public class PreviewServlet extends HttpServlet {
             }
         }
         return deck;
+    }
+
+    public void loadFromRequest(HttpServletRequest req) {
+
+
     }
 }
