@@ -61,29 +61,29 @@ public class TxcBuilderTaskHandler extends HttpServlet {
     produceTxcJson(req, resp);
   }
 
-  private void produceTxcJson(HttpServletRequest req, HttpServletResponse resp)
-      throws IOException {
+  private void produceTxcJson(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     Drive drive = AuthUtils.getDriveOrOAuth(
         getServletContext(), req, resp, req.getParameter("sessionId"), false);
+
     Random random = new Random();
     GcsFilename gcsFilename = new GcsFilename(
         GCS_BUCKET_NAME, String.format("tmp-txc-%d", random.nextInt()));
     OutputStream gcsOutput = Channels.newOutputStream(
         gcsService.createOrReplace(gcsFilename, GcsFileOptions.getDefaultInstance()));
-    TxcPortingUtility.ExportSpec exportSpec = new TxcPortingUtility.ExportSpec()
-        .setDeckLabel(req.getParameter("deckName"))
-        .setPublisher(req.getParameter("publisher"))
-        .setDeckId(req.getParameter("deckId"))
-        .setTimestamp(System.currentTimeMillis())
-        .setLicenseUrl(req.getParameter("licenseUrl"))
-        .setLocked(req.getParameter("locked") != null);
+
+    String audioDirId = assembleTxc(req, drive, gcsOutput);
+
+    pushTxcToDrive(req, drive, gcsFilename, audioDirId);
+
+    resp.getWriter().println(
+        "Your TXC is being assembled and the file should arrive in Drive in a minute or two.");
+  }
+
+  private String assembleTxc(HttpServletRequest req, Drive drive, OutputStream gcsOutput) throws IOException {
+    TxcPortingUtility.ExportSpec exportSpec = createExportSpec(req);
     String audioDirId = TxcPortingUtility.getAudioDirId(req);
     ChildList audioList = drive.children().list(audioDirId).execute();
-    Map<String, String> audioFileIds = new HashMap<String, String>();
-    for (ChildReference audioRef : audioList.getItems()) {
-      File audioFile = drive.files().get(audioRef.getId()).execute();
-      audioFileIds.put(audioFile.getOriginalFilename(), audioRef.getId());
-    }
+    Map<String, String> audioFileIds = readAudioFileIdsFromCsv(drive, audioList);
     String spreadsheetFileId = TxcPortingUtility.getSpreadsheetId(req);
     Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
     Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
@@ -94,10 +94,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
       for (CSVRecord row : parser) {
         String language = row.get(SRC_HEADER_LANGUAGE);
         String filename = row.get(SRC_HEADER_FILENAME);
-        TxcPortingUtility.CardSpec card = new TxcPortingUtility.CardSpec()
-            .setLabel(row.get(SRC_HEADER_LABEL))
-            .setFilename(filename)
-            .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
+        TxcPortingUtility.CardSpec card = createCardSpec(row, filename);
         exportSpec.addCard(language, card);
         if (includedAudioFiles.contains(filename)) {
           continue;
@@ -115,6 +112,36 @@ public class TxcBuilderTaskHandler extends HttpServlet {
       reader.close();
       zipOutput.close();
     }
+    return audioDirId;
+  }
+
+  private TxcPortingUtility.CardSpec createCardSpec(CSVRecord row, String filename) {
+    return new TxcPortingUtility.CardSpec()
+            .setLabel(row.get(SRC_HEADER_LABEL))
+            .setFilename(filename)
+            .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
+  }
+
+  private TxcPortingUtility.ExportSpec createExportSpec(HttpServletRequest req) {
+    return new TxcPortingUtility.ExportSpec()
+        .setDeckLabel(req.getParameter("deckName"))
+        .setPublisher(req.getParameter("publisher"))
+        .setDeckId(req.getParameter("deckId"))
+        .setTimestamp(System.currentTimeMillis())
+        .setLicenseUrl(req.getParameter("licenseUrl"))
+        .setLocked(req.getParameter("locked") != null);
+  }
+
+  private Map<String, String> readAudioFileIdsFromCsv(Drive drive, ChildList audioList) throws IOException {
+    Map<String, String> audioFileIds = new HashMap<String, String>();
+    for (ChildReference audioRef : audioList.getItems()) {
+      File audioFile = drive.files().get(audioRef.getId()).execute();
+      audioFileIds.put(audioFile.getOriginalFilename(), audioRef.getId());
+    }
+    return audioFileIds;
+  }
+
+  private void pushTxcToDrive(HttpServletRequest req, Drive drive, GcsFilename gcsFilename, String audioDirId) throws IOException {
     File targetFileInfo = new File();
     String targetFilename = req.getParameter("deckName")
         .replaceAll(" ", "_")
@@ -125,8 +152,6 @@ public class TxcBuilderTaskHandler extends HttpServlet {
     InputStream txcContentStream = Channels.newInputStream(
         gcsService.openPrefetchingReadChannel(gcsFilename, 0, BUFFER_SIZE));
     drive.files().insert(targetFileInfo, new InputStreamContent(null, txcContentStream)).execute();
-    resp.getWriter().println(
-        "Your TXC is being assembled and the file should arrive in Drive in a minute or two.");
   }
 }
 
