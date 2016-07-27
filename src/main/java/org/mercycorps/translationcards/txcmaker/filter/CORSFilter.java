@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker;
+package org.mercycorps.translationcards.txcmaker.filter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;

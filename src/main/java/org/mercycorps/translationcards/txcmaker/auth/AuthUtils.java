@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker;
+package org.mercycorps.translationcards.txcmaker.auth;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.Credential;
@@ -10,10 +10,8 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.util.store.DataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import com.google.appengine.api.users.UserServiceFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,7 +23,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-class AuthUtils {
+public class AuthUtils {
 
   private static final AppEngineDataStoreFactory DATA_STORE_FACTORY =
       AppEngineDataStoreFactory.getDefaultInstance();
@@ -39,13 +37,13 @@ class AuthUtils {
 
   private static final String CLIENT_SECRETS_FILENAME = "/WEB-INF/client_secrets.json";
 
-  static String getRedirectUri(HttpServletRequest req) {
+  public static String getRedirectUri(HttpServletRequest req) {
     GenericUrl url = new GenericUrl(req.getRequestURL().toString());
     url.setRawPath("/oauth2callback");
     return url.build();
   }
 
-  static Drive getDriveOrOAuth(
+  public static Drive getDriveOrOAuth(
       ServletContext context, HttpServletRequest req, HttpServletResponse resp,
       String sessionId, boolean orOAuth)
       throws IOException {
@@ -64,7 +62,7 @@ class AuthUtils {
     }
   }
 
-  static AuthorizationCodeFlow newFlow(ServletContext context) throws IOException {
+  public static AuthorizationCodeFlow newFlow(ServletContext context) throws IOException {
     InputStream in = context.getResourceAsStream(CLIENT_SECRETS_FILENAME);
     GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
     return new GoogleAuthorizationCodeFlow.Builder(

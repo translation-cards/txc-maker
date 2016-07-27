@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker;
+package org.mercycorps.translationcards.txcmaker.task;
 
 import com.google.gson.Gson;
 
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-class TxcPortingUtility {
+public class TxcPortingUtility {
 
   private static final Pattern FILE_URL_MATCHER = Pattern.compile(
       "https?://docs.google.com/spreadsheets/d/(.*?)(/.*)?$");

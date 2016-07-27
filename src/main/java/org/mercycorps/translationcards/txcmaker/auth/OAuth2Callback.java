@@ -12,13 +12,13 @@
  * the License.
  */
 
-package org.mercycorps.translationcards.txcmaker;
+package org.mercycorps.translationcards.txcmaker.auth;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.appengine.auth.oauth2.AbstractAppEngineAuthorizationCodeCallbackServlet;
-import com.google.appengine.api.users.UserServiceFactory;
+import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 
 import java.io.IOException;
 

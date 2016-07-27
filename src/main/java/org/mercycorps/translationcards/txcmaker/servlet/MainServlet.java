@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker;
+package org.mercycorps.translationcards.txcmaker.servlet;
 
 import java.io.IOException;
 

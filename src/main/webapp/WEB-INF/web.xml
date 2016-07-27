@@ -3,7 +3,7 @@
 
   <servlet>		
     <servlet-name>get-txc</servlet-name>
-    <servlet-class>org.mercycorps.translationcards.txcmaker.GetTxcServlet</servlet-class>
+    <servlet-class>org.mercycorps.translationcards.txcmaker.servlet.GetTxcServlet</servlet-class>
   </servlet>		
   <servlet-mapping>		
     <servlet-name>get-txc</servlet-name>
@@ -12,7 +12,7 @@
 
   <servlet>		
     <servlet-name>helloWorld</servlet-name>
-    <servlet-class>org.mercycorps.translationcards.txcmaker.HelloWorldServlet</servlet-class>
+    <servlet-class>org.mercycorps.translationcards.txcmaker.servlet.HelloWorldServlet</servlet-class>
   </servlet>		
   <servlet-mapping>		
     <servlet-name>helloWorld</servlet-name>
@@ -21,7 +21,7 @@
 		
   <servlet>		
     <servlet-name>oauth2callback</servlet-name>
-    <servlet-class>org.mercycorps.translationcards.txcmaker.OAuth2Callback</servlet-class>
+    <servlet-class>org.mercycorps.translationcards.txcmaker.auth.OAuth2Callback</servlet-class>
   </servlet>		
   <servlet-mapping>		
     <servlet-name>oauth2callback</servlet-name>
@@ -30,7 +30,7 @@
 
   <servlet>
       <servlet-name>builder-task-handler</servlet-name>
-      <servlet-class>org.mercycorps.translationcards.txcmaker.TxcBuilderTaskHandler</servlet-class>
+      <servlet-class>org.mercycorps.translationcards.txcmaker.task.TxcBuilderTaskHandler</servlet-class>
   </servlet>
   <servlet-mapping>
       <servlet-name>builder-task-handler</servlet-name>
@@ -38,7 +38,7 @@
   </servlet-mapping>
     <filter>
         <filter-name>cross-origin</filter-name>
-        <filter-class>org.mercycorps.translationcards.txcmaker.CORSFilter</filter-class>
+        <filter-class>org.mercycorps.translationcards.txcmaker.filter.CORSFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>cross-origin</filter-name>
