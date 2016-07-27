@@ -1,7 +1,8 @@
 package org.mercycorps.translationcards.txcmaker.servlet;
 
 import com.google.appengine.repackaged.com.google.gson.Gson;
-import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
+import org.mercycorps.translationcards.txcmaker.model.Card;
+import org.mercycorps.translationcards.txcmaker.model.Deck;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +16,7 @@ public class PreviewServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        TxcPortingUtility.ExportSpec deck = createStubbedDeck();
+        Deck deck = createStubbedDeck();
         String json = new Gson().toJson(deck);
 
         resp.setContentType("application/json");
@@ -24,7 +25,7 @@ public class PreviewServlet extends HttpServlet {
 
     }
 
-    private TxcPortingUtility.ExportSpec createStubbedDeck() {
+    private Deck createStubbedDeck() {
         List<String> languages = Arrays.asList("ar", "fa", "ps");
         List<String> phrases = Arrays.asList(
                 "Do you understand this language?",
@@ -35,7 +36,7 @@ public class PreviewServlet extends HttpServlet {
                 "Do you need medical attention?",
                 "Where do you come from?");
 
-        TxcPortingUtility.ExportSpec deck = new TxcPortingUtility.ExportSpec()
+        Deck deck = new Deck()
                 .setDeckId("1234")
                 .setDeckLabel("Default Deck")
                 .setPublisher("Women Hack Syria")
@@ -46,7 +47,7 @@ public class PreviewServlet extends HttpServlet {
 
         for(String language : languages) {
             for(String phrase : phrases) {
-                deck.addCard(language, new TxcPortingUtility.CardSpec()
+                deck.addCard(language, new Card()
                         .setLabel(phrase)
                         .setTranslationText(language + " translation")
                         .setFilename(phrase + ".mp3"));

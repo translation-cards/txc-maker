@@ -1,0 +1,69 @@
+package org.mercycorps.translationcards.txcmaker.model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Deck {
+
+  private String deck_label;
+  private String publisher;
+  private String iso_code;
+  private String id;
+  private long timestamp;
+  private String license_url;
+  private boolean locked;
+  private List<Language> languages;
+  private transient Map<String, Language> languageLookup;
+
+  public Deck() {
+    languages = new ArrayList<Language>();
+    languageLookup = new HashMap<String, Language>();
+  }
+
+  public Deck setDeckLabel(String deckLabel) {
+    this.deck_label = deckLabel;
+    return this;
+  }
+
+  public Deck setPublisher(String publisher) {
+    this.publisher = publisher;
+    return this;
+  }
+
+  public Deck setLanguage(String iso_code) {
+    this.iso_code = iso_code;
+    return this;
+  }
+
+  public Deck setDeckId(String deckId) {
+    this.id = deckId;
+    return this;
+  }
+
+  public Deck setTimestamp(long timestamp) {
+    this.timestamp = timestamp;
+    return this;
+  }
+
+  public Deck setLicenseUrl(String licenseUrl) {
+    this.license_url = licenseUrl;
+    return this;
+  }
+
+  public Deck setLocked(boolean locked) {
+    this.locked = locked;
+    return this;
+  }
+
+  public Deck addCard(String language, Card card) {
+    if (!languageLookup.containsKey(language)) {
+      Language langSpec = new Language(language);
+      languages.add(langSpec);
+      languageLookup.put(language, langSpec);
+    }
+    languageLookup.get(language).addCard(card);
+    return this;
+  }
+}

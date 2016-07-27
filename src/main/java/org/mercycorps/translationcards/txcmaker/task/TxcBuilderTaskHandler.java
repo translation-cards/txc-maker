@@ -35,6 +35,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.model.Card;
+import org.mercycorps.translationcards.txcmaker.model.Deck;
 
 public class TxcBuilderTaskHandler extends HttpServlet {
 
@@ -80,7 +82,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
   }
 
   private String assembleTxc(HttpServletRequest req, Drive drive, OutputStream gcsOutput) throws IOException {
-    TxcPortingUtility.ExportSpec exportSpec = createExportSpec(req);
+    Deck exportSpec = createExportSpec(req);
     String audioDirId = TxcPortingUtility.getAudioDirId(req);
     ChildList audioList = drive.children().list(audioDirId).execute();
     Map<String, String> audioFileIds = readAudioFileIdsFromCsv(drive, audioList);
@@ -94,7 +96,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
       for (CSVRecord row : parser) {
         String language = row.get(SRC_HEADER_LANGUAGE);
         String filename = row.get(SRC_HEADER_FILENAME);
-        TxcPortingUtility.CardSpec card = createCardSpec(row, filename);
+        Card card = createCardSpec(row, filename);
         exportSpec.addCard(language, card);
         if (includedAudioFiles.contains(filename)) {
           continue;
@@ -115,15 +117,15 @@ public class TxcBuilderTaskHandler extends HttpServlet {
     return audioDirId;
   }
 
-  private TxcPortingUtility.CardSpec createCardSpec(CSVRecord row, String filename) {
-    return new TxcPortingUtility.CardSpec()
+  private Card createCardSpec(CSVRecord row, String filename) {
+    return new Card()
             .setLabel(row.get(SRC_HEADER_LABEL))
             .setFilename(filename)
             .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
   }
 
-  private TxcPortingUtility.ExportSpec createExportSpec(HttpServletRequest req) {
-    return new TxcPortingUtility.ExportSpec()
+  private Deck createExportSpec(HttpServletRequest req) {
+    return new Deck()
         .setDeckLabel(req.getParameter("deckName"))
         .setPublisher(req.getParameter("publisher"))
         .setDeckId(req.getParameter("deckId"))
