@@ -45,6 +45,7 @@ public class TxcPortingUtility {
 
     private String deck_label;
     private String publisher;
+    private String iso_code;
     private String id;
     private long timestamp;
     private String license_url;
@@ -64,6 +65,11 @@ public class TxcPortingUtility {
 
     public ExportSpec setPublisher(String publisher) {
       this.publisher = publisher;
+      return this;
+    }
+
+    public ExportSpec setLanguage(String iso_code) {
+      this.iso_code = iso_code;
       return this;
     }
 

@@ -17,7 +17,25 @@
   <servlet-mapping>		
     <servlet-name>helloWorld</servlet-name>
     <url-pattern>/helloWorld</url-pattern>
-  </servlet-mapping>		
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>ImportServlet</servlet-name>
+      <servlet-class>org.mercycorps.translationcards.txcmaker.servlet.ImportServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>ImportServlet</servlet-name>
+      <url-pattern>/importDeck</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>PreviewServlet</servlet-name>
+      <servlet-class>org.mercycorps.translationcards.txcmaker.servlet.PreviewServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>PreviewServlet</servlet-name>
+      <url-pattern>/previewDeck</url-pattern>
+  </servlet-mapping>
 		
   <servlet>		
     <servlet-name>oauth2callback</servlet-name>
