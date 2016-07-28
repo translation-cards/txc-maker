@@ -8,7 +8,14 @@ angular.module('txcmaker', [
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
   //$locationProvider.hashPrefix('!');
 
+  $routeProvider.when('/DeckImport', {
+    templateUrl: 'views/deckImport/deckImport.html',
+    controller: 'DeckImportCtrl'
+  });
+
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
+
+  $locationProvider.html5Mode(true);
 }])
 
 .run(function () {
