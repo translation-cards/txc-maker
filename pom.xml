@@ -126,6 +126,10 @@
                             <filtering>true</filtering>
                             <targetPath>WEB-INF</targetPath>
                         </resource>
+                        <resource>
+                            <directory>${basedir}/src/UI/app</directory>
+                            <targetPath>/</targetPath>
+                        </resource>
                     </webResources>
                 </configuration>
             </plugin>
