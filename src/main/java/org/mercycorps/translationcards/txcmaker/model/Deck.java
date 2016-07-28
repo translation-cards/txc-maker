@@ -13,14 +13,14 @@ import java.util.Map;
 
 public class Deck {
 
-  private String deck_label;
-  private String publisher;
-  private String iso_code;
-  private String id;
-  private long timestamp;
-  private String license_url;
-  private boolean locked;
-  private List<Language> languages;
+  public String deck_label;
+  public String publisher;
+  public String iso_code;
+  public String id;
+  public long timestamp;
+  public String license_url;
+  public boolean locked;
+  public List<Language> languages;
   private transient Map<String, Language> languageLookup;
 
   public Deck() {

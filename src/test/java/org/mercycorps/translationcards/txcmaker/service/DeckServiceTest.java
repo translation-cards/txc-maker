@@ -17,7 +17,7 @@ public class DeckServiceTest {
 
     @Test
     public void shouldGetADeck() throws Exception {
-        Deck deck = deckService.get(1);
+        Deck deck = deckService.retrieve(1);
 
         assertNotNull(deck);
     }

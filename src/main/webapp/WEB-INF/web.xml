@@ -11,15 +11,24 @@
   </servlet-mapping>
 
     <servlet>
-        <servlet-name>DeckServlet</servlet-name>
-        <servlet-class>org.mercycorps.translationcards.txcmaker.servlet.DeckServlet</servlet-class>
+        <servlet-name>RESTServlet</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>org.mercycorps.translationcards.txcmaker.api</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DeckServlet</servlet-name>
-        <url-pattern>/deck</url-pattern>
+        <servlet-name>RESTServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-		
-  <servlet>		
+
+  <servlet>
     <servlet-name>oauth2callback</servlet-name>
     <servlet-class>org.mercycorps.translationcards.txcmaker.auth.OAuth2Callback</servlet-class>
   </servlet>		

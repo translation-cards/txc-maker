@@ -7,9 +7,9 @@ import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
  */
 public class Card {
 
-  private String card_label;
-  private String dest_audio;
-  private String dest_txt;
+  public String card_label;
+  public String dest_audio;
+  public String dest_txt;
 
   public Card setLabel(String label) {
     this.card_label = label;

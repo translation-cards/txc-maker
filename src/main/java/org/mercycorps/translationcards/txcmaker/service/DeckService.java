@@ -11,8 +11,12 @@ import java.util.List;
 
 public class DeckService {
 
-    public Deck get(int id) {
+    public Deck retrieve(int id) {
         return createStubbedDeck();
+    }
+
+    public int create(Deck deck) {
+        return 10;
     }
 
     private Deck createStubbedDeck() {
@@ -44,10 +48,5 @@ public class DeckService {
             }
         }
         return deck;
-    }
-
-    public void loadFromRequest(HttpServletRequest req) {
-
-
     }
 }
