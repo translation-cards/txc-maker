@@ -1,15 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
-import com.google.appengine.repackaged.com.google.gson.Gson;
-import com.google.common.base.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Deck {
 
@@ -71,6 +62,37 @@ public class Deck {
     }
     languageLookup.get(language).addCard(card);
     return this;
+  }
+
+  public static Deck stub() {
+    List<String> languages = Arrays.asList("ar", "fa", "ps");
+    List<String> phrases = Arrays.asList(
+            "Do you understand this language?",
+            "Can I talk to you, using this mobile application (App)?",
+            "What is your name?",
+            "Do you need water?",
+            "Do you have a phone?",
+            "Do you need medical attention?",
+            "Where do you come from?");
+
+    Deck deck = new Deck()
+            .setDeckId("1234")
+            .setDeckLabel("Default Deck")
+            .setPublisher("Women Hack Syria")
+            .setLanguage("en")
+            .setLocked(false)
+            .setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
+            .setTimestamp(System.currentTimeMillis());
+
+    for(String language : languages) {
+      for(String phrase : phrases) {
+        deck.addCard(language, new Card()
+                .setLabel(phrase)
+                .setTranslationText(language + " translation")
+                .setFilename(phrase + ".mp3"));
+      }
+    }
+    return deck;
   }
 
 }

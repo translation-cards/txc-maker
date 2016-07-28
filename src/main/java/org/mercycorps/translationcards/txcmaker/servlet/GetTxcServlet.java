@@ -47,14 +47,14 @@ public class GetTxcServlet extends HttpServlet {
 
   private byte[] buffer = new byte[BUFFER_SIZE];
   private GcsService gcsService = GcsServiceFactory.createGcsService();
+  private AuthUtils authUtils = new AuthUtils();
 
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
     // We don't actually need the Drive service yet, but we authenticate in advance because
     // otherwise OAuth will send them back here anyway.
 
-    String sessionId=req.getSession(true).getId();
-    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, sessionId, true);
+    Drive drive = authUtils.getDriveOrOAuth(getServletContext(), req, resp, true);
     if (drive == null) {
       // We've already redirected.
       return;
@@ -66,7 +66,7 @@ public class GetTxcServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     String sessionId=req.getSession(true).getId();
-    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, sessionId, false);
+    Drive drive = authUtils.getDriveOrOAuth(getServletContext(), req, resp, false);
     if (drive == null) {
       resp.getWriter().println("You haven't provided Drive authentication.");
       return;
@@ -120,7 +120,7 @@ public class GetTxcServlet extends HttpServlet {
   private void verify(String sessionId, HttpServletRequest req, HttpServletResponse resp,
       List<String> warnings, List<String> errors) throws IOException {
 
-    Drive drive = AuthUtils.getDriveOrOAuth(getServletContext(), req, resp, sessionId, false);
+    Drive drive = authUtils.getDriveOrOAuth(getServletContext(), req, resp, false);
     String audioDirId = TxcPortingUtility.getAudioDirId(req);
     ChildList audioList = drive.children().list(audioDirId).execute();
     Map<String, String> audioFileIds = new HashMap<String, String>();

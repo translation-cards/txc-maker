@@ -25,44 +25,45 @@ import javax.servlet.http.HttpServletResponse;
 
 public class AuthUtils {
 
-  private static final AppEngineDataStoreFactory DATA_STORE_FACTORY =
+  private final AppEngineDataStoreFactory DATA_STORE_FACTORY =
       AppEngineDataStoreFactory.getDefaultInstance();
   
-  static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
+  final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
 
-  static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+  final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-  static final Collection<String> SCOPES = Arrays.asList(
+  final Collection<String> SCOPES = Arrays.asList(
       DriveScopes.DRIVE_READONLY, DriveScopes.DRIVE_FILE);
 
-  private static final String CLIENT_SECRETS_FILENAME = "/WEB-INF/client_secrets.json";
+  private final String CLIENT_SECRETS_FILENAME = "/WEB-INF/client_secrets.json";
 
-  public static String getRedirectUri(HttpServletRequest req) {
+  public String getRedirectUri(HttpServletRequest req) {
     GenericUrl url = new GenericUrl(req.getRequestURL().toString());
     url.setRawPath("/oauth2callback");
     return url.build();
   }
 
-  public static Drive getDriveOrOAuth(
-      ServletContext context, HttpServletRequest req, HttpServletResponse resp,
-      String sessionId, boolean orOAuth)
+  public Drive getDriveOrOAuth(
+          ServletContext context, HttpServletRequest req, HttpServletResponse resp,
+          boolean orOAuth)
       throws IOException {
-    AuthorizationCodeFlow flow = AuthUtils.newFlow(context);
+    AuthorizationCodeFlow flow = newFlow(context);
+    String sessionId = req.getSession(true).getId();
     Credential credential = flow.loadCredential(sessionId);
     if (credential == null) {
       if (orOAuth) {
         String url = flow.newAuthorizationUrl()
-            .setRedirectUri(AuthUtils.getRedirectUri(req))
+            .setRedirectUri(getRedirectUri(req))
             .build(); 
         resp.sendRedirect(url);
       }
       return null;
     } else {
-      return AuthUtils.getDriveService(credential);
+      return getDriveService(credential);
     }
   }
 
-  public static AuthorizationCodeFlow newFlow(ServletContext context) throws IOException {
+  public AuthorizationCodeFlow newFlow(ServletContext context) throws IOException {
     InputStream in = context.getResourceAsStream(CLIENT_SECRETS_FILENAME);
     GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
     return new GoogleAuthorizationCodeFlow.Builder(
@@ -72,7 +73,7 @@ public class AuthUtils {
         .build();
   }
 
-  static Drive getDriveService(Credential credential) throws IOException {
+  Drive getDriveService(Credential credential) throws IOException {
     return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
         .setApplicationName("TXC Maker")
         .build();

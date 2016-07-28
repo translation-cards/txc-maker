@@ -58,14 +58,16 @@ public class TxcBuilderTaskHandler extends HttpServlet {
   private byte[] buffer = new byte[BUFFER_SIZE];
   private GcsService gcsService = GcsServiceFactory.createGcsService();
 
+  AuthUtils authUtils = new AuthUtils();
+
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     produceTxcJson(req, resp);
   }
 
   private void produceTxcJson(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    Drive drive = AuthUtils.getDriveOrOAuth(
-        getServletContext(), req, resp, req.getParameter("sessionId"), false);
+    Drive drive = authUtils.getDriveOrOAuth(
+        getServletContext(), req, resp, false);
 
     Random random = new Random();
     GcsFilename gcsFilename = new GcsFilename(

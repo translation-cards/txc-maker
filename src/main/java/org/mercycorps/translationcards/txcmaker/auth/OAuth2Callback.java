@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OAuth2Callback extends AbstractAppEngineAuthorizationCodeCallbackServlet {
 
+  AuthUtils authUtils = new AuthUtils();
+
   @Override
   protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, Credential credential)
       throws ServletException, IOException {
@@ -54,12 +56,12 @@ public class OAuth2Callback extends AbstractAppEngineAuthorizationCodeCallbackSe
 
   @Override
   protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
-    return AuthUtils.getRedirectUri(req);
+    return authUtils.getRedirectUri(req);
   }
 
   @Override
   protected AuthorizationCodeFlow initializeFlow() throws IOException {
-    return AuthUtils.newFlow(getServletContext());
+    return authUtils.newFlow(getServletContext());
   }
   @Override
   protected String getUserId(HttpServletRequest req) throws ServletException, IOException {
