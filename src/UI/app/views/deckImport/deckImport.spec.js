@@ -8,16 +8,16 @@ describe('txcmaker.deckImport', function() {
 
     // Load the needed modules
     beforeEach(module('txcmaker.deckImport'));
-    beforeEach(module('mock.helloWorldService'));
+    beforeEach(module('mock.BackendService'));
 
     // Initialize the controller with its dependencies
-    beforeEach(inject(function($controller, $rootScope, _helloWorldService_) {
+    beforeEach(inject(function($controller, $rootScope, _BackendService_) {
       scope = $rootScope.$new();
-      service = _helloWorldService_;
+      service = _BackendService_;
 
       controller = $controller('DeckImportCtrl', {
         $scope: scope,
-        helloWorldService: _helloWorldService_
+        BackendService: _BackendService_
       });
     }));
 

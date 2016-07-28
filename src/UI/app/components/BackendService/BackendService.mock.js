@@ -1,8 +1,8 @@
-angular.module('mock.helloWorldService', [])
-  .factory('helloWorldService', function($q) {
+angular.module('mock.BackendService', [])
+  .factory('BackendService', function($q) {
     var service = {};
 
-    service.getText = function() {
+    service.get = function(url) {
       var response = {data: "stubbed text"};
       return $q.when(response);
     }

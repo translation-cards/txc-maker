@@ -13,8 +13,8 @@ module.exports = function(config) {
       'views/deckImport/deckImport.ctrl.js',
       'views/deckImport/deckImport.spec.js',
       // Then, load dependencies of the module
-      'components/helloWorld/helloWorldService.js',
-      'components/helloWorld/helloWorldService.mock.js',
+      'components/BackendService/BackendService.js',
+      'components/BackendService/BackendService.mock.js',
 
       // Lastly, load the app
       'app.js'
