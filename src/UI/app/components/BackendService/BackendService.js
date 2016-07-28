@@ -1,4 +1,4 @@
-angular.module('txcmaker.deckImport')
+angular.module('txcmaker')
   .factory('BackendService', function($http) {
     var service = {};
 

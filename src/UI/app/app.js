@@ -2,8 +2,7 @@
 
 // Declare app level module which depends on views, and components
 angular.module('txcmaker', [
-  'ngRoute',
-  'txcmaker.deckImport'
+  'ngRoute'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
   //$locationProvider.hashPrefix('!');
@@ -11,11 +10,13 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
   $routeProvider.when('/DeckImport', {
     templateUrl: 'views/deckImport/deckImport.html',
     controller: 'DeckImportCtrl'
+  })
+  .when('/DeckPreview', {
+    templateUrl: 'views/DeckPreview/DeckPreview.html',
+    controller: 'DeckPreviewCtrl'
   });
 
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
-
-  $locationProvider.html5Mode(true);
 }])
 
 .run(function () {

@@ -8,6 +8,6 @@ function DeckImportController ($scope, BackendService){
 
 }
 
-angular.module('txcmaker.deckImport', ['ngRoute'])
+angular.module('txcmaker')
 
 .controller('DeckImportCtrl', ['$scope', 'BackendService', DeckImportController])
