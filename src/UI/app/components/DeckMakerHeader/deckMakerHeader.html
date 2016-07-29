@@ -1,0 +1,18 @@
+<md-toolbar layout-padding layout-fill style="min-height: 224px;">
+      <div layout="row">
+      </div>
+      <div layout="row">
+        <h3>TXC Maker</h3>
+      </div>
+      <div layout="row">
+      </div>
+      <md-tabs>
+        <md-tab label="Decks"></md-tab>
+        <md-tab label="Import" 
+                md-active="$ctrl.deckImportSelected"
+                md-on-select="$ctrl.go('/DeckImport')"></md-tab>
+        <md-tab label="FAQ"></md-tab>
+        <md-tab label="Deck Preview" md-on-select="$ctrl.go('/DeckPreview')"
+        md-active="$ctrl.deckPreviewSelected"></md-tab>
+      </md-tabs>
+  </md-toolbar>

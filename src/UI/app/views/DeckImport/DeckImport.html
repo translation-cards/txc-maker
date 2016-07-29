@@ -1,78 +1,48 @@
 
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header" >
-      <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary deckMakerHeader">
-        <div class="mdl-layout--large-screen-only mdl-layout__header-row">
-        </div>
-        <div class="mdl-layout--large-screen-only mdl-layout__header-row">
-          <h3>TXC Maker</h3>
-        </div>
-        <div class="mdl-layout--large-screen-only mdl-layout__header-row">
-        </div>
-        <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
-          <a href="#overview" class="mdl-layout__tab">Decks</a>
-          <a href="#features" class="mdl-layout__tab is-active">Import</a>
-          <a href="#features" class="mdl-layout__tab">FAQ</a>
-        </div>
-      </header>
-      <main class="mdl-layout__content">
 
-        <div class="mdl-grid">
-          <div class="mdl-cell mdl-cell--6-col formBody">
+      <div layout="column">
+      <deck-maker-header deckImportSelected="true"></deck-maker-header>
+      
+      <main >
+        <div layout="row" layout-align="center center" layout-padding>
+          <div class="formBody"  >
             <form method="post" action="/get-txc">
+              <text-input-field 
+                label="'Deck Name'"
+                description="'An effective deck name explains who the deck is for and where it\'s most useful.'"
+                value="''"></text-input-field>
+                
+              <text-input-field 
+                label="'Publisher'"
+                description="'Your organisation and/or your name.'"
+                value="model.publisher"></text-input-field>
+                
+              <text-input-field 
+                label="'Deck ID'"
+                description="'The unique identifier for the deck.'"
+                value="''"></text-input-field>
+                
+              <text-input-field 
+                label="'Document ID'"
+                description="'URL of the Google spreadsheet containing deck information.'"
+                value="''"></text-input-field>
+                
+              <text-input-field 
+                label="'Audio Directory ID'"
+                description="'URL of the Google Drive folder containing the audio files.'"
+                value="''"></text-input-field>
+              <text-input-field 
+                label="'License URL'"
+                value="''"></text-input-field>
 
-              <h6>Deck Name</h6>
-              <p>An effective deck name explains who the deck is for and where it's most useful.</p>
-              <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="deckName" name="deckName">
-                <label class="mdl-textfield__label" for="deckName">Deck Name</label>
-              </div>
-
-              <h6>Publisher</h6>
-              <p>Your organisation and/or your name.</p>
-              <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="publisher" name="publisher">
-                <label class="mdl-textfield__label" for="publisher">Publisher</label>
-              </div>
-
-              <h6>Deck ID</h6>
-              <p>The unique identifier for the deck.</p>
-              <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="deckId" name="deckId">
-                <label class="mdl-textfield__label" for="deckId">Deck ID</label>
-              </div>
-
-              <h6>Document ID</h6>
-              <p>URL of the Google spreadsheet containing deck information.</p>
-              <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="docId" name="docId">
-                <label class="mdl-textfield__label" for="docId">Document ID</label>
-              </div>
-
-              <h6>Audio Directory ID</h6>
-              <p>URL of the Google Drive folder containing the audio files.</p>
-              <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="audioDirId" name="audioDirId">
-                <label class="mdl-textfield__label" for="audioDirId">Audio Directory ID</label>
-              </div>
-
-              <h6>License URL</h6>
-              <div class="mdl-textfield mdl-js-textfield">
-                <input class="mdl-textfield__input" type="text" id="licenseUrl" name="licenseUrl">
-                <label class="mdl-textfield__label" for="licenseUrl">License URL</label>
-              </div>
-
-              <h6>Deck Locking</h6>
+              <h6 class="md-title">Deck Locking</h6>
               <div class="mdl-textfield mdl-js-textfield">
                 <input class="mdl-checkbox__input" type="checkbox" id="locked" name="locked">
                 <label class="mdl-checkbox__label" for="locked">Lock this deck so it cannot be modified</label>
               </div>
 
               <br />
-
-              <button class="mdl-button mdl-js-button mdl-button--raised submitButton" type="submit">
-                Submit
-              </button>
-
+              <md-button class="md-raised md-cornered md-primary" type="submit">Submit</md-button>
             </form>
           </div>
         </div>

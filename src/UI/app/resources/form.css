@@ -1,5 +1,8 @@
 
-
+html, 
+body {
+    height: inherit;
+}
 body {
   background-color: #efefef;
 }
