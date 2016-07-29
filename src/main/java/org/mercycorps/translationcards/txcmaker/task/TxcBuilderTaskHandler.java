@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +60,13 @@ public class TxcBuilderTaskHandler extends HttpServlet {
   private byte[] buffer = new byte[BUFFER_SIZE];
   private GcsService gcsService = GcsServiceFactory.createGcsService();
 
-  AuthUtils authUtils = new AuthUtils();
+  AuthUtils authUtils;
+
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    authUtils = (AuthUtils)config.getServletContext().getAttribute("authUtils");
+  }
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -67,7 +75,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
 
   private void produceTxcJson(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     Drive drive = authUtils.getDriveOrOAuth(
-        getServletContext(), req, resp, false);
+        getServletContext(), req, resp, false, req.getParameter("sessionId"));
 
     Random random = new Random();
     GcsFilename gcsFilename = new GcsFilename(
@@ -85,10 +93,10 @@ public class TxcBuilderTaskHandler extends HttpServlet {
 
   private String assembleTxc(HttpServletRequest req, Drive drive, OutputStream gcsOutput) throws IOException {
     Deck exportSpec = createExportSpec(req);
-    String audioDirId = TxcPortingUtility.getAudioDirId(req);
+    String audioDirId = TxcPortingUtility.parseAudioDirId(req.getParameter("audioDirId"));
     ChildList audioList = drive.children().list(audioDirId).execute();
     Map<String, String> audioFileIds = readAudioFileIdsFromCsv(drive, audioList);
-    String spreadsheetFileId = TxcPortingUtility.getSpreadsheetId(req);
+    String spreadsheetFileId = TxcPortingUtility.getSpreadsheetId(req.getParameter("docId"));
     Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
     Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
     CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());

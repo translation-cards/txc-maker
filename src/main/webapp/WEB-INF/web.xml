@@ -10,6 +10,10 @@
     <url-pattern>/get-txc</url-pattern>
   </servlet-mapping>
 
+    <listener>
+        <listener-class>org.mercycorps.translationcards.txcmaker.Application</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>RESTServlet</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
