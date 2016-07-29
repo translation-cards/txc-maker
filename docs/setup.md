@@ -2,7 +2,7 @@
 
 The Deck Maker runs on a Java server hosted in Google AppEngine. It interacts with AppEngine services for storage and task management, and utilizes the Google Drive API to pull translation files and deploy finished decks.
 
-The frontend is being written in AngularJS. We have setup a folder `src/UI`, in which web pages can be developed without worrying about integration with the Google services.
+The frontend is being written in AngularJS. The Angular app lives in the folder `src/UI`.
 
 ## 1. Get the source code
 
@@ -19,23 +19,26 @@ You should install the following dependencies on your machine. Alternatively, fo
 2. Maven >3.1
 3. Node.js v6
 
-## 3. Run the (whole) application
+## 3. Run the application
 
-The webapp is built and deployed with Maven and Google AppEngine. The following commands will be useful:
+The webapp is built and deployed with Maven, NPM, and Google AppEngine.
 
-   * To run locally, use `mvn appengine:devserver` from the project root
-    * Access the app at http://localhost:8080/get-txc
+1. from `src/UI`, run `npm install`
+ * This sets up the angular code
+2. from the project root, run `mvn appengine:devserver`
+  * This runs the server at http://localhost:8080/get-txc
 
-## 4. Run the (frontend part of the) application
+In order for your changes to the Angular app to show up while you're running the server, you will have to copy the contents of `src/UI/app` into `target/txcmaker-1.0-SNAPSHOT`. Otherwise, you will have to restart the server to see the changes.
+
+## 4. Develop on the frontend
 
 From the `src/UI` directory:
 
 * `npm install` : install dependencies
  * `npm install --unsafe-perm` : use this if using docker
-* `npm run config` : configure your Java backend location, defaults to http://localhost:8080
- * Set the API_LOCATION environment variable if the backend is not running on your machine
-* `npm run test` : Run the Jasmine tests through Karma. Connect to http://localhost:9876 to debug with your browser.
-* `npm run start` : Start a simple server which serves the files.
+* `npm run test` : Run the Jasmine tests through Karma.   
+ * Connect to http://localhost:9876 to debug with your browser.
+* `npm run start` : Start a simple server which serves the files. This won't connect to the backend, it's just for quick feedback
 
 ## Debug configuration (optional)
 
@@ -45,9 +48,9 @@ To debug the Java server, add the following flags to your debugger's configurati
 
 ## Docker Setup (optional)
 
-We have created a [Docker](https://www.docker.com/what-docker) image that contains the development environment, which is based off of Debian Jessie.
+We have created a [Docker](https://www.docker.com/what-docker) image that contains the development environment, which is based off of Debian Jessie. Setting up and running Docker is not always straightforward, so proceed at your own risk.
 
-Depending on your system, you will have to install a different version of Docker. If you're unable to install Docker v1.12, please read the section on Docker Toolbox. Setting up and running Docker is not always straightforward, so proceed at your own risk.
+Depending on your system, you will have to install a different version of Docker. If you're unable to install Docker v1.12, please read the section on Docker Toolbox.
 
 1. [Install Docker](https://docs.docker.com/engine/installation/).
 
