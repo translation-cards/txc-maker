@@ -7,7 +7,7 @@ angular.module('txcmaker', ['ngRoute'])
   //$locationProvider.hashPrefix('!');
 
   $routeProvider.when('/DeckImport', {
-    templateUrl: 'views/deckImport/deckImport.html',
+    templateUrl: 'views/DeckImport/DeckImport.html',
     controller: 'DeckImportCtrl'
   })
   .when('/DeckPreview', {
