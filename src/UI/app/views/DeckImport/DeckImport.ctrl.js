@@ -10,4 +10,4 @@ function DeckImportController ($scope, BackendService){
 
 angular.module('txcmaker')
 
-.controller('DeckImportCtrl', ['$scope', 'BackendService', DeckImportController])
+.controller('DeckImportCtrl', ['$scope', 'BackendService', DeckImportController]);

@@ -9,15 +9,14 @@ module.exports = function(config) {
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-mocks/angular-mocks.js',
 
+      'app.js',
+
       // First, load the module
-      'views/deckImport/deckImport.ctrl.js',
-      'views/deckImport/deckImport.spec.js',
+      'views/DeckImport/DeckImport.ctrl.js',
+      'views/DeckImport/DeckImport.spec.js',
       // Then, load dependencies of the module
       'components/BackendService/BackendService.js',
       'components/BackendService/BackendService.mock.js',
-
-      // Lastly, load the app
-      'app.js'
     ],
 
     autoWatch: true,

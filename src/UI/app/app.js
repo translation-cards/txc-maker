@@ -1,10 +1,9 @@
 'use strict';
 
 // Declare app level module which depends on views, and components
-angular.module('txcmaker', [
-  'ngRoute'
-]).
-config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
+angular.module('txcmaker', ['ngRoute'])
+
+.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
   //$locationProvider.hashPrefix('!');
 
   $routeProvider.when('/DeckImport', {
