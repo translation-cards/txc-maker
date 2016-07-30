@@ -49,13 +49,5 @@
       <servlet-name>builder-task-handler</servlet-name>
       <url-pattern>/tasks/txc-build</url-pattern>
   </servlet-mapping>
-    <filter>
-        <filter-name>cross-origin</filter-name>
-        <filter-class>org.mercycorps.translationcards.txcmaker.filter.CORSFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>cross-origin</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 
 </web-app>
