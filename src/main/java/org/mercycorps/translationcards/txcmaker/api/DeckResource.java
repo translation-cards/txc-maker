@@ -1,20 +1,21 @@
 package org.mercycorps.translationcards.txcmaker.api;
 
-
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URISyntaxException;
+import java.util.List;
 
 @Path("/decks")
 public class DeckResource {
 
-    private DeckService deckService;
+    private DeckService deckService = null;
 
     @Context
     ServletContext servletContext;
@@ -28,16 +29,21 @@ public class DeckResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Deck retrieveDeck() {
+    public List<Deck> retrieveAllDecks() {
         init();
-        return deckService.retrieve(1);
+
+        return deckService.retrieveAll();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createDeck(Deck deck) {
+    public Response importDeck(Deck deck) throws URISyntaxException {
         init();
-        deckService.create(deck);
+
+        CreateDeckResponse createDeckResponse = new CreateDeckResponse();
+        deckService.create(deck, createDeckResponse);
+
+        return createDeckResponse.build();
     }
 
 }

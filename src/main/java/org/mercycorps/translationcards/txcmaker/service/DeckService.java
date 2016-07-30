@@ -1,9 +1,12 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 
-import com.google.api.services.drive.Drive;
+import org.mercycorps.translationcards.txcmaker.api.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 public class DeckService {
@@ -18,7 +21,18 @@ public class DeckService {
         return Deck.stub();
     }
 
-    public int create(Deck deck) {
-        return 10;
+    public void create(Deck deck, CreateDeckResponse createDeckResponse) {
+        if ("deck with errors".equals(deck.deck_label)) {
+            createDeckResponse.setId(-1);
+            createDeckResponse.addError("Error 1");
+            createDeckResponse.addWarning("Warning 1");
+            createDeckResponse.addWarning("Warning 2");
+        } else {
+            createDeckResponse.setId(10);
+        }
+    }
+
+    public List<Deck> retrieveAll() {
+        return Arrays.asList(Deck.stub());
     }
 }
