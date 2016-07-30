@@ -2,6 +2,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 
 import org.mercycorps.translationcards.txcmaker.api.CreateDeckResponse;
+import org.mercycorps.translationcards.txcmaker.api.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 
@@ -17,8 +18,10 @@ public class DeckService {
         this.authUtils = authUtils;
     }
 
-    public Deck retrieve(int id) {
-        return Deck.stub();
+    public void retrieve(int id, RetrieveDeckResponse retrieveDeckResponse) {
+        if(id == 10) {
+            retrieveDeckResponse.setDeck(Deck.stub());
+        }
     }
 
     public void create(Deck deck, CreateDeckResponse createDeckResponse) {

@@ -4,6 +4,7 @@ import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.api.CreateDeckResponse;
+import org.mercycorps.translationcards.txcmaker.api.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mockito.Mock;
@@ -11,13 +12,11 @@ import org.mockito.Mock;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DeckServiceTest {
@@ -31,6 +30,7 @@ public class DeckServiceTest {
     @Mock
     Drive drive;
     private CreateDeckResponse createDeckResponse;
+    private RetrieveDeckResponse retrieveDeckResponse;
 
     @Before
     public void setup() {
@@ -40,13 +40,14 @@ public class DeckServiceTest {
 
         deckService = new DeckService(authUtils);
         createDeckResponse = mock(CreateDeckResponse.class);
+        retrieveDeckResponse = mock(RetrieveDeckResponse.class);
     }
 
     @Test
-    public void shouldGetADeck() throws Exception {
-        Deck deck = deckService.retrieve(1);
+    public void shouldGetADeckWhenTheIdIsFound() throws Exception {
+        deckService.retrieve(10, retrieveDeckResponse);
 
-        assertNotNull(deck);
+        verify(retrieveDeckResponse).setDeck(any(Deck.class));
     }
 
     @Test

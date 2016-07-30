@@ -46,4 +46,16 @@ public class DeckResource {
         return createDeckResponse.build();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveDeck(@PathParam("id") int id) {
+        init();
+
+        RetrieveDeckResponse retrieveDeckResponse = new RetrieveDeckResponse();
+        deckService.retrieve(id, retrieveDeckResponse);
+
+        return retrieveDeckResponse.build();
+    }
+
 }
