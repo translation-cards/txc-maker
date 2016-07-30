@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.api;
+package org.mercycorps.translationcards.txcmaker.api.response;
 
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 

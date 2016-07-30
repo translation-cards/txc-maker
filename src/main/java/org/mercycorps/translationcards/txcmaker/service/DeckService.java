@@ -1,8 +1,8 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 
-import org.mercycorps.translationcards.txcmaker.api.CreateDeckResponse;
-import org.mercycorps.translationcards.txcmaker.api.RetrieveDeckResponse;
+import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
+import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 

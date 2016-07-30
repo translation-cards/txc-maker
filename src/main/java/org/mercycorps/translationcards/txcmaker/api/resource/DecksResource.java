@@ -1,5 +1,7 @@
-package org.mercycorps.translationcards.txcmaker.api;
+package org.mercycorps.translationcards.txcmaker.api.resource;
 
+import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
+import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
@@ -13,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @Path("/decks")
-public class DeckResource {
+public class DecksResource {
 
     private DeckService deckService = null;
 

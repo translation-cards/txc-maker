@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.api;
+package org.mercycorps.translationcards.txcmaker.api.response;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
