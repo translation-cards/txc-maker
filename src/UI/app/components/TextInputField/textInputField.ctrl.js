@@ -7,6 +7,7 @@ angular.module('txcmaker').component('textInputField', {
   controller: TextInputFieldController,
   bindings: {
     label: '<',
+    name: '<',
     description: '<',
     value: '<',
     onUpdate: '&'
