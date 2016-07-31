@@ -4,12 +4,14 @@ import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -38,12 +40,12 @@ public class DecksResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response importDeck(Deck deck) throws URISyntaxException {
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response importDeck(MultivaluedMap<String,String> formInput) throws URISyntaxException {
         init();
 
         CreateDeckResponse createDeckResponse = new CreateDeckResponse();
-        deckService.create(deck, createDeckResponse);
+        deckService.create(new ImportDeckForm(formInput), createDeckResponse);
 
         return createDeckResponse.build();
     }

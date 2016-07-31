@@ -7,8 +7,10 @@ import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
 import org.mockito.Mock;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -59,40 +61,41 @@ public class DeckServiceTest {
 
     @Test
     public void create_shouldAddErrorsToTheResult() throws Exception {
-        deck = deckWithErrors();
-
-        deckService.create(deck, createDeckResponse);
+        deckService.create(formWithErrors(), createDeckResponse);
 
         verify(createDeckResponse).addError(anyString());
     }
 
     @Test
     public void create_shouldAddWarningsToTheResult() throws Exception {
-        deck = deckWithErrors();
-
-        deckService.create(deck, createDeckResponse);
+        deckService.create(formWithErrors(), createDeckResponse);
 
         verify(createDeckResponse, times(2)).addWarning(anyString());
     }
 
     @Test
     public void create_shouldAssignAnIdToTheNewDeck() throws Exception {
-        deckService.create(deck, createDeckResponse);
+        deckService.create(formWithoutErrors(), createDeckResponse);
 
         verify(createDeckResponse).setId(anyInt());
     }
 
     @Test
     public void create_shouldAssignAnInvalidIdWhenThereAreErrors() throws Exception {
-        deck = deckWithErrors();
-
-        deckService.create(deck, createDeckResponse);
+        deckService.create(formWithErrors(), createDeckResponse);
 
         verify(createDeckResponse).setId(anyInt());
     }
 
-    private Deck deckWithErrors() {
-        return new Deck()
-                .setDeckLabel("deck with errors");
+    private ImportDeckForm formWithErrors() {
+        MultivaluedHashMap<String, String> formInput = new MultivaluedHashMap<>();
+        formInput.add("deckName", "deck with errors");
+        return new ImportDeckForm(formInput);
+    }
+
+    private ImportDeckForm formWithoutErrors() {
+        MultivaluedHashMap<String, String> formInput = new MultivaluedHashMap<>();
+        formInput.add("deckName", "deck without errors");
+        return new ImportDeckForm(formInput);
     }
 }

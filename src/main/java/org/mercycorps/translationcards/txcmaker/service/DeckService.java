@@ -5,6 +5,7 @@ import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,15 +25,23 @@ public class DeckService {
         }
     }
 
-    public void create(Deck deck, CreateDeckResponse createDeckResponse) {
+    public void create(ImportDeckForm form, CreateDeckResponse createDeckResponse) {
+        Deck deck = form.getDeck();
+        String audioDirectoryId = form.getAudioDirectoryId();
+        String documentId = form.getDocumentId();
+
         if ("deck with errors".equals(deck.deck_label)) {
-            createDeckResponse.setId(-1);
-            createDeckResponse.addError("Error 1");
-            createDeckResponse.addWarning("Warning 1");
-            createDeckResponse.addWarning("Warning 2");
+            addFakeErrors(createDeckResponse);
         } else {
             createDeckResponse.setId(10);
         }
+    }
+
+    private void addFakeErrors(CreateDeckResponse createDeckResponse) {
+        createDeckResponse.setId(-1);
+        createDeckResponse.addError("Error 1");
+        createDeckResponse.addWarning("Warning 1");
+        createDeckResponse.addWarning("Warning 2");
     }
 
     public List<Deck> retrieveAll() {
