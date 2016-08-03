@@ -1,0 +1,10 @@
+
+
+.languageDisplayContainer {
+  display: block;
+  padding: 1.5em 0em;
+}
+
+.languageDisplayComponents {
+  float: left;
+}

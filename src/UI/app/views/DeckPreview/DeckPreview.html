@@ -1,8 +1,47 @@
 
-<div layout="column">
+<div layout="column" >
       <deck-maker-header deckPreviewSelected="true"></deck-maker-header>
-      
+
       <main >
-          This is the deck preview
-          </main>
+        <md-content class="md-padding" layout="row" layout-align="center">
+            <md-card flex="30">
+              <md-card-title>
+                <md-card-title-text>
+                  <span class="md-headline">{{deck.deck_label}}</span>
+                  <span class="md-subhead">{{deck.publisher}}</span>
+                </md-card-title-text>
+              </md-card-title>
+              <md-card-content layout="column" layout-align="space-between">
+
+                <md-divider></md-divider>
+
+                <div class="languageDisplayContainer">
+                  <div class="languageDisplayComponents">
+                    <md-chips id="sourceLanguageChips" ng-model="sourceLanguage" readonly="true">
+                    </md-chips>
+                  </div>
+
+                  <div class="languageDisplayComponents">
+                    >
+                  </div>
+
+                  <div class="languageDisplayComponents">
+                    <md-chips ng-model="destinationLanguages" readonly="true">
+                    </md-chips>
+                  </div>
+                </div>
+
+                <md-divider></md-divider>
+              </md-card-content>
+            </md-card>
+        </md-content>
+      </main>
 </div>
+
+<!--
+<h3 class="md-title">{{deck.deck_label}}</h3>
+<p class="md-subhead">{{deck.publisher}}</p>
+
+<hr  />
+
+{{deck.iso_code}} -->
