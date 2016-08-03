@@ -2,7 +2,10 @@ FROM maven:3-jdk-7
 MAINTAINER agarrard@thoughtworks.com
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - &&\
-    apt-get install -y nodejs
+    apt-get install -y \
+      nodejs \
+      vim \
+      tmux
 
 RUN useradd --user-group --create-home --shell /bin/false app
 ENV HOME=/home/app
@@ -14,7 +17,3 @@ RUN chown -R app:app $HOME/*
 USER app
 WORKDIR $HOME/txc-maker
 RUN cd src/UI && npm install
-COPY pom.xml $HOME/txc-maker
-RUN mvn dependency:resolve
-
-

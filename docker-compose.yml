@@ -7,8 +7,8 @@ services:
     command: /bin/bash
     volumes:
       - /home/app/txc-maker/src/UI/node_modules/
+      - /home/app/txc-maker/src/UI/app/bower_components
       - .:/home/app/txc-maker/
-      - ~/.bash_profile:/home/app/.bashrc
     ports:
       - '8080:8080'
       - '8554:8554'
