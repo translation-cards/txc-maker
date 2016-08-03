@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  txcmaker:
+    build: .
+    image: agarrard/txcmaker
+    command: /bin/bash
+    volumes:
+      - /home/app/txc-maker/src/UI/node_modules/
+      - .:/home/app/txc-maker/
+      - ~/.bash_profile:/home/app/.bashrc
+    ports:
+      - '8080:8080'
+      - '8554:8554'
+      - '9876:9876'
+      - '8000:8000'

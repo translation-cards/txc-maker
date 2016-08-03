@@ -22,10 +22,9 @@
     "watch": "^0.19.1"
   },
   "scripts": {
-    "install-on-docker": "./install-on-docker.sh",
     "copy_watch": "watch 'sync-files --no-delete app/ ../../target/txcmaker-1.0-SNAPSHOT' app/",
     "config": "grunt ngconstant:development",
-    "postinstall": "bower install --allow-root",
+    "postinstall": "bower install",
     "prestart": "npm install",
     "start": "http-server -a 0.0.0.0 -p 8554 -c-1 ./app",
     "pretest": "npm install",
