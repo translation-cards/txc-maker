@@ -13,7 +13,7 @@ module.exports = function(config) {
       'bower_components/angular-messages/angular-messages.min.js',
       'bower_components/angular-material/angular-material.min.js',
 
-      'app.js',
+      'app.mock.js',
 
       // First, load the module
       'views/DeckImport/DeckImport.ctrl.js',
