@@ -107,7 +107,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
         String language = row.get(SRC_HEADER_LANGUAGE);
         String filename = row.get(SRC_HEADER_FILENAME);
         Card card = createCardSpec(row, filename);
-        exportSpec.addCard(language, card);
+        exportSpec.addCard(language, "language_label", card);
         if (includedAudioFiles.contains(filename)) {
           continue;
         }

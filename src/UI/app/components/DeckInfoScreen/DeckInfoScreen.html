@@ -10,20 +10,14 @@
               <span class="md-subhead">{{deck.publisher}}</span>
             </md-card-title-text>
           </md-card-title>
-          <md-card-content layout="column" layout-align="space-between">
+          <md-card-content layout="column">
             <md-divider></md-divider>
-            <div class="languageDisplayContainer">
-              <div class="languageDisplayComponents">
-                <md-chips id="sourceLanguageChips" ng-model="sourceLanguage" readonly="true">
-                </md-chips>
-              </div>
-              <div class="languageDisplayComponents">
-                >
-              </div>
-              <div class="languageDisplayComponents">
-                <md-chips ng-model="destinationLanguages" readonly="true">
-                </md-chips>
-              </div>
+            <div layout="row" layout-align="start center" layout-padding >
+              <md-chips flex="20" id="sourceLanguageChips" ng-model="sourceLanguage" readonly="true">
+              </md-chips>
+              <md-icon flex="10" class="largeIcon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
+              <md-chips flex="70" ng-model="destinationLanguages" readonly="true">
+              </md-chips>
             </div>
             <md-divider></md-divider>
           </md-card-content>
