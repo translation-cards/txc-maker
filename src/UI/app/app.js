@@ -6,8 +6,7 @@ angular.module('txcmaker', [
   'ngMaterial',
   'angularCSS'
 ]).
-config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
-  //$locationProvider.hashPrefix('!');
+config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($locationProvider, $routeProvider, $mdThemingProvider) {
 
   $routeProvider.when('/DeckImport', {
     templateUrl: 'views/DeckImport/DeckImport.html',
@@ -20,4 +19,8 @@ config(['$locationProvider', '$routeProvider', function($locationProvider, $rout
   });
 
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
+
+  $mdThemingProvider.theme('default')
+    .primaryPalette('indigo')
+    .accentPalette('amber');
 }]);

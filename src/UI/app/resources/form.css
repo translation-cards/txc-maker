@@ -1,10 +1,8 @@
 
-html, 
+html,
 body {
     height: inherit;
-}
-body {
-  background-color: #efefef;
+    background-color: #efefef;
 }
 
 .formBody {
