@@ -13,11 +13,17 @@
           <md-card-content layout="column">
             <md-divider></md-divider>
             <div layout="row" layout-align="start center" layout-padding >
-              <md-chips flex="20" id="sourceLanguageChips" ng-model="sourceLanguage" readonly="true">
-              </md-chips>
+              <div flex="20">
+                <div class="chip">
+                  {{sourceLanguage}}
+                </div>
+              </div>
               <md-icon flex="10" class="largeIcon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
-              <md-chips flex="70" ng-model="destinationLanguages" readonly="true">
-              </md-chips>
+              <div flex="70">
+                <div class="chip" ng-repeat="language in destinationLanguages">
+                  {{language}}
+                </div>
+              </div>
             </div>
             <md-divider></md-divider>
           </md-card-content>
