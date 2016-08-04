@@ -8,3 +8,8 @@
 .languageDisplayComponents {
   float: left;
 }
+
+.largeIcon {
+  width: 4em;
+  height: 4em;
+}
