@@ -26,8 +26,4 @@ describe('deckImport', function() {
   it('should be defined', function() {
     expect(controller).toBeDefined();
   });
-
-  it('should get some text', function() {
-    expect(scope.myWelcome).toBe("stubbed text");
-  })
 });
