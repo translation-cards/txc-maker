@@ -1,20 +1,11 @@
 
 
-function DeckPreviewController($scope, BackendService) {
+function DeckPreviewController($scope) {
 
-  BackendService.get('/api/decks/10').then(function(response) {
-    $scope.deck = response.data.deck;
-
-    $scope.sourceLanguage = [$scope.deck.iso_code];
-    
-    $scope.destinationLanguages = [];
-    $scope.deck.languages.forEach(function(language){
-      $scope.destinationLanguages.push(language.iso_code);
-    });
-  });
+  $scope.deckId = 10;
 
 }
 
 angular.module('txcmaker')
 
-.controller('DeckPreviewCtrl', ['$scope', 'BackendService', DeckPreviewController]);
+.controller('DeckPreviewCtrl', ['$scope', DeckPreviewController]);

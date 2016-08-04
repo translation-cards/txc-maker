@@ -1,51 +1,16 @@
-
-<div layout="column" >
-  <deck-maker-header deckPreviewSelected="true"></deck-maker-header>
-  <main >
-    <div layout="row" layout-align="center center" layout-padding>
-      <div flex="40">
-        <md-card>
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline">{{deck.deck_label}}</span>
-              <span class="md-subhead">{{deck.publisher}}</span>
-            </md-card-title-text>
-          </md-card-title>
-          <md-card-content layout="column" layout-align="space-between">
-            <md-divider></md-divider>
-            <div class="languageDisplayContainer">
-              <div class="languageDisplayComponents">
-                <md-chips id="sourceLanguageChips" ng-model="sourceLanguage" readonly="true">
-                </md-chips>
-              </div>
-              <div class="languageDisplayComponents">
-                >
-              </div>
-              <div class="languageDisplayComponents">
-                <md-chips ng-model="destinationLanguages" readonly="true">
-                </md-chips>
-              </div>
-            </div>
-            <md-divider></md-divider>
-          </md-card-content>
-        </md-card>
-        <div layout="row">
-          <md-card flex="70">
-            <md-card-content layout="row" layout-align="space-between center">
-              <md-icon md-svg-src="resources/ic_done_black_64px.svg" class="largeIcon"></md-icon>
-              <div layout-padding layout-fill>
-                Be sure to look over the cards in each language before publishing your deck.
-              </div>
-            </md-card-content>
-          </md-card>
-          <md-button flex="30" class="md-accent md-raised" layout="column">
-            <md-icon md-svg-src="resources/ic_get_app_black_48px.svg"</md-icon>
-            <div>
-              Publish
-            </div>
-          </md-button>
-        </div>
-      </div>
-    </div>
-  </main>
+<div layout="column">
+  <md-toolbar layout-padding>
+    <h3 class="md-display-1">TXC Maker</h3>
+  </md-toolbar>
+  <md-tabs class="md-primary" md-dynamic-height>
+    <md-tab label="Deck Info">
+        <deck-info-screen deck-id="deckId">
+        </deck-info-screen>
+    </md-tab>
+    <md-tab label="test">
+      <md-content class="md-padding">
+        hello
+      </md-content>
+    </md-tab>
+  </md-tabs>
 </div>
