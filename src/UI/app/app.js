@@ -21,6 +21,9 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
 
   $mdThemingProvider.theme('default')
-    .primaryPalette('indigo')
+    .primaryPalette('blue', {
+      'default': '800',
+      'hue-1': '900'
+    })
     .accentPalette('amber');
 }]);

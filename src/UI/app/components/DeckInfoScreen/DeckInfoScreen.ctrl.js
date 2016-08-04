@@ -1,16 +1,17 @@
 
-function DeckInfoScreenController($scope, BackendService) {
-  BackendService.get('/api/decks/' + this.deckId).then(function(response) {
-    $scope.deck = response.data.deck;
-    console.log($scope.deck);
+function DeckInfoScreenController($scope) {
+  this.$onChanges = function (changesObj) {
+    if(changesObj.deck) {
+      $scope.deck = changesObj.deck.currentValue;
 
-    $scope.sourceLanguage = [$scope.deck.iso_code];
+      $scope.sourceLanguage = [$scope.deck.iso_code];
 
-    $scope.destinationLanguages = [];
-    $scope.deck.languages.forEach(function(language){
-      $scope.destinationLanguages.push(language.iso_code);
-    });
-  });
+      $scope.destinationLanguages = [];
+      $scope.deck.languages.forEach(function(language){
+        $scope.destinationLanguages.push(language.iso_code);
+      });
+    }
+  }
 }
 
 angular.module('txcmaker').component('deckInfoScreen', {
@@ -18,6 +19,6 @@ angular.module('txcmaker').component('deckInfoScreen', {
   templateUrl: 'components/DeckInfoScreen/DeckInfoScreen.html',
   controller: DeckInfoScreenController,
   bindings: {
-    deckId: '<'
+    deck: '<'
   }
 });
