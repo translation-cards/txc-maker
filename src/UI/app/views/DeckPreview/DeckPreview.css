@@ -31,3 +31,8 @@
   max-width: 100%;
   position: relative;
 }
+
+.publish-button {
+  color: white;
+  background-color: #FF8F00;
+}
