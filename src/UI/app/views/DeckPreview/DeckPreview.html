@@ -8,10 +8,9 @@
         <deck-info-screen deck="deck">
         </deck-info-screen>
     </md-tab>
-    <md-tab label="test">
-      <md-content class="md-padding">
-        hello
-      </md-content>
+    <md-tab label="{{language.language_label}}" ng-repeat="language in deck.languages">
+      <translations-screen language="language">
+      </translations-screen>
     </md-tab>
   </md-tabs>
 </div>
