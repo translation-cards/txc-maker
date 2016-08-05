@@ -16,6 +16,10 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
     templateUrl: 'views/DeckPreview/DeckPreview.html',
     controller: 'DeckPreviewCtrl',
     css: 'views/DeckPreview/DeckPreview.css'
+  })
+  .when('/FAQ', {
+    templateUrl: 'views/FAQ/FAQ.html',
+    controller: 'FAQCtrl'
   });
 
   $routeProvider.otherwise({redirectTo: '/DeckImport'});

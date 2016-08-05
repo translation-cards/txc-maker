@@ -1,7 +1,7 @@
 
 function DeckInfoScreenController($scope) {
   this.$onChanges = function (changesObj) {
-    if(changesObj.deck) {
+    if(changesObj.deck && changesObj.deck.currentValue) {
       $scope.deck = changesObj.deck.currentValue;
 
       $scope.sourceLanguage = $scope.deck.language_label;

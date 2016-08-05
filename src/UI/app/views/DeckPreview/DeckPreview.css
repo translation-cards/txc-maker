@@ -9,7 +9,7 @@
   float: left;
 }
 
-.largeIcon {
+.large-icon {
   width: 4em;
   height: 4em;
 }
@@ -35,4 +35,8 @@
 .publish-button {
   color: white;
   background-color: #FFC107;
+}
+
+.check-icon {
+  fill: #2196F3;
 }

@@ -1,6 +1,6 @@
-function HeaderController($location) {
-  this.go=function(path){
-      $location.path(path);
+function HeaderController($scope, $location) {
+  $scope.go = function(path) {
+    $location.path(path);
   }
 }
 
@@ -9,6 +9,6 @@ angular.module('txcmaker').component('deckMakerHeader', {
   templateUrl: 'components/DeckMakerHeader/deckMakerHeader.html',
   controller: HeaderController,
   bindings: {
-    deckImportSelected: '<'
+    subtitle: '<'
   }
 });

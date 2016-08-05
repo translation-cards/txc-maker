@@ -1,14 +1,13 @@
-<div layout="column">
-  <md-toolbar layout-padding>
-    <h3 class="md-display-1">TXC Maker</h3>
-  </md-toolbar>
-  <md-tabs class="md-primary">
-    <md-tab label="Decks"></md-tab>
-    <md-tab label="Import"
-            md-active="$ctrl.deckImportSelected"
-            md-on-select="$ctrl.go('/DeckImport')"></md-tab>
-    <md-tab label="FAQ"></md-tab>
-    <md-tab label="Deck Preview" md-on-select="$ctrl.go('/DeckPreview')"
-    md-active="$ctrl.deckPreviewSelected"></md-tab>
-  </md-tabs>
-</div>
+<md-toolbar class="md-primary md-tall" layout="row" layout-align="center center" layout-padding>
+  <div class="md-display-1">TXC Maker: {{$ctrl.subtitle}}</div>
+  <span flex></span>
+  <md-button aria-label="Import" ng-click="go('/DeckImport')">
+    Import
+  </md-button>
+  <md-button aria-label="Preview" ng-click="go('/DeckPreview')">
+    Preview
+  </md-button>
+  <md-button aria-label="FAQ" ng-click="go('/FAQ')">
+    FAQ
+  </md-button>
+</md-toolbar>

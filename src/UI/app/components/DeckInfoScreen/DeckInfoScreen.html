@@ -1,53 +1,51 @@
 
 <div layout="column" >
-  <main >
-    <div layout="row" layout-align="center center" layout-padding>
-      <div flex="40">
-        <md-card>
-          <md-card-title>
-            <md-card-title-text>
-              <span class="md-headline">{{deck.deck_label}}</span>
-              <span class="md-subhead">{{deck.publisher}}</span>
-            </md-card-title-text>
-          </md-card-title>
-          <md-card-content layout="column">
-            <md-divider></md-divider>
-            <div layout="row" layout-align="start center" layout-padding >
-              <div flex="20">
-                <div class="chip">
-                  {{sourceLanguage}}
-                </div>
-              </div>
-              <md-icon flex="10" class="largeIcon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
-              <div flex="70">
-                <div class="chip" ng-repeat="language in destinationLanguages">
-                  {{language}}
-                </div>
+  <div layout="row" layout-align="center center" layout-padding>
+    <div flex="50">
+      <md-card>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{deck.deck_label}}</span>
+            <span class="md-subhead">{{deck.publisher}}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content layout="column">
+          <md-divider></md-divider>
+          <div layout="row" layout-align="start center" layout-padding >
+            <div flex="20">
+              <div class="chip">
+                {{sourceLanguage}}
               </div>
             </div>
-            <md-divider></md-divider>
+            <md-icon flex="10" class="large-icon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
+            <div flex="70">
+              <div class="chip" ng-repeat="language in destinationLanguages">
+                {{language}}
+              </div>
+            </div>
+          </div>
+          <md-divider></md-divider>
+        </md-card-content>
+      </md-card>
+      <div layout="row">
+        <md-card flex="70">
+          <md-card-content layout="row" layout-align="space-between center">
+            <md-icon md-svg-src="resources/ic_done_black_64px.svg" class="large-icon check-icon"></md-icon>
+            <div layout-padding layout-fill>
+              Be sure to look over the cards in each language before publishing your deck.
+            </div>
           </md-card-content>
         </md-card>
-        <div layout="row">
-          <md-card flex="70">
-            <md-card-content layout="row" layout-align="space-between center">
-              <md-icon md-svg-src="resources/ic_done_black_64px.svg" class="largeIcon"></md-icon>
-              <div layout-padding layout-fill>
-                Be sure to look over the cards in each language before publishing your deck.
-              </div>
-            </md-card-content>
-          </md-card>
-          <md-card flex="30" class="publish-button">
-            <md-card-content layout="column" layout-align="center center" >
-              <md-icon md-svg-src="resources/ic_file_upload_white_48px.svg"></md-icon></md-icon>
-              <br />
-              <div>
-                PUBLISH DECK
-              </div>
-            </md-card-content>
-          </md-card>
-        </div>
+        <md-card flex="30" class="publish-button">
+          <md-card-content layout="column" layout-align="center center" >
+            <md-icon md-svg-src="resources/ic_file_upload_white_48px.svg"></md-icon></md-icon>
+            <br />
+            <div>
+              PUBLISH DECK
+            </div>
+          </md-card-content>
+        </md-card>
       </div>
     </div>
-  </main>
+  </div>
 </div>

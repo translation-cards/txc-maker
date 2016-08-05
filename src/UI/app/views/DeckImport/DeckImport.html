@@ -1,8 +1,8 @@
 <div layout="column">
-  <deck-maker-header deckImportSelected="true"></deck-maker-header>
-  <main >
-    <div layout="row" layout-align="center center" layout-padding>
-      <div class="formBody">
+  <deck-maker-header subtitle="'Import data'"></deck-maker-header>
+  <div layout="row" layout-align="center center" layout-padding>
+    <md-card layout-padding flex="50">
+      <md-card-content>
         <form method="post" action="/get-txc">
           <text-input-field
             label="'Deck Name'"
@@ -47,7 +47,7 @@
           <br />
           <md-button class="md-raised md-cornered md-primary" type="submit">Submit</md-button>
         </form>
-      </div>
-    </div>
-  </main>
+      </md-card-content>
+    </md-card>
+  </div>
 </div>
