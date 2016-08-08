@@ -29,7 +29,7 @@ describe('DeckPreviewController', function() {
   });
 
   it('should retry to get a deck when it isn\'t found', function(done) {
-    this.backendService.response = {
+    this.backendService.responseToGet = {
       status: 404,
       data: {
         deck: {

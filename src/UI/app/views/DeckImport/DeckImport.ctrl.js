@@ -3,10 +3,7 @@
 function DeckImportController ($scope, BackendService, $location){
 
   $scope.formData = {};
-
-  var displayErrors = function(errors) {
-    console.log(errors);
-  }
+  $scope.errors = [];
 
   $scope.submitForm = function() {
     BackendService.postForm('/api/decks/', $scope.formData).then(
@@ -14,7 +11,7 @@ function DeckImportController ($scope, BackendService, $location){
         $location.path('/DeckPreview/' + response.data.id);
       },
       function(response) {
-        displayErrors(response.data.errors);
+        $scope.errors = response.data.errors;
       });
   };
 }

@@ -5,17 +5,14 @@ angular.module('mock.BackendService', [])
         var deferred = $q.defer();
         this.requestCount++;
 
-        if (this.response.status === 200) {
-          deferred.resolve(this.response);
+        if (this.responseToGet.status === 200) {
+          deferred.resolve(this.responseToGet);
         } else {
-          deferred.reject({
-            reason:'status is not 200',
-            status: this.response.status
-          });
+          deferred.reject(this.responseToGet);
         }
         return deferred.promise;
       },
-      response: {
+      responseToGet: {
         status: 200,
         data: {
           deck: {
@@ -23,7 +20,28 @@ angular.module('mock.BackendService', [])
           }
         }
       },
-      requestCount: 0
+      requestCount: 0,
+
+      postForm: function(url, formData) {
+        var deferred = $q.defer();
+        this.requestCount++;
+
+        if(this.responseToPostForm.status === 200) {
+          deferred.resolve(this.responseToPostForm)
+        } else {
+          deferred.reject(this.responseToPostForm)
+        }
+
+        return deferred.promise;
+      },
+      responseToPostForm: {
+        status: 200,
+        data: {
+          errors: [],
+          id: 10,
+          warnings: []
+        }
+      }
     };
 
     return service;
