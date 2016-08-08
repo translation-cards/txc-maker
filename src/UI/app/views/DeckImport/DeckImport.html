@@ -4,6 +4,12 @@
     <md-card layout-padding flex="50">
       <md-card-content layout="column">
         <form ng-submit="submitForm()">
+          <md-card ng-repeat="error in errors" class="error">
+            <md-card-content>
+              <md-icon md-svg-src="resources/ic_announcement_white_24px.svg"></md-icon>
+              {{error}}
+            </md-card-content>
+          </md-card>
           <md-input-container class="md-block">
             <label>Deck Name</label>
             <input ng-model="formData.deckName" type="text" name="deckName">

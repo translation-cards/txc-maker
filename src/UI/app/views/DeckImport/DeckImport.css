@@ -1,11 +1,4 @@
 
-html,
-body {
-    height: inherit;
-    background-color: #efefef;
-}
-
-
 
 .hint {
   /* Position the hint */
@@ -21,6 +14,7 @@ body {
   color: grey;
 }
 
-.md-display-1 {
+.error {
+  background-color: #F44336;
   color: white;
 }
