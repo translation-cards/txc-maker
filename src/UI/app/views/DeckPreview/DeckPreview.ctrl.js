@@ -14,13 +14,13 @@ function DeckPreviewController($scope, $timeout, BackendService) {
         $scope.deck = response.data.deck;
     },
     function(response) {
-      if(fetchCount == maxFetches) {
+      if(fetchCount === maxFetches) {
         errorFetchingDeck = true;
-      } else if(response.status == 404 ) {
+      } else if(response.status === 404) {
         fetchCount++;
         $timeout(fetchDeck, timeoutDuration);
       }
-    })
+    });
   })();
 
 }

@@ -2,17 +2,30 @@
 
 describe('DeckPreviewController', function() {
 
-  var backendService, deckPreviewController, $timeout, $scope;
-
   beforeEach(module('txcmaker'));
   beforeEach(module('mock.BackendService'));
 
-  beforeEach(inject(function($controller, _$timeout_, $rootScope, _BackendService_) {
-    $timeout = _$timeout_;
-    backendService = _BackendService_;
-    $scope = $rootScope;
+  beforeEach(inject(function(_$controller_, _$timeout_, $rootScope, _BackendService_) {
+    this.$timeout = _$timeout_;
+    this.backendService = _BackendService_;
+    this.$scope = $rootScope;
+    this.$controller = _$controller_;
 
-    backendService.response = {
+    this.deckPreviewController = this.$controller('DeckPreviewCtrl', {
+      $scope: $rootScope,
+      BackendService: this.backendService,
+      $timeout: this.$timeout
+    });
+  }));
+
+  it('should get a deck', function() {
+    this.$scope.$apply();
+    expect(this.$scope.deck).toBeDefined();
+    expect(this.$scope.deck.deck_label).toBe("stubbed label");
+  });
+
+  it('should retry to get a deck when it isn\'t found', function(done) {
+    this.backendService.response = {
       status: 404,
       data: {
         deck: {
@@ -20,40 +33,19 @@ describe('DeckPreviewController', function() {
         }
       }
     };
+    this.backendService.requestCount = 0;
 
-
-    deckPreviewController = $controller('DeckPreviewCtrl', {
-      $scope: $rootScope,
-      BackendService: backendService,
-      $timeout: $timeout
-    })
-  }));
-
-  beforeEach(function(done) {
-    // $scope.$apply();
-    done();
-  });
-
-  it('should get a deck', function() {
-    expect($scope.deck).toBeDefined();
-  });
-
-  it('should retry to get a deck when it isn\'t found', function(done) {
-
-
-    $scope.promise.then(function(response){
-      expect($scope.deck).toBeUndefined();
-      expect(response.status).toBe(404);
-      done(); //$scope.apply()?
+    this.deckPreviewController = this.$controller('DeckPreviewCtrl', {
+      $scope: this.$scope,
+      BackendService: this.backendService,
+      $timeout: this.$timeout
     });
 
-    $timeout.flush();
-
-
-
-  })
-
-
-
+    this.$timeout.flush();
+    expect(this.backendService.requestCount).toBe(1);
+    this.$timeout.flush();
+    expect(this.backendService.requestCount).toBe(2);
+    done();
+  });
 
 });
