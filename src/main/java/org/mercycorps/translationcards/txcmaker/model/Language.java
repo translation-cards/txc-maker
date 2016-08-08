@@ -6,11 +6,13 @@ import java.util.List;
 public class Language {
 
   public String iso_code;
+  public String language_label;
   public List<Card> cards;
 
-  public Language(String isoCode) {
+  public Language(String isoCode, String language_label) {
     this.iso_code = isoCode;
-    cards = new ArrayList<Card>();
+    this.language_label = language_label;
+    cards = new ArrayList<>();
   }
 
   public Language addCard(Card card) {

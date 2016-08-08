@@ -7,6 +7,7 @@ public class Deck {
   public String deck_label;
   public String publisher;
   public String iso_code;
+  public String language_label;
   public String id;
   public long timestamp;
   public String license_url;
@@ -34,6 +35,11 @@ public class Deck {
     return this;
   }
 
+  public Deck setLanguageLabel(String language_label) {
+    this.language_label = language_label;
+    return this;
+  }
+
   public Deck setDeckId(String deckId) {
     this.id = deckId;
     return this;
@@ -54,18 +60,21 @@ public class Deck {
     return this;
   }
 
-  public Deck addCard(String language, Card card) {
-    if (!languageLookup.containsKey(language)) {
-      Language langSpec = new Language(language);
+  public Deck addCard(String iso_code, String language_label, Card card) {
+    if (!languageLookup.containsKey(iso_code)) {
+      Language langSpec = new Language(iso_code, language_label);
       languages.add(langSpec);
-      languageLookup.put(language, langSpec);
+      languageLookup.put(iso_code, langSpec);
     }
-    languageLookup.get(language).addCard(card);
+    languageLookup.get(iso_code).addCard(card);
     return this;
   }
 
   public static Deck stub() {
-    List<String> languages = Arrays.asList("ar", "fa", "ps");
+    Map<String,String> languages = new HashMap<>();
+    languages.put("ar", "Arabic");
+    languages.put("fa", "Farsi");
+    languages.put("ps", "Pushto");
     List<String> phrases = Arrays.asList(
             "Do you understand this language?",
             "Can I talk to you, using this mobile application (App)?",
@@ -80,15 +89,17 @@ public class Deck {
             .setDeckLabel("Default Deck")
             .setPublisher("Women Hack Syria")
             .setLanguage("en")
+            .setLanguageLabel("English")
             .setLocked(false)
             .setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
             .setTimestamp(System.currentTimeMillis());
 
-    for(String language : languages) {
+    for(String iso_code : languages.keySet()) {
       for(String phrase : phrases) {
-        deck.addCard(language, new Card()
+        String language_label = languages.get(iso_code);
+        deck.addCard(iso_code, language_label, new Card()
                 .setLabel(phrase)
-                .setTranslationText(language + " translation")
+                .setTranslationText(language_label + " translation")
                 .setFilename(phrase + ".mp3"));
       }
     }

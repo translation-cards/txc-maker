@@ -1,0 +1,27 @@
+
+
+<div layout="column" >
+  <div layout="row" layout-align="center center" layout-padding>
+    <div flex="50">
+      <md-card ng-repeat="card in language.cards">
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{card.card_label}}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content layout="column" layout-padding>
+          <md-divider></md-divider>
+          <div layout="row">
+            <md-icon md-svg-src="resources/ic_volume_up_black_48px.svg"></md-icon>
+            <span flex></span>
+            <div>
+              {{card.dest_txt}}
+            </div>
+          </div>
+          <span flex></span>
+          <md-divider></md-divider>
+        </md-card-content>
+      </md-card>
+    </div>
+  </div>
+</div>

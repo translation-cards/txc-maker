@@ -1,14 +1,14 @@
 
 function DeckInfoScreenController($scope) {
   this.$onChanges = function (changesObj) {
-    if(changesObj.deck) {
+    if(changesObj.deck && changesObj.deck.currentValue) {
       $scope.deck = changesObj.deck.currentValue;
 
-      $scope.sourceLanguage = [$scope.deck.iso_code];
+      $scope.sourceLanguage = $scope.deck.language_label;
 
       $scope.destinationLanguages = [];
       $scope.deck.languages.forEach(function(language){
-        $scope.destinationLanguages.push(language.iso_code);
+        $scope.destinationLanguages.push(language.language_label);
       });
     }
   }

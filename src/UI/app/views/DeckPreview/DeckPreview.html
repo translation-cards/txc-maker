@@ -1,7 +1,5 @@
 <div layout="column">
-  <md-toolbar class="md-primary md-tall" layout-align="center left" layout-padding>
-    <div class="md-display-1">TXC Maker: Preview Deck</div>
-  </md-toolbar>
+  <deck-maker-header subtitle="'Preview deck'"></deck-maker-header>
   <md-toolbar class="md-primary md-hue-1" layout-padding>
     <div class="md-display-1">{{deck.deck_label}}</div>
   </md-toolbar>
@@ -10,10 +8,9 @@
         <deck-info-screen deck="deck">
         </deck-info-screen>
     </md-tab>
-    <md-tab label="test">
-      <md-content class="md-padding">
-        hello
-      </md-content>
+    <md-tab label="{{language.language_label}}" ng-repeat="language in deck.languages">
+      <translations-screen language="language">
+      </translations-screen>
     </md-tab>
   </md-tabs>
 </div>
