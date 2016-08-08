@@ -5,11 +5,14 @@ describe('DeckPreviewController', function() {
   beforeEach(module('txcmaker'));
   beforeEach(module('mock.BackendService'));
 
-  beforeEach(inject(function(_$controller_, _$timeout_, $rootScope, _BackendService_) {
+  beforeEach(inject(function(_$controller_, _$timeout_, $rootScope,
+      _BackendService_, _timeoutDuration_, _maxFetches_) {
     this.$timeout = _$timeout_;
     this.backendService = _BackendService_;
     this.$scope = $rootScope;
     this.$controller = _$controller_;
+    this.timeoutDuration = _timeoutDuration_;
+    this.maxFetches = _maxFetches_;
 
     this.deckPreviewController = this.$controller('DeckPreviewCtrl', {
       $scope: $rootScope,
@@ -41,10 +44,13 @@ describe('DeckPreviewController', function() {
       $timeout: this.$timeout
     });
 
-    this.$timeout.flush();
-    expect(this.backendService.requestCount).toBe(1);
-    this.$timeout.flush();
-    expect(this.backendService.requestCount).toBe(2);
+    for(var i = 0; i < this.maxFetches; i++) {
+      this.$timeout.flush();
+      expect(this.backendService.requestCount).toBe(i+1);
+    }
+
+    expect(this.$scope.errorFetchingDeck).toBe(true);
+
     done();
   });
 
