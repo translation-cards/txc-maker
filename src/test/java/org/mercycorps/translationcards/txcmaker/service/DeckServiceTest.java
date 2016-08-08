@@ -63,7 +63,7 @@ public class DeckServiceTest {
     public void create_shouldAddErrorsToTheResult() throws Exception {
         deckService.create(formWithErrors(), createDeckResponse);
 
-        verify(createDeckResponse).addError(anyString());
+        verify(createDeckResponse, times(4)).addError(anyString());
     }
 
     @Test
