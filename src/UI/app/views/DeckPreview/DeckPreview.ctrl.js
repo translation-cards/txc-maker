@@ -1,10 +1,11 @@
 
 
-function DeckPreviewController($scope, $timeout, BackendService, timeoutDuration, maxFetches) {
+function DeckPreviewController($scope, $timeout, $routeParams,
+    BackendService, timeoutDuration, maxFetches) {
 
   var fetchCount = 1;
   $scope.errorFetchingDeck = false;
-  $scope.deckId = 10;
+  $scope.deckId = $routeParams.id;
 
   (function fetchDeck() {
     $scope.promise = BackendService.get('/api/decks/' + $scope.deckId);
@@ -26,7 +27,8 @@ function DeckPreviewController($scope, $timeout, BackendService, timeoutDuration
 angular.module('txcmaker')
 
 .controller('DeckPreviewCtrl',
-  ['$scope', '$timeout', 'BackendService', 'timeoutDuration', 'maxFetches', DeckPreviewController])
+  ['$scope', '$timeout', '$routeParams', 'BackendService', 'timeoutDuration',
+  'maxFetches', DeckPreviewController])
 
 .value('timeoutDuration', 1000)
 .value('maxFetches', 120);

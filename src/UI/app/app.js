@@ -12,7 +12,7 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
     templateUrl: 'views/DeckImport/DeckImport.html',
     controller: 'DeckImportCtrl'
   })
-  .when('/DeckPreview', {
+  .when('/DeckPreview/:id', {
     templateUrl: 'views/DeckPreview/DeckPreview.html',
     controller: 'DeckPreviewCtrl',
     css: 'views/DeckPreview/DeckPreview.css'

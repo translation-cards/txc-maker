@@ -17,7 +17,8 @@ describe('DeckPreviewController', function() {
     this.deckPreviewController = this.$controller('DeckPreviewCtrl', {
       $scope: $rootScope,
       BackendService: this.backendService,
-      $timeout: this.$timeout
+      $timeout: this.$timeout,
+      $routeParams: {id: 10}
     });
   }));
 
@@ -41,7 +42,8 @@ describe('DeckPreviewController', function() {
     this.deckPreviewController = this.$controller('DeckPreviewCtrl', {
       $scope: this.$scope,
       BackendService: this.backendService,
-      $timeout: this.$timeout
+      $timeout: this.$timeout,
+      $routeParams: {id: 10}
     });
 
     for(var i = 0; i < this.maxFetches; i++) {
