@@ -1,16 +1,23 @@
 <div layout="column">
   <deck-maker-header subtitle="'Preview deck'"></deck-maker-header>
-  <md-toolbar class="md-primary md-hue-1" layout-padding>
-    <div class="md-display-1">{{deck.deck_label}}</div>
-  </md-toolbar>
-  <md-tabs class="md-primary md-hue-1" md-dynamic-height>
-    <md-tab label="Deck Info">
-        <deck-info-screen deck="deck">
-        </deck-info-screen>
-    </md-tab>
-    <md-tab label="{{language.language_label}}" ng-repeat="language in deck.languages">
-      <translations-screen language="language">
-      </translations-screen>
-    </md-tab>
-  </md-tabs>
+  <loading-screen
+    ng-show="!initialized"
+    headline="'Assembling Deck'"
+    subhead="'This could take a couple minutes, please be patient.'">
+  </loading-screen>
+  <div ng-show="initialized">
+    <md-toolbar class="md-primary md-hue-1" layout-padding>
+      <div class="md-display-1">{{deck.deck_label}}</div>
+    </md-toolbar>
+    <md-tabs class="md-primary md-hue-1" md-dynamic-height>
+      <md-tab label="Deck Info">
+          <deck-info-screen deck="deck">
+          </deck-info-screen>
+      </md-tab>
+      <md-tab label="{{language.language_label}}" ng-repeat="language in deck.languages">
+        <translations-screen language="language">
+        </translations-screen>
+      </md-tab>
+    </md-tabs>
+  </div>
 </div>

@@ -7,11 +7,13 @@ function DeckPreviewController($scope, $timeout, BackendService) {
   var fetchCount = 1;
   $scope.errorFetchingDeck = false;
   $scope.deckId = 10;
+  $scope.initialized = false;
 
   (function fetchDeck() {
     $scope.promise = BackendService.get('/api/decks/' + $scope.deckId);
     $scope.promise.then(function(response) {
         $scope.deck = response.data.deck;
+        $scope.initialized = true;
     },
     function(response) {
       if(fetchCount === maxFetches) {
