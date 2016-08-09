@@ -1,29 +1,52 @@
 'use strict';
 
 describe('deckImport', function() {
-  var controller, scope, service;
 
   // Load the needed modules
   beforeEach(module('txcmaker'));
   beforeEach(module('mock.BackendService'));
 
   // Initialize the controller with its dependencies
-  beforeEach(inject(function($controller, $rootScope, _BackendService_) {
-    scope = $rootScope.$new();
-    service = _BackendService_;
+  beforeEach(inject(function($controller, $rootScope, $location, _BackendService_) {
+    this.$scope = $rootScope.$new();
+    this.$location = $location;
+    this.backendService = _BackendService_;
 
-    controller = $controller('DeckImportCtrl', {
-      $scope: scope,
-      BackendService: _BackendService_
+    this.deckImportController = $controller('DeckImportCtrl', {
+      $scope: this.$scope,
+      BackendService: _BackendService_,
+      $location: this.$location
     });
   }));
 
-  // Resolve mocked promises
-  beforeEach(function() {
-    scope.$apply();
-  })
-
   it('should be defined', function() {
-    expect(controller).toBeDefined();
+    expect(this.deckImportController).toBeDefined();
+  });
+
+  it('should load the next view when the form is successfully submitted', function() {
+    spyOn(this.$location, 'path');
+
+    this.$scope.submitForm();
+    this.$scope.$apply();
+
+    var expectedId = this.backendService.responseToPostForm.data.id;
+    expect(this.$location.path).toHaveBeenCalledWith('/DeckPreview/' + expectedId);
+  });
+
+  it('should display errors when the form is not successfully submitted', function() {
+    var response = {
+      status: 400,
+      data: {
+        errors: ['error1', 'error2'],
+        warnings: [],
+        id: -1
+      }
+    };
+    this.backendService.responseToPostForm = response;
+
+    this.$scope.submitForm();
+    this.$scope.$apply();
+
+    expect(this.$scope.errors).toBe(response.data.errors);
   });
 });

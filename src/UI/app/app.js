@@ -10,9 +10,10 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
 
   $routeProvider.when('/DeckImport', {
     templateUrl: 'views/DeckImport/DeckImport.html',
-    controller: 'DeckImportCtrl'
-  })
-  .when('/DeckPreview', {
+    controller: 'DeckImportCtrl',
+    css: 'views/DeckImport/DeckImport.css'
+  }) 
+  .when('/DeckPreview/:id', {
     templateUrl: 'views/DeckPreview/DeckPreview.html',
     controller: 'DeckPreviewCtrl',
     css: 'views/DeckPreview/DeckPreview.css'

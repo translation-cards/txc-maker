@@ -2,48 +2,61 @@
   <deck-maker-header subtitle="'Import data'"></deck-maker-header>
   <div layout="row" layout-align="center center" layout-padding>
     <md-card layout-padding flex="50">
-      <md-card-content>
-        <form method="post" action="/get-txc">
-          <text-input-field
-            label="'Deck Name'"
-            description="'An effective deck name explains who the deck is for and where it\'s most useful.'"
-            value="''"
-            name="'deckName'">
-          </text-input-field>
-          <text-input-field
-            label="'Publisher'"
-            description="'Your organisation and/or your name.'"
-            value="model.publisher"
-            name="'publisher'">
-          </text-input-field>
-          <text-input-field
-            label="'Deck ID'"
-            description="'The unique identifier for the deck.'"
-            value="''"
-            name="'deckId'">
-          </text-input-field>
-          <text-input-field
-            label="'Document ID'"
-            description="'URL of the Google spreadsheet containing deck information.'"
-            value="''"
-            name="'docId'">
-          </text-input-field>
-          <text-input-field
-            label="'Audio Directory ID'"
-            description="'URL of the Google Drive folder containing the audio files.'"
-            value="''"
-            name="'audioDirId'">
-          </text-input-field>
-          <text-input-field
-            label="'License URL'"
-            value="''"
-            name="'licenseUrl'">
-          </text-input-field>
-          <h6 class="md-title">Deck Locking</h6>
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-checkbox__input" type="checkbox" id="locked" name="locked">
-            <label class="mdl-checkbox__label" for="locked">Lock this deck so it cannot be modified</label>
-          </div>
+      <md-card-content layout="column">
+        <form ng-submit="submitForm()">
+          <md-card ng-repeat="error in errors" class="error">
+            <md-card-content>
+              <md-icon md-svg-src="resources/ic_announcement_white_24px.svg"></md-icon>
+              {{error}}
+            </md-card-content>
+          </md-card>
+          <md-input-container class="md-block">
+            <label>Deck Name</label>
+            <input ng-model="formData.deckName" type="text" name="deckName">
+            <div class="hint">
+              An effective deck name explains who the deck is for and where it's most useful.
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Publisher</label>
+            <input ng-model="formData.publisher" type="text" name="publisher">
+            <div class="hint">
+              Your organisation and/or your name.
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Deck ID</label>
+            <input ng-model="formData.deckId" type="text" name="deckId">
+            <div class="hint">
+              The unique identifier for the deck.
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Document ID</label>
+            <input ng-model="formData.docId" type="text" name="docId">
+            <div class="hint">
+              URL of the Google spreadsheet containing deck information.
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>Audio Directory ID</label>
+            <input ng-model="formData.audioDirId" type="text" name="audioDirId">
+            <div class="hint">
+              URL of the Google Drive folder containing the audio files.
+            </div>
+          </md-input-container>
+          <md-input-container class="md-block">
+            <label>License URL</label>
+            <input ng-model="formData.licenseUrl" type="text" name="licenseUrl">
+            <div class="hint">
+              URL of the Google Drive folder containing the audio files.
+            </div>
+          </md-input-container>
+          <md-input-container>
+            <md-checkbox ng-model="formData.locked" aria-label="Lock this deck so it cannot be modified">
+              Lock this deck so it cannot be modified
+            </md-checkbox>
+          </md-input-container>
           <br />
           <md-button class="md-raised md-cornered md-primary" type="submit">Submit</md-button>
         </form>

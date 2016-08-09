@@ -1,11 +1,48 @@
 angular.module('mock.BackendService', [])
   .factory('BackendService', function($q) {
-    var service = {};
+    var service = {
+      get: function(url) {
+        var deferred = $q.defer();
+        this.requestCount++;
 
-    service.get = function(url) {
-      var response = {data: "stubbed text"};
-      return $q.when(response);
-    }
+        if (this.responseToGet.status === 200) {
+          deferred.resolve(this.responseToGet);
+        } else {
+          deferred.reject(this.responseToGet);
+        }
+        return deferred.promise;
+      },
+      responseToGet: {
+        status: 200,
+        data: {
+          deck: {
+            deck_label: "stubbed label"
+          }
+        }
+      },
+      requestCount: 0,
+
+      postForm: function(url, formData) {
+        var deferred = $q.defer();
+        this.requestCount++;
+
+        if(this.responseToPostForm.status === 200) {
+          deferred.resolve(this.responseToPostForm)
+        } else {
+          deferred.reject(this.responseToPostForm)
+        }
+
+        return deferred.promise;
+      },
+      responseToPostForm: {
+        status: 200,
+        data: {
+          errors: [],
+          id: 10,
+          warnings: []
+        }
+      }
+    };
 
     return service;
   });

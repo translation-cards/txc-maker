@@ -18,6 +18,8 @@ module.exports = function(config) {
       // First, load the module
       'views/DeckImport/DeckImport.ctrl.js',
       'views/DeckImport/DeckImport.spec.js',
+      'views/DeckPreview/DeckPreview.ctrl.js',
+      'views/DeckPreview/DeckPreview.spec.js',
       // Then, load dependencies of the module
       'components/BackendService/BackendService.js',
       'components/BackendService/BackendService.mock.js',

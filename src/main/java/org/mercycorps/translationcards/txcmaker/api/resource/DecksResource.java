@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 @Path("/decks")
 public class DecksResource {
 
@@ -58,6 +60,12 @@ public class DecksResource {
 
         RetrieveDeckResponse retrieveDeckResponse = new RetrieveDeckResponse();
         deckService.retrieve(id, retrieveDeckResponse);
+
+        try {
+            sleep(3000);
+        } catch(InterruptedException e) {
+
+        }
 
         return retrieveDeckResponse.build();
     }

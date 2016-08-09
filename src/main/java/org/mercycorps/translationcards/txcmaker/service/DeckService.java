@@ -39,7 +39,10 @@ public class DeckService {
 
     private void addFakeErrors(CreateDeckResponse createDeckResponse) {
         createDeckResponse.setId(-1);
-        createDeckResponse.addError("Error 1");
+        createDeckResponse.addError("Please provide a deck name");
+        createDeckResponse.addError("Please provide a publisher");
+        createDeckResponse.addError("Invalid Document ID");
+        createDeckResponse.addError("Invalid Audio Directory ID");
         createDeckResponse.addWarning("Warning 1");
         createDeckResponse.addWarning("Warning 2");
     }
