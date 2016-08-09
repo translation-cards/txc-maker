@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.api.resource;
 
+import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
@@ -8,11 +9,13 @@ import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -25,10 +28,11 @@ public class DecksResource {
 
     @Context
     ServletContext servletContext;
+    private AuthUtils authUtils;
 
     private void init() {
         if(deckService == null) {
-            AuthUtils authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
+            authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
             deckService = new DeckService(authUtils);
         }
     }
@@ -42,12 +46,19 @@ public class DecksResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response importDeck(MultivaluedMap<String,String> formInput) throws URISyntaxException {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response importDeck(ImportDeckForm importDeckForm, @Context HttpServletRequest request) throws URISyntaxException {
         init();
+        Drive drive = null;
+        try {
+            drive = authUtils.getDriveOrOAuth(servletContext, request, null, false, request.getSession().getId());
+        } catch(IOException e) {
+            System.out.println("Auth fails");
+        }
+
 
         CreateDeckResponse createDeckResponse = new CreateDeckResponse();
-        deckService.create(new ImportDeckForm(formInput), createDeckResponse);
+        deckService.create(importDeckForm, createDeckResponse, drive);
 
         return createDeckResponse.build();
     }

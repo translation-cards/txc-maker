@@ -1,6 +1,6 @@
 angular.module('txcmaker')
 
-.factory('BackendService', function($http, $httpParamSerializerJQLike) {
+.factory('BackendService', function($http) {
   var service = {};
 
   service.get = function (url) {
@@ -17,9 +17,9 @@ angular.module('txcmaker')
     return $http({
       url: url,
       method: 'POST',
-      data: $httpParamSerializerJQLike(formData),
+      data: formData,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/json'
       }
     })
   }

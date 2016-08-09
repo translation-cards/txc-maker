@@ -43,7 +43,6 @@ public class GetTxcServlet extends HttpServlet {
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
     // We don't actually need the Drive service yet, but we authenticate in advance because
     // otherwise OAuth will send them back here anyway.
-
     Drive drive = authUtils.getDriveOrOAuth(getServletContext(), req, resp, true, req.getSession(true).getId());
     if (drive == null) {
       // We've already redirected.

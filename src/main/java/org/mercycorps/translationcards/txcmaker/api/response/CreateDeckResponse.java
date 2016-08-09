@@ -61,4 +61,8 @@ public class CreateDeckResponse {
     public int getId() {
         return id;
     }
+
+    public boolean hasErrors() {
+        return !errors.isEmpty();
+    }
 }

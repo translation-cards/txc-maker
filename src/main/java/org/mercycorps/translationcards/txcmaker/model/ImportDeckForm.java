@@ -1,35 +1,75 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.List;
-
 public class ImportDeckForm {
 
-    MultivaluedMap<String,String> formInput;
+    private String docId;
+    private String audioDirId;
+    private String deckName;
+    private String publisher;
+    private String licenseUrl;
+    private boolean locked;
+    private String deckId;
 
-    public ImportDeckForm(MultivaluedMap<String, String> formInput) {
-        this.formInput = formInput;
+    public String getDocId() {
+        return docId;
     }
 
-    public Deck getDeck() {
-        return new Deck()
-                .setDeckLabel(getField("deckName"))
-                .setPublisher(getField("publisher"))
-                .setLicenseUrl(getField("licenseUrl"))
-                .setLocked(Boolean.parseBoolean(getField("locked")))
-                .setDeckId(getField("deckId"));
+    public ImportDeckForm setDocId(String docId) {
+        this.docId = docId;
+        return this;
     }
 
-    public String getAudioDirectoryId() {
-        return getField("audioDirId");
+    public String getAudioDirId() {
+        return audioDirId;
     }
 
-    public String getDocumentId() {
-        return getField("docId");
+    public ImportDeckForm setAudioDirId(String audioDirId) {
+        this.audioDirId = audioDirId;
+        return this;
     }
 
-    private String getField(String key) {
-        List<String> values = formInput.get(key);
-        return values == null ? "" : values.get(0);
+    public String getDeckName() {
+        return deckName;
+    }
+
+    public ImportDeckForm setDeckName(String deckName) {
+        this.deckName = deckName;
+        return this;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public ImportDeckForm setPublisher(String publisher) {
+        this.publisher = publisher;
+        return this;
+    }
+
+    public String getLicenseUrl() {
+        return licenseUrl;
+    }
+
+    public ImportDeckForm setLicenseUrl(String licenseUrl) {
+        this.licenseUrl = licenseUrl;
+        return this;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public ImportDeckForm setLocked(boolean locked) {
+        this.locked = locked;
+        return this;
+    }
+
+    public String getDeckId() {
+        return deckId;
+    }
+
+    public ImportDeckForm setDeckId(String deckId) {
+        this.deckId = deckId;
+        return this;
     }
 }

@@ -1,12 +1,16 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,6 +18,8 @@ import java.util.List;
 public class DeckService {
 
     AuthUtils authUtils;
+    public static final String CSV_EXPORT_TYPE = "text/csv";
+
 
     public DeckService(AuthUtils authUtils) {
         this.authUtils = authUtils;
@@ -25,13 +31,19 @@ public class DeckService {
         }
     }
 
-    public void create(ImportDeckForm form, CreateDeckResponse createDeckResponse) {
-        Deck deck = form.getDeck();
-        String audioDirectoryId = form.getAudioDirectoryId();
-        String documentId = form.getDocumentId();
+    public void create(ImportDeckForm form, CreateDeckResponse createDeckResponse, Drive drive) {
+        String spreadsheetFileId = form.getDocId();
 
-        if ("deck with errors".equals(deck.deck_label)) {
-            addFakeErrors(createDeckResponse);
+        try {
+            InputStream inputStream = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE).executeMediaAsInputStream();
+        } catch(GoogleJsonResponseException e) {
+            createDeckResponse.addError("Invalid Document ID");
+        } catch(IOException e) {
+            //something bad happened
+        }
+
+        if (createDeckResponse.hasErrors()) {
+            createDeckResponse.setId(-1);
         } else {
             createDeckResponse.setId(10);
         }
