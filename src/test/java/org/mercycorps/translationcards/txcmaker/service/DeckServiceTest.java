@@ -74,4 +74,15 @@ public class DeckServiceTest {
 
         assertThat(createDeckResponse.getId(), is(-1));
     }
+
+    @Test
+    public void verifyFormData_shouldAddErrorsToTheResponseWhenThereAreErrors() throws Exception {
+        Field failedField = mock(Field.class);
+        List<Error> fieldErrors = Collections.singletonList(error);
+        when(failedField.verify()).thenReturn(fieldErrors);
+        fields.add(failedField);
+        deckService.verifyFormData(createDeckResponse, fields);
+
+        assertThat(createDeckResponse.getErrors(), is(fieldErrors));
+    }
 }

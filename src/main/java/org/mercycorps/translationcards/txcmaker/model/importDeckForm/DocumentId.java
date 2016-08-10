@@ -6,7 +6,6 @@ import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +16,8 @@ public class DocumentId implements Field {
     public static final String FATAL_DRIVE_ERROR_MESSAGE = "There was an error accessing the provided document. Please try again.";
     public static final Error INVALID_DOCUMENT_ID = new Error(FIELD_NAME, INVALID_DOCUMENT_ID_MESSAGE);
     public static final Error FATAL_DRIVE_ERROR = new Error("", FATAL_DRIVE_ERROR_MESSAGE);
+    public static final String REQUIRED_FIELD_MESSAGE = "Document ID is a required field.";
+    public static final Error REQUIRED_FIELD = new Error(FIELD_NAME, REQUIRED_FIELD_MESSAGE);
 
     private Drive drive;
     private String documentIdString;
@@ -29,9 +30,14 @@ public class DocumentId implements Field {
     @Override
     public List<Error> verify() {
         List<Error> errors = new ArrayList<>();
+
+        if(documentIdString == null) {
+            errors.add(REQUIRED_FIELD);
+            return errors;
+        }
+
         try {
-            InputStream inputStream = drive.files().export(documentIdString, CSV_EXPORT_TYPE).executeMediaAsInputStream();
-            inputStream.close();
+            drive.files().export(documentIdString, CSV_EXPORT_TYPE).executeMediaAsInputStream().close();
         } catch(GoogleJsonResponseException e) {
             errors.add(INVALID_DOCUMENT_ID);
         } catch(IOException e) {

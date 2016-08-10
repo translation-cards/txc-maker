@@ -6,8 +6,6 @@ import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckRespons
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.DocumentId;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 
@@ -19,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -55,9 +52,7 @@ public class DecksResource {
         CreateDeckResponse createDeckResponse = new CreateDeckResponse();
         Drive drive = getDrive(request, createDeckResponse);
         if(drive != null) {
-            List<Field> fields = new ArrayList<>();
-            fields.add(new DocumentId(drive, importDeckForm.getDocId()));
-            deckService.verifyFormData(createDeckResponse, fields);
+            deckService.verifyFormData(createDeckResponse, importDeckForm.getFieldsToVerify(drive));
         }
         return createDeckResponse.build();
     }

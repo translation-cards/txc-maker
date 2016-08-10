@@ -1,6 +1,11 @@
 package org.mercycorps.translationcards.txcmaker.model.importDeckForm;
 
 
+import com.google.api.services.drive.Drive;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ImportDeckForm {
 
     private String docId;
@@ -72,5 +77,14 @@ public class ImportDeckForm {
     public ImportDeckForm setDeckId(String deckId) {
         this.deckId = deckId;
         return this;
+    }
+
+    public List<Field> getFieldsToVerify(Drive drive) {
+        List<Field> fields = new ArrayList<>();
+        fields.add(new DocumentId(drive, getDocId()));
+        fields.add(new AudioDirectoryId(drive, getAudioDirId()));
+        fields.add(new DeckName(getDeckName()));
+        fields.add(new Publisher(getPublisher()));
+        return fields;
     }
 }
