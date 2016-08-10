@@ -70,7 +70,9 @@ public class Deck {
     return this;
   }
 
-  public static Deck stub() {
+  public static final Deck STUBBED_DECK = stub();
+
+  private static Deck stub() {
     Map<String,String> languages = new HashMap<>();
     languages.put("ar", "Arabic");
     languages.put("fa", "Farsi");

@@ -1,4 +1,5 @@
-package org.mercycorps.translationcards.txcmaker.model;
+package org.mercycorps.translationcards.txcmaker.model.importDeckForm;
+
 
 public class ImportDeckForm {
 

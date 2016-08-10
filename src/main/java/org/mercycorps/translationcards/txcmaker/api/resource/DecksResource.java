@@ -5,7 +5,10 @@ import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
-import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
+import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.DocumentId;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 
 import javax.servlet.ServletContext;
@@ -13,10 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -33,7 +36,7 @@ public class DecksResource {
     private void init() {
         if(deckService == null) {
             authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
-            deckService = new DeckService(authUtils);
+            deckService = new DeckService();
         }
     }
 
@@ -49,18 +52,24 @@ public class DecksResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response importDeck(ImportDeckForm importDeckForm, @Context HttpServletRequest request) throws URISyntaxException {
         init();
+        CreateDeckResponse createDeckResponse = new CreateDeckResponse();
+        Drive drive = getDrive(request, createDeckResponse);
+        if(drive != null) {
+            List<Field> fields = new ArrayList<>();
+            fields.add(new DocumentId(drive, importDeckForm.getDocId()));
+            deckService.verifyFormData(createDeckResponse, fields);
+        }
+        return createDeckResponse.build();
+    }
+
+    private Drive getDrive(@Context HttpServletRequest request, CreateDeckResponse createDeckResponse) {
         Drive drive = null;
         try {
             drive = authUtils.getDriveOrOAuth(servletContext, request, null, false, request.getSession().getId());
         } catch(IOException e) {
-            System.out.println("Auth fails");
+            createDeckResponse.addError(new Error("", "Authorization failed"));
         }
-
-
-        CreateDeckResponse createDeckResponse = new CreateDeckResponse();
-        deckService.create(importDeckForm, createDeckResponse, drive);
-
-        return createDeckResponse.build();
+        return drive;
     }
 
     @GET

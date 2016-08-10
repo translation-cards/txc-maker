@@ -1,55 +1,54 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
-import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
-import org.mercycorps.translationcards.txcmaker.model.ImportDeckForm;
-import org.mockito.Mock;
+import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DeckServiceTest {
 
-    public static final String DEFAULT_DOCUMENT_ID = "A Document ID";
     DeckService deckService;
 
-    Deck deck;
+    List<Field> fields;
 
-    @Mock
-    AuthUtils authUtils;
-    Drive drive;
     private CreateDeckResponse createDeckResponse;
     private RetrieveDeckResponse retrieveDeckResponse;
+    Error error;
+    Deck deck;
 
     @Before
-    public void setup() {
-        initMocks(this);
+    public void setup() throws IOException{
+        deckService = new DeckService();
 
-        deck = Deck.stub();
+        fields = new ArrayList<>();
+        Field field = mock(Field.class);
+        when(field.verify()).thenReturn(Collections.<Error>emptyList());
+        fields.add(field);
 
-        drive = mock(Drive.class, RETURNS_DEEP_STUBS);
-        deckService = new DeckService(authUtils);
-        createDeckResponse = mock(CreateDeckResponse.class);
-        retrieveDeckResponse = mock(RetrieveDeckResponse.class);
+        createDeckResponse = new CreateDeckResponse();
+        retrieveDeckResponse = new RetrieveDeckResponse();
+        error = new Error("someField", "some message");
+        deck = Deck.STUBBED_DECK;
     }
 
     @Test
     public void shouldGetADeckWhenTheIdIsFound() throws Exception {
         deckService.retrieve(10, retrieveDeckResponse);
 
-        verify(retrieveDeckResponse).setDeck(any(Deck.class));
+        assertThat(retrieveDeckResponse.getDeck(), is(deck));
     }
 
     @Test
@@ -60,65 +59,19 @@ public class DeckServiceTest {
     }
 
     @Test
-    public void create_shouldAssignAnIdToTheNewDeck() throws Exception {
-        deckService.create(formWithoutErrors(), createDeckResponse, drive);
+    public void verifyFormData_shouldAssignAnIdToTheNewDeck() throws Exception {
+        deckService.verifyFormData(createDeckResponse, fields);
 
-        verify(createDeckResponse).setId(anyInt());
+        assertThat(createDeckResponse.getId(), is(10));
     }
 
     @Test
-    public void create_shouldAssignAnInvalidIdWhenThereAreErrors() throws Exception {
-        deckService.create(formWithErrors(), createDeckResponse, drive);
+    public void verifyFormData_shouldAssignAnInvalidIdWhenThereAreErrors() throws Exception {
+        Field failedField = mock(Field.class);
+        when(failedField.verify()).thenReturn(Collections.singletonList(error));
+        fields.add(failedField);
+        deckService.verifyFormData(createDeckResponse, fields);
 
-        verify(createDeckResponse).setId(-1);
-    }
-
-    @Test
-    public void create_shouldNotHaveInvalidIDErrorWhenCreatingAValidDocument() throws Exception {
-        deckService.create(formWithoutErrors(), createDeckResponse, drive);
-
-        verify(createDeckResponse, times(0)).addError("Invalid Document ID");
-    }
-
-    @Test
-    public void create_shouldAddAnInvalidDocumentIDErrorWhenDocumentIDIsInvalid() throws Exception {
-        when(drive.files().export(DEFAULT_DOCUMENT_ID, DeckService.CSV_EXPORT_TYPE).executeMediaAsInputStream())
-                .thenThrow(mock(GoogleJsonResponseException.class));
-
-        deckService.create(formWithErrors(), createDeckResponse, drive);
-
-        verify(createDeckResponse).addError("Invalid Document ID");
-    }
-
-    private ImportDeckForm formWithErrors() {
-        when(createDeckResponse.hasErrors()).thenReturn(true);
-
-        ImportDeckForm importDeckForm = new ImportDeckForm()
-                .setDeckId("1234")
-                .setDeckName("deck with errors")
-                .setDocId(DEFAULT_DOCUMENT_ID);
-
-//        MultivaluedHashMap<String, String> formInput = new MultivaluedHashMap<>();
-//        formInput.add("deckName", "deck with errors");
-//        formInput.add("docId", DEFAULT_DOCUMENT_ID);
-//        formInput.add("audioDirId", "An Audio Directory ID");
-//        formInput.add("publisher", "some publisher");
-//        formInput.add("licenseUrl", "some license URL");
-//        formInput.add("locked", "false");
-//        formInput.add("deckId", "1234");
-
-        return importDeckForm;
-    }
-
-    private ImportDeckForm formWithoutErrors()  {
-        when(createDeckResponse.hasErrors()).thenReturn(false);
-
-        ImportDeckForm importDeckForm = new ImportDeckForm()
-                .setDeckId("1234")
-                .setDeckName("deck without errors")
-                .setDocId(DEFAULT_DOCUMENT_ID);
-
-
-        return importDeckForm;
+        assertThat(createDeckResponse.getId(), is(-1));
     }
 }

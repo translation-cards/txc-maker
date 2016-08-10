@@ -1,5 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.api.response;
 
+import org.mercycorps.translationcards.txcmaker.model.Error;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CreateDeckResponse {
-    private List<String> errors = new ArrayList<>();
+    private List<Error> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
     private int id = -1;
 
@@ -38,8 +40,12 @@ public class CreateDeckResponse {
                 .build();
     }
 
-    public void addError(String error) {
+    public void addError(Error error) {
         errors.add(error);
+    }
+
+    public void addErrors(List<Error> errors) {
+        this.errors.addAll(errors);
     }
 
     public void addWarning(String warning) {
@@ -50,7 +56,7 @@ public class CreateDeckResponse {
         this.id = id;
     }
 
-    public List<String> getErrors() {
+    public List<Error> getErrors() {
         return errors;
     }
 
