@@ -49,4 +49,23 @@ describe('deckImport', function() {
 
     expect(this.$scope.errors).toBe(response.data.errors);
   });
+
+  it('should populate the licenseUrl with CC URL when selected', function() {
+    this.$scope.licenseOption = 'cc';
+
+    this.$scope.submitForm();
+
+    expect(this.$scope.formData.licenseUrl).toEqual('http://creativecommons.org/licenses/by-nc/4.0/');
+  });
+
+  it('should populate the licenseUrl with Other URL when selected', function() {
+    var expectedUrl = 'http://someOtherLicenseUrl.com';
+    this.$scope.licenseOption = 'other';
+    this.$scope.licenseOtherUrl = expectedUrl;
+
+    this.$scope.submitForm();
+
+    expect(this.$scope.formData.licenseUrl).toEqual(expectedUrl);
+  });
+
 });
