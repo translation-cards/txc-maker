@@ -1,6 +1,6 @@
 <div layout="column">
   <deck-maker-header subtitle="'Import data'"></deck-maker-header>
-  <div layout="row" layout-align="center center" layout-padding>
+  <ul layout="row" layout-align="center center" layout-padding>
     <md-card layout-padding flex="50">
       <md-card-content layout="column">
         <form ng-submit="submitForm()">
@@ -45,13 +45,19 @@
               URL of the Google Drive folder containing the audio files.
             </div>
           </md-input-container>
-          <md-input-container class="md-block">
+          <div class="radio-group">
             <label>License URL</label>
-            <input ng-model="formData.licenseUrl" type="text" name="licenseUrl">
-            <div class="hint">
-              URL of the Google Drive folder containing the audio files.
+            <div>
+              <input type="radio" name="licenseRadio" value="cc" ng-model="formData.licenseOption" ng-change="onLicenseChange()" class="input-radio">
+              <label>Creative Commons Attribution-NonCommercial 4.0 International</label>
             </div>
-          </md-input-container>
+
+            <div>
+              <input type="radio" name="licenseRadio" value="other" ng-model="formData.licenseOption" ng-change="onLicenseChange()" class="input-radio">
+              <label>Other</label>
+              <input ng-model="formData.licenseOtherUrl" type="text" name="licenseOtherUrl">
+            </div>
+          </div>
           <md-input-container>
             <md-checkbox ng-model="formData.locked" aria-label="Lock this deck so it cannot be modified">
               Lock this deck so it cannot be modified
