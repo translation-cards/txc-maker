@@ -23,5 +23,15 @@ angular.module('txcmaker')
       }
     })
   }
+
+  service.channelToken = "";
+
+  service.openChannel = function(messageHandler) {
+    console.log(service.channelToken);
+    var channel = new goog.appengine.Channel(service.channelToken);
+    var socket = channel.open();
+    socket.onmessage = messageHandler;
+  }
+
   return service;
 });

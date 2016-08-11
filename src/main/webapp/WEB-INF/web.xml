@@ -50,4 +50,13 @@
       <url-pattern>/tasks/txc-build</url-pattern>
   </servlet-mapping>
 
+    <servlet>
+        <servlet-name>verify-deck-task-handler</servlet-name>
+        <servlet-class>org.mercycorps.translationcards.txcmaker.task.VerifyDeckTask</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>verify-deck-task-handler</servlet-name>
+        <url-pattern>/tasks/txc-verify</url-pattern>
+    </servlet-mapping>
+
 </web-app>

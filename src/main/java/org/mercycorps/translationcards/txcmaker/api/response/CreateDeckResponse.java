@@ -13,6 +13,7 @@ public class CreateDeckResponse {
     private List<Error> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
     private int id = -1;
+    private String channelToken;
 
     public Response build() throws URISyntaxException {
         if(errors.isEmpty()) {
@@ -70,5 +71,13 @@ public class CreateDeckResponse {
 
     public boolean hasErrors() {
         return !errors.isEmpty();
+    }
+
+    public void setChannelToken(String channelToken) {
+        this.channelToken = channelToken;
+    }
+
+    public String getChannelToken() {
+        return channelToken;
     }
 }

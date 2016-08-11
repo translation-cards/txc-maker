@@ -1,6 +1,11 @@
 package org.mercycorps.translationcards.txcmaker.api.resource;
 
 import com.google.api.services.drive.Drive;
+import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.channel.ChannelServiceFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
@@ -25,7 +30,6 @@ import static java.lang.Thread.sleep;
 public class DecksResource {
 
     private DeckService deckService = null;
-
     @Context
     ServletContext servletContext;
     private AuthUtils authUtils;
@@ -53,8 +57,20 @@ public class DecksResource {
         Drive drive = getDrive(request, createDeckResponse);
         if(drive != null) {
             deckService.verifyFormData(createDeckResponse, importDeckForm.getFieldsToVerify(drive));
+            String token = getTokenForNewChannel(request.getSession().getId());
+            createDeckResponse.setChannelToken(token);
+
+            Queue queue = QueueFactory.getQueue("queue-txc-building");
+            TaskOptions taskOptions = TaskOptions.Builder.withUrl("/tasks/txc-verify")
+                    .param("sessionId", request.getSession().getId());
+            queue.add(taskOptions);
         }
         return createDeckResponse.build();
+    }
+
+    private String getTokenForNewChannel(String sessionId) {
+        ChannelService channelService = ChannelServiceFactory.getChannelService();
+        return channelService.createChannel(sessionId);
     }
 
     private Drive getDrive(@Context HttpServletRequest request, CreateDeckResponse createDeckResponse) {

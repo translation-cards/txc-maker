@@ -12,6 +12,7 @@ function DeckImportController ($scope, BackendService, $location){
 
     BackendService.postForm('/api/decks/', $scope.formData).then(
       function(response) {
+        BackendService.channelToken = response.data.channelToken;
         $location.path('/DeckPreview/' + response.data.id);
       },
       function(response) {

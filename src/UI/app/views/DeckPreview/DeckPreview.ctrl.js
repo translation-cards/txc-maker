@@ -1,25 +1,19 @@
 
 
-function DeckPreviewController($scope, $timeout, $routeParams,
-    BackendService, timeoutDuration, maxFetches) {
+function DeckPreviewController($scope, $timeout, $routeParams, BackendService, timeoutDuration, maxFetches) {
 
   var fetchCount = 1;
   $scope.errorFetchingDeck = false;
   $scope.deckId = $routeParams.id;
 
+  $scope.messageHandler = function(data) {
+    console.log(data.data);
+    $scope.deck = data.data;
+    $scope.$apply();
+  };
+
   (function fetchDeck() {
-    BackendService.get('/api/decks/' + $scope.deckId).then(
-      function(response) {
-          $scope.deck = response.data.deck;
-      },
-      function(response) {
-        if(fetchCount === maxFetches) {
-          $scope.errorFetchingDeck = true;
-        } else if(response.status === 404) {
-          fetchCount++;
-          $timeout(fetchDeck, timeoutDuration);
-        }
-      });
+    BackendService.openChannel($scope.messageHandler);
   })();
 
 }
