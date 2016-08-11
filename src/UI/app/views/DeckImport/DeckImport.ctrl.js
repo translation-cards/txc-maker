@@ -4,6 +4,8 @@ function DeckImportController ($scope, BackendService, $location){
 
   $scope.formData = {};
   $scope.errors = [];
+  $scope.licenseOption = 'cc';
+  $scope.licenseOtherUrl = '';
 
   $scope.submitForm = function() {
     $scope.formData.licenseUrl = getLicenseUrl($scope);
@@ -18,11 +20,10 @@ function DeckImportController ($scope, BackendService, $location){
   };
 
   var getLicenseUrl = function(scope) {
-    var formData = scope.formData;
-    if (formData.licenseOption === 'cc') {
+    if ($scope.licenseOption === 'cc') {
         return  'http://creativecommons.org/licenses/by-nc/4.0/';
     } else {
-        return formData.licenseOtherUrl;
+        return $scope.licenseOtherUrl;
     }
   }
 }

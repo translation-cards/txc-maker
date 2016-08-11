@@ -51,9 +51,7 @@ describe('deckImport', function() {
   });
 
   it('should populate the licenseUrl with CC URL when selected', function() {
-    this.$scope.formData = {
-      licenseOption: 'cc'
-    };
+    this.$scope.licenseOption = 'cc';
 
     this.$scope.submitForm();
 
@@ -62,10 +60,8 @@ describe('deckImport', function() {
 
   it('should populate the licenseUrl with Other URL when selected', function() {
     var expectedUrl = 'http://someOtherLicenseUrl.com';
-    this.$scope.formData = {
-      licenseOption: 'other',
-      licenseOtherUrl: expectedUrl
-    };
+    this.$scope.licenseOption = 'other';
+    this.$scope.licenseOtherUrl = expectedUrl;
 
     this.$scope.submitForm();
 

@@ -48,14 +48,14 @@
           <div class="radio-group">
             <label>License URL</label>
             <div>
-              <input type="radio" name="licenseRadio" value="cc" ng-model="formData.licenseOption" ng-change="onLicenseChange()" class="input-radio">
+              <input type="radio" name="licenseRadio" value="cc" ng-model="licenseOption" ng-change="onLicenseChange()" class="input-radio">
               <label>Creative Commons Attribution-NonCommercial 4.0 International</label>
             </div>
 
             <div>
-              <input type="radio" name="licenseRadio" value="other" ng-model="formData.licenseOption" ng-change="onLicenseChange()" class="input-radio">
+              <input type="radio" name="licenseRadio" value="other" ng-model="licenseOption" ng-change="onLicenseChange()" class="input-radio">
               <label>Other</label>
-              <input ng-model="formData.licenseOtherUrl" type="text" name="licenseOtherUrl">
+              <input ng-model="licenseOtherUrl" type="text" name="licenseOtherUrl">
             </div>
           </div>
           <md-input-container>
