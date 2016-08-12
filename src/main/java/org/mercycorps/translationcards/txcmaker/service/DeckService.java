@@ -1,6 +1,9 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 
+import com.google.appengine.api.channel.ChannelService;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
@@ -12,11 +15,22 @@ import java.util.List;
 
 public class DeckService {
 
+    private ChannelService channelService;
+    private Queue taskQueue;
+
+    public DeckService(ChannelService channelService, Queue taskQueue) {
+        this.channelService = channelService;
+        this.taskQueue = taskQueue;
+    }
 
     public void retrieve(int id, RetrieveDeckResponse retrieveDeckResponse) {
         if(id == 10) {
             retrieveDeckResponse.setDeck(Deck.STUBBED_DECK);
         }
+    }
+
+    public List<Deck> retrieveAll() {
+        return Arrays.asList(Deck.STUBBED_DECK);
     }
 
     public void verifyFormData(CreateDeckResponse createDeckResponse, List<Field> fields) {
@@ -31,8 +45,15 @@ public class DeckService {
         }
     }
 
-
-    public List<Deck> retrieveAll() {
-        return Arrays.asList(Deck.STUBBED_DECK);
+    public void kickoffVerifyDeckTask(CreateDeckResponse createDeckResponse, String sessionId) {
+        if(createDeckResponse.hasErrors()) {
+            return;
+        }
+        String token = channelService.createChannel(sessionId);
+        createDeckResponse.setChannelToken(token);
+        TaskOptions taskOptions = TaskOptions.Builder
+                .withUrl("/tasks/txc-verify")
+                .param("sessionId", sessionId);
+        taskQueue.add(taskOptions);
     }
 }

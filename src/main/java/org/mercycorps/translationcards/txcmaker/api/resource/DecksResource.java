@@ -1,16 +1,12 @@
 package org.mercycorps.translationcards.txcmaker.api.resource;
 
 import com.google.api.services.drive.Drive;
-import com.google.appengine.api.channel.ChannelService;
-import com.google.appengine.api.channel.ChannelServiceFactory;
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskOptions;
 import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 
@@ -36,8 +32,8 @@ public class DecksResource {
 
     private void init() {
         if(deckService == null) {
+            deckService = (DeckService) servletContext.getAttribute("deckService");
             authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
-            deckService = new DeckService();
         }
     }
 
@@ -55,22 +51,13 @@ public class DecksResource {
         init();
         CreateDeckResponse createDeckResponse = new CreateDeckResponse();
         Drive drive = getDrive(request, createDeckResponse);
+        final String sessionId = request.getSession().getId();
+        final List<Field> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
-            deckService.verifyFormData(createDeckResponse, importDeckForm.getFieldsToVerify(drive));
-            String token = getTokenForNewChannel(request.getSession().getId());
-            createDeckResponse.setChannelToken(token);
-
-            Queue queue = QueueFactory.getQueue("queue-txc-building");
-            TaskOptions taskOptions = TaskOptions.Builder.withUrl("/tasks/txc-verify")
-                    .param("sessionId", request.getSession().getId());
-            queue.add(taskOptions);
+            deckService.verifyFormData(createDeckResponse, fieldsToVerify);
+            deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId);
         }
         return createDeckResponse.build();
-    }
-
-    private String getTokenForNewChannel(String sessionId) {
-        ChannelService channelService = ChannelServiceFactory.getChannelService();
-        return channelService.createChannel(sessionId);
     }
 
     private Drive getDrive(@Context HttpServletRequest request, CreateDeckResponse createDeckResponse) {
