@@ -1,28 +1,21 @@
 
-
-function DeckPreviewController($scope, $timeout, $routeParams, BackendService, timeoutDuration, maxFetches) {
-
-  var fetchCount = 1;
-  $scope.errorFetchingDeck = false;
+function DeckPreviewController($scope, $timeout, $routeParams, BackendService) {
   $scope.deckId = $routeParams.id;
 
-  $scope.messageHandler = function(data) {
-    console.log(data.data);
+  var messageHandler = function(data) {
     $scope.deck = data.data;
     $scope.$apply();
   };
 
   (function fetchDeck() {
-    BackendService.openChannel($scope.messageHandler);
+    BackendService.openChannel(messageHandler);
   })();
-
 }
 
 angular.module('txcmaker')
 
 .controller('DeckPreviewCtrl',
-  ['$scope', '$timeout', '$routeParams', 'BackendService', 'timeoutDuration',
-  'maxFetches', DeckPreviewController])
+  ['$scope', '$timeout', '$routeParams', 'BackendService', DeckPreviewController])
 
 .value('timeoutDuration', 1000)
 .value('maxFetches', 120);

@@ -41,8 +41,20 @@ angular.module('mock.BackendService', [])
           id: 10,
           warnings: []
         }
-      }
+      },
+
+      openChannel: function(messageHandler) {
+        this.openChannelCalled = true;
+        messageHandler({
+          data: {
+            deck_label: "stubbed label"
+          }
+        });
+      },
+      openChannelCalled: false
     };
+
+
 
     return service;
   });
