@@ -3,7 +3,7 @@ function DeckPreviewController($scope, $timeout, $routeParams, BackendService) {
   $scope.deckId = $routeParams.id;
 
   var messageHandler = function(data) {
-    $scope.deck = data.data;
+    $scope.deck = angular.fromJson(data.data);
     $scope.$apply();
   };
 

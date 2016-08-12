@@ -11,7 +11,7 @@ angular.module('txcmaker')
         'Content-Type': 'application/json; charset=utf-8'
       }
     });
-  }
+  };
 
   service.postForm = function(url, formData) {
     return $http({
@@ -22,16 +22,15 @@ angular.module('txcmaker')
         'Content-Type': 'application/json'
       }
     })
-  }
+  };
 
   service.channelToken = "";
 
   service.openChannel = function(messageHandler) {
-    console.log(service.channelToken);
     var channel = new goog.appengine.Channel(service.channelToken);
     var socket = channel.open();
     socket.onmessage = messageHandler;
-  }
+  };
 
   return service;
 });
