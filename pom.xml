@@ -101,6 +101,11 @@
             <version>${appengine.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20080701</version>
+        </dependency>
     </dependencies>
 
     <build>

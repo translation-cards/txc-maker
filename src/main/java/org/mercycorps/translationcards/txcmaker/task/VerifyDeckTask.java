@@ -1,6 +1,5 @@
 package org.mercycorps.translationcards.txcmaker.task;
 
-
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
@@ -12,6 +11,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
+import org.mercycorps.translationcards.txcmaker.service.LanguageService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -29,10 +29,10 @@ public class VerifyDeckTask extends HttpServlet {
     private static final String SRC_HEADER_TRANSLATION_TEXT = "Translation";
     private static final String SRC_HEADER_FILENAME = "Filename";
 
-
     ServletContext servletContext;
     private AuthUtils authUtils;
     private DriveService driveService;
+    private LanguageService languageService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -41,6 +41,7 @@ public class VerifyDeckTask extends HttpServlet {
         servletContext = config.getServletContext();
         authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
         driveService = (DriveService) servletContext.getAttribute("driveService");
+        languageService = (LanguageService) servletContext.getAttribute("languageService");
     }
 
     @Override
@@ -65,19 +66,17 @@ public class VerifyDeckTask extends HttpServlet {
 
         for(CSVRecord row : parser) {
             String languageIso = row.get(SRC_HEADER_LANGUAGE);
+            String languageLabel = languageService.getLanguageDisplayName(languageIso);
             String audioFileName = row.get(SRC_HEADER_FILENAME);
             Card card = new Card()
                     .setLabel(row.get(SRC_HEADER_LABEL))
                     .setFilename(audioFileName)
                     .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
-            deck.addCard(languageIso, "language_label", card);
+            deck.addCard(languageIso, languageLabel, card);
         }
 
         return deck;
     }
-
-
-
 
     private Drive getDrive(String sessionId) {
         Drive drive = null;
@@ -95,7 +94,9 @@ public class VerifyDeckTask extends HttpServlet {
                 .setPublisher(req.getParameter("publisher"))
                 .setDeckId(req.getParameter("deckId"))
                 .setTimestamp(System.currentTimeMillis())
-                .setLicenseUrl(req.getParameter("licenseUrl"));
+                .setLicenseUrl(req.getParameter("licenseUrl"))
+                .setLanguage("en")
+                .setLanguageLabel("English");
     }
 
     private void sendDeckToClient(Deck deck, String sessionId) throws IOException {
