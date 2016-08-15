@@ -10,6 +10,7 @@ import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckRespons
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class DeckServiceTest {
     private Queue taskQueue;
     private String sessionId;
     private String channelToken;
+    private ImportDeckForm importDeckForm;
 
     @Before
     public void setup() throws IOException{
@@ -51,6 +53,11 @@ public class DeckServiceTest {
         retrieveDeckResponse = new RetrieveDeckResponse();
         error = new Error("someField", "some message");
         deck = Deck.STUBBED_DECK;
+        importDeckForm = new ImportDeckForm()
+                .setDeckName("deck name")
+                .setAudioDirId("audio dir id")
+                .setDocId("doc id")
+                .setPublisher("publisher");
 
         deckService = new DeckService(channelService, taskQueue);
         sessionId = "session ID";
@@ -101,7 +108,7 @@ public class DeckServiceTest {
 
     @Test
     public void kickoffVerifyDeckTask_shouldCreateAChannel() throws Exception {
-        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId);
+        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId, importDeckForm);
 
         verify(channelService).createChannel(sessionId);
     }
@@ -109,14 +116,14 @@ public class DeckServiceTest {
     @Test
     public void kickoffVerifyDeckTask_shouldAddTheChannelTokenToTheResponse() throws Exception {
         when(channelService.createChannel(sessionId)).thenReturn(channelToken);
-        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId);
+        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId, importDeckForm);
 
         assertThat(createDeckResponse.getChannelToken(), is(channelToken));
     }
 
     @Test
     public void kickoffVerifyDeckTask_shouldAddTheVerifyDeckTaskToTheQueue() throws Exception {
-        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId);
+        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId, importDeckForm);
 
         ArgumentCaptor<TaskOptions> taskOptionsArgumentCaptor = ArgumentCaptor.forClass(TaskOptions.class);
         verify(taskQueue).add(taskOptionsArgumentCaptor.capture());
@@ -124,13 +131,17 @@ public class DeckServiceTest {
         TaskOptions taskOptions = taskOptionsArgumentCaptor.getValue();
         assertThat(taskOptions.getUrl(), is("/tasks/txc-verify"));
         assertThat(taskOptions.getStringParams().get("sessionId").get(0), is(sessionId));
+        assertThat(taskOptions.getStringParams().get("deckName").get(0), is("deck name"));
+        assertThat(taskOptions.getStringParams().get("docId").get(0), is("doc id"));
+        assertThat(taskOptions.getStringParams().get("audioDirId").get(0), is("audio dir id"));
+        assertThat(taskOptions.getStringParams().get("publisher").get(0), is("publisher"));
     }
 
     @Test
     public void kickoffVerifyDeckTask_shouldDoNothingIfThereAreErrorsPresent() throws Exception {
         createDeckResponse.addError(error);
 
-        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId);
+        deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId, importDeckForm);
 
         verify(channelService, times(0)).createChannel(sessionId);
         assertNull(createDeckResponse.getChannelToken());

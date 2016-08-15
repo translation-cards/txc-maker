@@ -8,6 +8,7 @@ import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.api.response.RetrieveDeckResponse;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,15 +46,25 @@ public class DeckService {
         }
     }
 
-    public void kickoffVerifyDeckTask(CreateDeckResponse createDeckResponse, String sessionId) {
+    public void kickoffVerifyDeckTask(CreateDeckResponse createDeckResponse, String sessionId, ImportDeckForm importDeckForm) {
         if(createDeckResponse.hasErrors()) {
             return;
         }
         String token = channelService.createChannel(sessionId);
         createDeckResponse.setChannelToken(token);
-        TaskOptions taskOptions = TaskOptions.Builder
-                .withUrl("/tasks/txc-verify")
-                .param("sessionId", sessionId);
+        TaskOptions taskOptions = buildTaskOptions(sessionId, importDeckForm);
         taskQueue.add(taskOptions);
+    }
+
+    private TaskOptions buildTaskOptions(String sessionId, ImportDeckForm importDeckForm) {
+        return TaskOptions.Builder
+                    .withUrl("/tasks/txc-verify")
+                    .param("sessionId", sessionId)
+                    .param("deckName", importDeckForm.getDeckName())
+                    .param("publisher", importDeckForm.getPublisher())
+                    .param("docId", importDeckForm.getDocId())
+                    .param("audioDirId", importDeckForm.getAudioDirId())
+                    .param("deckId", "deck id")
+                    .param("licenseUrl", "license url");
     }
 }

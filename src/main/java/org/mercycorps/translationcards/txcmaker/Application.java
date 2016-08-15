@@ -6,6 +6,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
+import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.FileVerifier;
 
 import javax.servlet.ServletContext;
@@ -23,6 +24,7 @@ public class Application implements ServletContextListener {
         ChannelService channelService = ChannelServiceFactory.getChannelService();
         Queue taskQueue = QueueFactory.getQueue(TASK_QUEUE_NAME);
         DeckService deckService = new DeckService(channelService, taskQueue);
+        DriveService driveService = new DriveService();
 
         ServletContext servletContext = servletContextEvent.getServletContext();
         servletContext.setAttribute("authUtils", authUtils);
@@ -30,6 +32,7 @@ public class Application implements ServletContextListener {
         servletContext.setAttribute("channelService", channelService);
         servletContext.setAttribute("taskQueue", taskQueue);
         servletContext.setAttribute("deckService", deckService);
+        servletContext.setAttribute("driveService", driveService);
     }
 
     @Override

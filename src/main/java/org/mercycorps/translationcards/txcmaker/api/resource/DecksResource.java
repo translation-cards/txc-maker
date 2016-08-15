@@ -55,7 +55,7 @@ public class DecksResource {
         final List<Field> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
             deckService.verifyFormData(createDeckResponse, fieldsToVerify);
-            deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId);
+            deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId, importDeckForm);
         }
         return createDeckResponse.build();
     }
