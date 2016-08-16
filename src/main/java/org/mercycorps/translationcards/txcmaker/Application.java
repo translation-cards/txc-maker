@@ -24,7 +24,6 @@ public class Application implements ServletContextListener {
         AuthUtils authUtils = new AuthUtils();
         ChannelService channelService = ChannelServiceFactory.getChannelService();
         Queue taskQueue = QueueFactory.getQueue(TASK_QUEUE_NAME);
-        DeckService deckService = new DeckService(channelService, taskQueue);
         ServletContext servletContext = servletContextEvent.getServletContext();
         LanguageService languageService = getLanguageService(servletContext);
         Gson gson = new Gson();
@@ -36,7 +35,6 @@ public class Application implements ServletContextListener {
         servletContext.setAttribute("fileVerifier", fileVerifier);
         servletContext.setAttribute("channelService", channelService);
         servletContext.setAttribute("taskQueue", taskQueue);
-        servletContext.setAttribute("deckService", deckService);
         servletContext.setAttribute("driveService", driveService);
         servletContext.setAttribute("languageService", languageService);
         servletContext.setAttribute("txcPortingUtility", txcPortingUtility);

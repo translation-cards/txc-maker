@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
 
 import org.mercycorps.translationcards.txcmaker.service.FileVerifier;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
