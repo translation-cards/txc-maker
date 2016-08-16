@@ -1,18 +1,22 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import org.mercycorps.translationcards.txcmaker.model.Language;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class LanguageService {
 
     private final Map<String, List<String>> languageMap;
     public static final String INVALID_ISO_CODE = "xx";
     public static final String INVALID_LANGUAGE_NAME = "INVALID";
 
+    @Autowired
     public LanguageService(LanguagesImportUtility langImportUtility) {
         languageMap = langImportUtility.getLanguageMap();
     }

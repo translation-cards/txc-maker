@@ -6,12 +6,15 @@ import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.LanguageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Component
 public class TxcPortingUtility {
 
   private static final Pattern FILE_URL_MATCHER = Pattern.compile(
@@ -27,6 +30,7 @@ public class TxcPortingUtility {
   private LanguageService languageService;
   private Gson gson;
 
+  @Autowired
   public TxcPortingUtility(LanguageService languageService, Gson gson) {
     this.languageService = languageService;
     this.gson = gson;

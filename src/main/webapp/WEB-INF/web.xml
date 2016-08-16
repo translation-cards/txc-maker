@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-  <servlet>		
-    <servlet-name>get-txc</servlet-name>
-    <servlet-class>org.mercycorps.translationcards.txcmaker.servlet.GetTxcServlet</servlet-class>
-  </servlet>		
-  <servlet-mapping>		
-    <servlet-name>get-txc</servlet-name>
-    <url-pattern>/get-txc</url-pattern>
-  </servlet-mapping>
-
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>org.mercycorps.translationcards.txcmaker.MySpringApplication</param-value>
@@ -51,14 +42,4 @@
       <servlet-name>builder-task-handler</servlet-name>
       <url-pattern>/tasks/txc-build</url-pattern>
   </servlet-mapping>
-
-    <servlet>
-        <servlet-name>verify-deck-task-handler</servlet-name>
-        <servlet-class>org.mercycorps.translationcards.txcmaker.task.VerifyDeckTask</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>verify-deck-task-handler</servlet-name>
-        <url-pattern>/tasks/txc-verify</url-pattern>
-    </servlet-mapping>
-
 </web-app>

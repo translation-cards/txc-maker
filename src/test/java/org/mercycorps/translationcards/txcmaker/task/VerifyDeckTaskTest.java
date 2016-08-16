@@ -63,13 +63,9 @@ public class VerifyDeckTaskTest {
     public void setup() throws ServletException, IOException {
         initMocks(this);
 
-        // initialize the data passed in through the request
-
         when(request.getParameter("sessionId")).thenReturn(SESSION_ID);
         when(request.getParameter("audioDirId")).thenReturn(AUDIO_DIR_URL);
         when(request.getParameter("docId")).thenReturn(DOC_ID);
-
-        // initialize the stubbed and mocked values needed to make it through the method
 
         when(txcPortingUtility.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
 
@@ -84,55 +80,47 @@ public class VerifyDeckTaskTest {
 
         when(txcPortingUtility.buildTxcJson(any(Deck.class))).thenReturn(DECK_AS_JSON);
 
-        // initialize the task with its dependencies
-
-        when(servletContext.getAttribute("authUtils")).thenReturn(authUtils);
-        when(servletContext.getAttribute("driveService")).thenReturn(driveService);
-        when(servletContext.getAttribute("servletContext")).thenReturn(servletContext);
-        when(servletContext.getAttribute("channelService")).thenReturn(channelService);
-        when(servletContext.getAttribute("txcPortingUtility")).thenReturn(txcPortingUtility);
-        verifyDeckTask = new VerifyDeckTask();
-        verifyDeckTask.init(new StubServletContext(servletContext));
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcPortingUtility);
     }
 
     @Test
     public void shouldGetTheDriveUsingTheSessionId() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         verify(authUtils).getDriveOrOAuth(servletContext, null, null, false, SESSION_ID);
     }
 
     @Test
     public void shouldParseTheAudioDirectoryIdFromTheURL() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         verify(txcPortingUtility).parseAudioDirId(AUDIO_DIR_URL);
     }
 
     @Test
     public void shouldFetchAudioFiles() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         verify(driveService).fetchAudioFilesInDriveDirectory(drive, AUDIO_DIR_ID);
     }
 
     @Test
     public void shouldFetchCsv() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         verify(driveService).fetchParsableCsv(drive, DOC_ID);
     }
 
     @Test
     public void shouldParseTheCsvDataIntoTheDeck() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         verify(txcPortingUtility).parseCsvIntoDeck(any(Deck.class), any(CSVParser.class));
     }
 
     @Test
     public void shouldRespondOverTheCorrectChannel() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         ArgumentCaptor<ChannelMessage> channelMessageArgumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
         verify(channelService).sendMessage(channelMessageArgumentCaptor.capture());
@@ -143,7 +131,7 @@ public class VerifyDeckTaskTest {
 
     @Test
     public void shouldRespondWithTheDeckAsJson() throws Exception {
-        verifyDeckTask.doPost(request, null);
+        verifyDeckTask.verifyDeck(request);
 
         ArgumentCaptor<ChannelMessage> channelMessageArgumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
         verify(channelService).sendMessage(channelMessageArgumentCaptor.capture());
@@ -151,33 +139,4 @@ public class VerifyDeckTaskTest {
         ChannelMessage channelMessage = channelMessageArgumentCaptor.getValue();
         assertThat(channelMessage.getMessage(), is(DECK_AS_JSON));
     }
-
-    private class StubServletContext implements ServletConfig {
-        ServletContext servletContext;
-
-        StubServletContext(ServletContext servletContext) {
-            this.servletContext = servletContext;
-        }
-
-        @Override
-        public String getServletName() {
-            return "Stubbed Servlet Config";
-        }
-
-        @Override
-        public ServletContext getServletContext() {
-            return this.servletContext;
-        }
-
-        @Override
-        public String getInitParameter(String s) {
-            return null;
-        }
-
-        @Override
-        public Enumeration getInitParameterNames() {
-            return null;
-        }
-    }
-
 }

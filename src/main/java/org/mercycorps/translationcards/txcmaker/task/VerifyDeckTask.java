@@ -7,17 +7,20 @@ import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class VerifyDeckTask extends HttpServlet {
+@RestController
+@RequestMapping("/tasks/txc-verify")
+public class VerifyDeckTask {
 
     ServletContext servletContext;
     private AuthUtils authUtils;
@@ -25,19 +28,17 @@ public class VerifyDeckTask extends HttpServlet {
     private ChannelService channelService;
     private TxcPortingUtility txcPortingUtility;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-
-        servletContext = config.getServletContext();
-        authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
-        driveService = (DriveService) servletContext.getAttribute("driveService");
-        channelService = (ChannelService) servletContext.getAttribute("channelService");
-        txcPortingUtility = (TxcPortingUtility) servletContext.getAttribute("txcPortingUtility");
+    @Autowired
+    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, TxcPortingUtility txcPortingUtility) {
+        this.servletContext = servletContext;
+        this.authUtils = authUtils;
+        this.driveService = driveService;
+        this.channelService = channelService;
+        this.txcPortingUtility = txcPortingUtility;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
+    @RequestMapping(method = RequestMethod.POST)
+    public void verifyDeck(HttpServletRequest request) throws ServletException, IOException {
         final Deck deck = assembleDeck(request);
 
         sendDeckToClient(deck, request.getParameter("sessionId"));

@@ -8,12 +8,15 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
 
+@Component
 public class FileVerifier {
 
     private static final String CSV_EXPORT_TYPE = "text/csv";
@@ -27,6 +30,7 @@ public class FileVerifier {
     private Map<String, String> audioFileIds;
     private TxcPortingUtility txcPortingUtility;
 
+    @Autowired
     public FileVerifier(TxcPortingUtility txcPortingUtility) {
         this.txcPortingUtility = txcPortingUtility;
     }

@@ -19,30 +19,37 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mercycorps.translationcards.txcmaker.service.FileVerifier;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-public class GetTxcServlet extends HttpServlet {
+@RestController
+@RequestMapping("/get-txc")
+public class GetTxcServlet {
 
   private static final int BUFFER_SIZE = 1024;
 
-  private byte[] buffer = new byte[BUFFER_SIZE];
-  private GcsService gcsService = GcsServiceFactory.createGcsService();
+  private byte[] buffer;
+  private GcsService gcsService;
   private AuthUtils authUtils;
   private FileVerifier fileVerifier;
+  private ServletContext servletContext;
 
-  @Override
-  public void init(ServletConfig config) throws ServletException {
-    super.init(config);
-
-    ServletContext servletContext = config.getServletContext();
-    authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
-    fileVerifier = (FileVerifier) servletContext.getAttribute("fileVerifier");
+  @Autowired
+  public GetTxcServlet(AuthUtils authUtils, FileVerifier fileVerifier, ServletContext servletContext) {
+    this.authUtils = authUtils;
+    this.fileVerifier = fileVerifier;
+    this.servletContext = servletContext;
+    gcsService = GcsServiceFactory.createGcsService();
+    buffer = new byte[BUFFER_SIZE];
   }
 
-  @Override
+  @RequestMapping(method = RequestMethod.GET)
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
     // We don't actually need the Drive service yet, but we authenticate in advance because
     // otherwise OAuth will send them back here anyway.
-    Drive drive = authUtils.getDriveOrOAuth(getServletContext(), req, resp, true, req.getSession(true).getId());
+    Drive drive = authUtils.getDriveOrOAuth(servletContext, req, resp, true, req.getSession(true).getId());
     if (drive == null) {
       // We've already redirected.
       return;
@@ -51,9 +58,9 @@ public class GetTxcServlet extends HttpServlet {
     view.forward(req, resp);
   }
 
-  @Override
+  @RequestMapping(method = RequestMethod.POST)
   public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    Drive drive = authUtils.getDriveOrOAuth(getServletContext(), req, resp, false, req.getSession(true).getId());
+    Drive drive = authUtils.getDriveOrOAuth(servletContext, req, resp, false, req.getSession(true).getId());
     if (drive == null) {
       resp.getWriter().println("You haven't provided Drive authentication.");
       return;

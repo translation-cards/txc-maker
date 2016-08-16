@@ -7,6 +7,8 @@ import com.google.api.services.drive.model.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,12 +19,14 @@ import java.util.logging.Logger;
 
 import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.DocumentId.CSV_EXPORT_TYPE;
 
+@Service
 public class DriveService {
 
     private static final Logger log = Logger.getLogger(DriveService.class.getName());
 
     TxcPortingUtility txcPortingUtility;
 
+    @Autowired
     public DriveService(TxcPortingUtility txcPortingUtility) {
         this.txcPortingUtility = txcPortingUtility;
     }
