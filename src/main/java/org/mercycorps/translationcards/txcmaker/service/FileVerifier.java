@@ -22,19 +22,24 @@ public class FileVerifier {
     private static final String SRC_HEADER_TRANSLATION_TEXT = "Translation";
     private static final String SRC_HEADER_FILENAME = "Filename";
 
-    List<String> errors;
-    List<String> warnings;
+    private List<String> errors;
+    private List<String> warnings;
     private Map<String, String> audioFileIds;
+    private TxcPortingUtility txcPortingUtility;
+
+    public FileVerifier(TxcPortingUtility txcPortingUtility) {
+        this.txcPortingUtility = txcPortingUtility;
+    }
 
     public void verify(String audioDirString, String spreadsheetFileString, Drive drive) throws IOException {
         errors = new ArrayList<>();
         warnings = new ArrayList<>();
         audioFileIds  = new HashMap<>();
 
-        String audioDirId = TxcPortingUtility.parseAudioDirId(audioDirString);
+        String audioDirId = txcPortingUtility.parseAudioDirId(audioDirString);
         fetchAudioFileIds(drive, audioDirId);
 
-        String spreadsheetFileId = TxcPortingUtility.getSpreadsheetId(spreadsheetFileString);
+        String spreadsheetFileId = txcPortingUtility.getSpreadsheetId(spreadsheetFileString);
         checkForErrors(drive, spreadsheetFileId);
     }
 

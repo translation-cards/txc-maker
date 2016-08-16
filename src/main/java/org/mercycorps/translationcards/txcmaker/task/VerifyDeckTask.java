@@ -3,15 +3,10 @@ package org.mercycorps.translationcards.txcmaker.task;
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
-import com.google.appengine.api.channel.ChannelServiceFactory;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
-import org.mercycorps.translationcards.txcmaker.service.LanguageService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -24,15 +19,11 @@ import java.util.Map;
 
 public class VerifyDeckTask extends HttpServlet {
 
-    private static final String SRC_HEADER_LANGUAGE = "Language";
-    private static final String SRC_HEADER_LABEL = "Label";
-    private static final String SRC_HEADER_TRANSLATION_TEXT = "Translation";
-    private static final String SRC_HEADER_FILENAME = "Filename";
-
     ServletContext servletContext;
     private AuthUtils authUtils;
     private DriveService driveService;
-    private LanguageService languageService;
+    private ChannelService channelService;
+    private TxcPortingUtility txcPortingUtility;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -41,7 +32,8 @@ public class VerifyDeckTask extends HttpServlet {
         servletContext = config.getServletContext();
         authUtils = (AuthUtils) servletContext.getAttribute("authUtils");
         driveService = (DriveService) servletContext.getAttribute("driveService");
-        languageService = (LanguageService) servletContext.getAttribute("languageService");
+        channelService = (ChannelService) servletContext.getAttribute("channelService");
+        txcPortingUtility = (TxcPortingUtility) servletContext.getAttribute("txcPortingUtility");
     }
 
     @Override
@@ -52,11 +44,11 @@ public class VerifyDeckTask extends HttpServlet {
     }
 
     private Deck assembleDeck(HttpServletRequest request) {
-        Deck deck = initializeDeckWithFormData(request);
+        Deck deck = Deck.initializeDeckWithFormData(request);
         String sessionId = request.getParameter("sessionId");
         Drive drive = getDrive(sessionId);
 
-        String audioDirId = TxcPortingUtility.parseAudioDirId(request.getParameter("audioDirId"));
+        String audioDirId = txcPortingUtility.parseAudioDirId(request.getParameter("audioDirId"));
         Map<String, String> audioFileIds = driveService.fetchAudioFilesInDriveDirectory(drive, audioDirId);
         CSVParser parser = driveService.fetchParsableCsv(drive, request.getParameter("docId"));
 
@@ -64,16 +56,7 @@ public class VerifyDeckTask extends HttpServlet {
             return null;
         }
 
-        for(CSVRecord row : parser) {
-            String languageIso = row.get(SRC_HEADER_LANGUAGE);
-            String languageLabel = languageService.getLanguageDisplayName(languageIso);
-            String audioFileName = row.get(SRC_HEADER_FILENAME);
-            Card card = new Card()
-                    .setLabel(row.get(SRC_HEADER_LABEL))
-                    .setFilename(audioFileName)
-                    .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
-            deck.addCard(languageIso, languageLabel, card);
-        }
+        txcPortingUtility.parseCsvIntoDeck(deck, parser);
 
         return deck;
     }
@@ -83,26 +66,12 @@ public class VerifyDeckTask extends HttpServlet {
         try {
             drive = authUtils.getDriveOrOAuth(servletContext, null, null, false, sessionId);
         } catch(IOException e) {
-
+            //do something
         }
         return drive;
     }
 
-    private Deck initializeDeckWithFormData(HttpServletRequest req) {
-        return new Deck()
-                .setDeckLabel(req.getParameter("deckName"))
-                .setPublisher(req.getParameter("publisher"))
-                .setDeckId(req.getParameter("deckId"))
-                .setTimestamp(System.currentTimeMillis())
-                .setLicenseUrl(req.getParameter("licenseUrl"))
-                .setLanguage("en")
-                .setLanguageLabel("English");
-    }
-
     private void sendDeckToClient(Deck deck, String sessionId) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ChannelService channelService = ChannelServiceFactory.getChannelService();
-        String channelKey = sessionId;
-        channelService.sendMessage(new ChannelMessage(channelKey, objectMapper.writeValueAsString(deck)));
+        channelService.sendMessage(new ChannelMessage(sessionId, txcPortingUtility.buildTxcJson(deck)));
     }
 }

@@ -21,8 +21,14 @@ public class DriveService {
 
     private static final Logger log = Logger.getLogger(DriveService.class.getName());
 
+    TxcPortingUtility txcPortingUtility;
+
+    public DriveService(TxcPortingUtility txcPortingUtility) {
+        this.txcPortingUtility = txcPortingUtility;
+    }
+
     public CSVParser fetchParsableCsv(Drive drive, String documentId) {
-        String spreadsheetFileId = TxcPortingUtility.getSpreadsheetId(documentId);
+        String spreadsheetFileId = txcPortingUtility.getSpreadsheetId(documentId);
         CSVParser parser = null;
         try {
             Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);

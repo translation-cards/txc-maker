@@ -60,12 +60,14 @@ public class TxcBuilderTaskHandler extends HttpServlet {
   private byte[] buffer = new byte[BUFFER_SIZE];
   private GcsService gcsService = GcsServiceFactory.createGcsService();
 
-  AuthUtils authUtils;
+  private AuthUtils authUtils;
+  private TxcPortingUtility txcPortingUtility;
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     authUtils = (AuthUtils)config.getServletContext().getAttribute("authUtils");
+    txcPortingUtility = (TxcPortingUtility) config.getServletContext().getAttribute("txcPortingUtility");
   }
 
   @Override
@@ -93,10 +95,10 @@ public class TxcBuilderTaskHandler extends HttpServlet {
 
   private String assembleTxc(HttpServletRequest req, Drive drive, OutputStream gcsOutput) throws IOException {
     Deck exportSpec = createExportSpec(req);
-    String audioDirId = TxcPortingUtility.parseAudioDirId(req.getParameter("audioDirId"));
+    String audioDirId = txcPortingUtility.parseAudioDirId(req.getParameter("audioDirId"));
     ChildList audioList = drive.children().list(audioDirId).execute();
     Map<String, String> audioFileIds = readAudioFileIdsFromCsv(drive, audioList);
-    String spreadsheetFileId = TxcPortingUtility.getSpreadsheetId(req.getParameter("docId"));
+    String spreadsheetFileId = txcPortingUtility.getSpreadsheetId(req.getParameter("docId"));
     Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
     Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
     CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
@@ -117,7 +119,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
         zipOutput.closeEntry();
       }
       zipOutput.putNextEntry(new ZipEntry("card_deck.json"));
-      zipOutput.write(TxcPortingUtility.buildTxcJson(exportSpec).getBytes());
+      zipOutput.write(txcPortingUtility.buildTxcJson(exportSpec).getBytes());
       zipOutput.closeEntry();
     } finally {
       parser.close();

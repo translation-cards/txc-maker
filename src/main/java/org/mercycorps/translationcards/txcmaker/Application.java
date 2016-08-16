@@ -4,8 +4,10 @@ import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.gson.Gson;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.service.*;
+import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -20,20 +22,15 @@ public class Application implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         AuthUtils authUtils = new AuthUtils();
-        FileVerifier fileVerifier = new FileVerifier();
         ChannelService channelService = ChannelServiceFactory.getChannelService();
         Queue taskQueue = QueueFactory.getQueue(TASK_QUEUE_NAME);
         DeckService deckService = new DeckService(channelService, taskQueue);
-        DriveService driveService = new DriveService();
         ServletContext servletContext = servletContextEvent.getServletContext();
-        InputStream inputStream = servletContext.getResourceAsStream("/language_codes.json");
-        LanguagesImportUtility languagesImportUtility = new LanguagesImportUtility(inputStream);
-        try {
-            inputStream.close();
-        } catch(IOException e) {
-            //do something
-        }
-        LanguageService languageService = new LanguageService(languagesImportUtility);
+        LanguageService languageService = getLanguageService(servletContext);
+        Gson gson = new Gson();
+        TxcPortingUtility txcPortingUtility = new TxcPortingUtility(languageService, gson);
+        DriveService driveService = new DriveService(txcPortingUtility);
+        FileVerifier fileVerifier = new FileVerifier(txcPortingUtility);
 
         servletContext.setAttribute("authUtils", authUtils);
         servletContext.setAttribute("fileVerifier", fileVerifier);
@@ -42,6 +39,18 @@ public class Application implements ServletContextListener {
         servletContext.setAttribute("deckService", deckService);
         servletContext.setAttribute("driveService", driveService);
         servletContext.setAttribute("languageService", languageService);
+        servletContext.setAttribute("txcPortingUtility", txcPortingUtility);
+    }
+
+    private LanguageService getLanguageService(ServletContext servletContext) {
+        InputStream inputStream = servletContext.getResourceAsStream("/language_codes.json");
+        LanguagesImportUtility languagesImportUtility = new LanguagesImportUtility(inputStream);
+        try {
+            inputStream.close();
+        } catch(IOException e) {
+            //do something
+        }
+        return new LanguageService(languagesImportUtility);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class Deck {
@@ -68,6 +69,17 @@ public class Deck {
     }
     languageLookup.get(iso_code).addCard(card);
     return this;
+  }
+
+  public static Deck initializeDeckWithFormData(HttpServletRequest req) {
+    return new Deck()
+            .setDeckLabel(req.getParameter("deckName"))
+            .setPublisher(req.getParameter("publisher"))
+            .setDeckId(req.getParameter("deckId"))
+            .setTimestamp(System.currentTimeMillis())
+            .setLicenseUrl(req.getParameter("licenseUrl"))
+            .setLanguage("en")
+            .setLanguageLabel("English");
   }
 
   public static final Deck STUBBED_DECK = stub();
