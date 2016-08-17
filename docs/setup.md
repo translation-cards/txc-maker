@@ -23,22 +23,12 @@ You should install the following dependencies on your machine. Alternatively, fo
 
 The webapp is built and deployed with Maven, NPM, and Google AppEngine.
 
-1. from `src/UI`, run `npm install`
- * This sets up the angular code
-2. from the project root, run `mvn appengine:devserver`
+1. from the project root, run `mvn appengine:devserver`
   * This runs the server at http://localhost:8080/get-txc
+2. from `src/UI`, run `npm run test`
+  * This runs the JS tests. It will watch for changes to the JS files and automatically rerun the tests.
 
-In order for your changes to the Angular app to show up while you're running the server, you will have to copy the contents of `src/UI/app` into `target/txcmaker-1.0-SNAPSHOT`. Otherwise, you will have to restart the server to see the changes.
-
-## 4. Develop on the frontend
-
-From the `src/UI` directory:
-
-* `npm install` : install dependencies
- * `npm install --unsafe-perm` : use this if using docker
-* `npm run test` : Run the Jasmine tests through Karma.   
- * Connect to http://localhost:9876 to debug with your browser.
-* `npm run start` : Start a simple server which serves the files. This won't connect to the backend, it's just for quick feedback
+In order for your changes to the Angular app to show up while you're running the server, you will have to copy the contents of `src/UI/app/` into `target/txcmaker-1.0-SNAPSHOT/`. Otherwise, you will have to restart the server to see the changes.
 
 ## Debug configuration (optional)
 
@@ -54,16 +44,19 @@ Depending on your system, you will have to install a different version of Docker
 
 1. [Install Docker](https://docs.docker.com/engine/installation/).
 
-1. Using the terminal, go into the base project directory and run the following command:
+1. Using the terminal, go into the base project directory and run the following commands:
 
-   `docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txcmaker bash`
+  ```bash
+  $ docker-compose build
+  $ docker-compose run --service-ports --name txcmaker-develop txcmaker
+  ```
 
-   Be sure to replace `[absolute path]` with the absolute path to your project directory. Find the explanation for this command below.
-
-2. You should now have a command prompt open inside the development container. Move into the project directory: `cd /app` and continue with the instructions to run the app.
+2. You should now have a command prompt open inside the development container. Continue with the instructions to run the app above.
   * If you exit the container by typing `exit`, you can enter it again by running
 
-   `docker start -i txcmaker-develop`
+    `docker start -i txcmaker-develop`
+
+  * If you run into problems (especially with npm/phantomjs), your best bet is to exit and restart the container.
 
 ### Docker on Windows
 
@@ -78,22 +71,3 @@ You will have to modify your hosts file for the application to work. In the Dock
   `[ip address] translation-cards-docker.com`
 
 Where [ip address] is the ip address you recorded from the docker-machine command above. Now, after following the instructions in section 3, the application should be accessible at http://translation-cards-docker.com. In the above steps, you will have to use this URL (or the IP of your docker machine) instead of localhost.
-
-### Docker Command
-
-The command to run the development environment's container is a mouthful. Here is a basic explanation of its parts:
-
-`docker run -ti --name txcmaker-develop -p 8080:8080 -p 8000:8000 -p 8554:8554 -p 9876:9876 -v [absolute path]:/app atamrat/txcmaker bash`
-
-* This command runs a container in interactive mode (`run -ti`)
-* It gives a name to the container (`--name txcmaker-develop`)
-* It publishes/forwards various ports:
- * `-p 8080:8080` : web port for the Java server
- * `-p 8000:8000` : debug port for the Java server
- * `-p 8554:8554` : web port for the Nodejs server
- * `-p 9876:9876` : debug port for Karma test runner
-* It mounts the project directory (`-v [absolute path]:/app`)
-* It uses an image for the container `atamrat/txcmaker`
-* It opens up a shell on the newly running container (`bash`)
-
-See the [Docker run reference](https://docs.docker.com/engine/reference/run/) for additional details.
