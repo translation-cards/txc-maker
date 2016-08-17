@@ -44,8 +44,11 @@ public class VerifyDeckTask {
 
     @RequestMapping(method = RequestMethod.POST)
     public void verifyDeck(HttpServletRequest request) throws ServletException, IOException {
-        final String deckJson = assembleDeckJson(request);
         final String sessionId = request.getParameter("sessionId");
+        final String documentId = request.getParameter("docId");
+        final Deck deck = Deck.initializeDeckWithFormData(request);
+        final Drive drive = getDrive(sessionId);
+        final String deckJson = assembleDeckJson(deck, drive, documentId);
         sendDeckToClient(deckJson, sessionId);
         writeDeckToStorage(deckJson, sessionId);
     }
@@ -56,15 +59,9 @@ public class VerifyDeckTask {
         gcsOutput.close();
     }
 
-    private String assembleDeckJson(HttpServletRequest request) {
-        Deck deck = Deck.initializeDeckWithFormData(request);
-        String sessionId = request.getParameter("sessionId");
-        Drive drive = getDrive(sessionId);
-
-        CSVParser parser = driveService.fetchParsableCsv(drive, request.getParameter("docId"));
-
+    private String assembleDeckJson(Deck deck, Drive drive, String docId) {
+        CSVParser parser = driveService.fetchParsableCsv(drive, docId);
         txcPortingUtility.parseCsvIntoDeck(deck, parser);
-
         return txcPortingUtility.buildTxcJson(deck);
     }
 
