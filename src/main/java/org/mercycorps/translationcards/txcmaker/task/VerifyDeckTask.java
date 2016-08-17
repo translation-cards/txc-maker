@@ -8,6 +8,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
+import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,26 +30,30 @@ public class VerifyDeckTask {
     private AuthUtils authUtils;
     private DriveService driveService;
     private ChannelService channelService;
-    private TxcPortingUtility txcPortingUtility;
+    private CsvParsingUtility csvParsingUtility;
     private GcsStreamFactory gcsStreamFactory;
+    private GsonWrapper gsonWrapper;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, TxcPortingUtility txcPortingUtility, GcsStreamFactory gcsStreamFactory) {
+    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, CsvParsingUtility csvParsingUtility, GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
         this.channelService = channelService;
-        this.txcPortingUtility = txcPortingUtility;
+        this.csvParsingUtility = csvParsingUtility;
         this.gcsStreamFactory = gcsStreamFactory;
+        this.gsonWrapper = gsonWrapper;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public void verifyDeck(HttpServletRequest request) throws ServletException, IOException {
         final String sessionId = request.getParameter("sessionId");
         final String documentId = request.getParameter("docId");
+
         final Deck deck = Deck.initializeDeckWithFormData(request);
         final Drive drive = getDrive(sessionId);
         final String deckJson = assembleDeckJson(deck, drive, documentId);
+
         sendDeckToClient(deckJson, sessionId);
         writeDeckToStorage(deckJson, sessionId);
     }
@@ -61,8 +66,8 @@ public class VerifyDeckTask {
 
     private String assembleDeckJson(Deck deck, Drive drive, String docId) {
         CSVParser parser = driveService.fetchParsableCsv(drive, docId);
-        txcPortingUtility.parseCsvIntoDeck(deck, parser);
-        return txcPortingUtility.buildTxcJson(deck);
+        csvParsingUtility.parseCsvIntoDeck(deck, parser);
+        return gsonWrapper.toJson(deck);
     }
 
     private Drive getDrive(String sessionId) {

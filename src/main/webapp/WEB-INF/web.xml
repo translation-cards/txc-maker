@@ -34,12 +34,4 @@
     <url-pattern>/oauth2callback</url-pattern>
   </servlet-mapping>
 
-  <servlet>
-      <servlet-name>builder-task-handler</servlet-name>
-      <servlet-class>org.mercycorps.translationcards.txcmaker.task.TxcBuilderTaskHandler</servlet-class>
-  </servlet>
-  <servlet-mapping>
-      <servlet-name>builder-task-handler</servlet-name>
-      <url-pattern>/tasks/txc-build</url-pattern>
-  </servlet-mapping>
 </web-app>

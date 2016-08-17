@@ -6,7 +6,7 @@ import com.google.api.services.drive.model.ChildReference;
 import com.google.api.services.drive.model.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
+import org.mercycorps.translationcards.txcmaker.task.CsvParsingUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +24,15 @@ public class DriveService {
 
     private static final Logger log = Logger.getLogger(DriveService.class.getName());
 
-    TxcPortingUtility txcPortingUtility;
+    CsvParsingUtility csvParsingUtility;
 
     @Autowired
-    public DriveService(TxcPortingUtility txcPortingUtility) {
-        this.txcPortingUtility = txcPortingUtility;
+    public DriveService(CsvParsingUtility csvParsingUtility) {
+        this.csvParsingUtility = csvParsingUtility;
     }
 
     public CSVParser fetchParsableCsv(Drive drive, String documentId) {
-        String spreadsheetFileId = txcPortingUtility.parseDocId(documentId);
+        String spreadsheetFileId = csvParsingUtility.parseDocId(documentId);
         CSVParser parser = null;
         try {
             Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);

@@ -10,8 +10,10 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
+import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
@@ -48,7 +50,7 @@ public class VerifyDeckTaskTest {
     @Mock
     private ChannelService channelService;
     @Mock
-    private TxcPortingUtility txcPortingUtility;
+    private CsvParsingUtility csvParsingUtility;
     @Mock
     private GcsStreamFactory gcsStreamFactory;
     @Mock
@@ -57,6 +59,8 @@ public class VerifyDeckTaskTest {
     private Drive drive;
     @Mock
     private OutputStream outputStream;
+    @Mock
+    private GsonWrapper gsonWrapper;
 
     private VerifyDeckTask verifyDeckTask;
 
@@ -69,18 +73,18 @@ public class VerifyDeckTaskTest {
         when(request.getParameter("audioDirId")).thenReturn(AUDIO_DIR_URL);
         when(request.getParameter("docId")).thenReturn(DOC_ID);
 
-        when(txcPortingUtility.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
+        when(csvParsingUtility.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
 
         CSVParser parser = new CSVParser(new StringReader("Sure wish I could mock this"), CSVFormat.DEFAULT);
         when(driveService.fetchParsableCsv(drive, DOC_ID)).thenReturn(parser);
 
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID)).thenReturn(drive);
 
-        when(txcPortingUtility.buildTxcJson(any(Deck.class))).thenReturn(DECK_AS_JSON);
+        when(gsonWrapper.toJson(any(Deck.class))).thenReturn(DECK_AS_JSON);
 
         when(gcsStreamFactory.getOutputStream(SESSION_ID)).thenReturn(outputStream);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcPortingUtility, gcsStreamFactory);
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, csvParsingUtility, gcsStreamFactory, gsonWrapper);
     }
 
     @Test
@@ -101,7 +105,7 @@ public class VerifyDeckTaskTest {
     public void shouldParseTheCsvDataIntoTheDeck() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(txcPortingUtility).parseCsvIntoDeck(any(Deck.class), any(CSVParser.class));
+        verify(csvParsingUtility).parseCsvIntoDeck(any(Deck.class), any(CSVParser.class));
     }
 
     @Test

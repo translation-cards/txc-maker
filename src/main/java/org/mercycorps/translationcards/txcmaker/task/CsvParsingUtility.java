@@ -1,6 +1,5 @@
 package org.mercycorps.translationcards.txcmaker.task;
 
-import com.google.gson.Gson;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.model.Card;
@@ -13,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class TxcPortingUtility {
+public class CsvParsingUtility {
 
   private static final Pattern FILE_URL_MATCHER = Pattern.compile(
       "https?://docs.google.com/spreadsheets/d/(.*?)(/.*)?$");
@@ -26,16 +25,10 @@ public class TxcPortingUtility {
   private static final String SRC_HEADER_FILENAME = "Filename";
 
   private LanguageService languageService;
-  private Gson gson;
 
   @Autowired
-  public TxcPortingUtility(LanguageService languageService, Gson gson) {
+  public CsvParsingUtility(LanguageService languageService) {
     this.languageService = languageService;
-    this.gson = gson;
-  }
-
-  public String buildTxcJson(Deck exportSpec) {
-    return gson.toJson(exportSpec);
   }
 
   public String parseDocId(String spreadsheetFileString) {

@@ -34,11 +34,6 @@ public class Application extends SpringBootServletInitializer {
     }
 
     @Bean
-    public Gson gson() {
-        return new Gson();
-    }
-
-    @Bean
     public LanguagesImportUtility languagesImportUtility(ServletContext servletContext) {
         InputStream inputStream = servletContext.getResourceAsStream("/language_codes.json");
         LanguagesImportUtility languagesImportUtility = new LanguagesImportUtility(inputStream);

@@ -1,7 +1,5 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
-import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
-
 /**
  * Created by agarrard on 7/27/16.
  */
