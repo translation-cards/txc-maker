@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.service;
+package org.mercycorps.translationcards.txcmaker.language;
 
 /**
  * Exception for when there is an error importing a .txc file.

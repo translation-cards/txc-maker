@@ -5,42 +5,39 @@ import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.gson.Gson;
-import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.service.*;
-import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
+import org.mercycorps.translationcards.txcmaker.language.LanguagesImportUtility;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Application implements ServletContextListener {
+@SpringBootApplication
+public class Application extends SpringBootServletInitializer {
 
     public static final String TASK_QUEUE_NAME = "queue-txc-building";
 
-    @Override
-    public void contextInitialized(ServletContextEvent servletContextEvent) {
-        AuthUtils authUtils = new AuthUtils();
-        ChannelService channelService = ChannelServiceFactory.getChannelService();
-        Queue taskQueue = QueueFactory.getQueue(TASK_QUEUE_NAME);
-        ServletContext servletContext = servletContextEvent.getServletContext();
-        LanguageService languageService = getLanguageService(servletContext);
-        Gson gson = new Gson();
-        TxcPortingUtility txcPortingUtility = new TxcPortingUtility(languageService, gson);
-        DriveService driveService = new DriveService(txcPortingUtility);
-        FileVerifier fileVerifier = new FileVerifier(txcPortingUtility);
-
-        servletContext.setAttribute("authUtils", authUtils);
-        servletContext.setAttribute("fileVerifier", fileVerifier);
-        servletContext.setAttribute("channelService", channelService);
-        servletContext.setAttribute("taskQueue", taskQueue);
-        servletContext.setAttribute("driveService", driveService);
-        servletContext.setAttribute("languageService", languageService);
-        servletContext.setAttribute("txcPortingUtility", txcPortingUtility);
+    @Bean
+    public ChannelService channelService() {
+        return ChannelServiceFactory.getChannelService();
     }
 
-    private LanguageService getLanguageService(ServletContext servletContext) {
+    @Bean
+    public Queue queue() {
+        return QueueFactory.getQueue(TASK_QUEUE_NAME);
+    }
+
+    @Bean
+    public Gson gson() {
+        return new Gson();
+    }
+
+    @Bean
+    public LanguagesImportUtility languagesImportUtility(ServletContext servletContext) {
         InputStream inputStream = servletContext.getResourceAsStream("/language_codes.json");
         LanguagesImportUtility languagesImportUtility = new LanguagesImportUtility(inputStream);
         try {
@@ -48,11 +45,15 @@ public class Application implements ServletContextListener {
         } catch(IOException e) {
             //do something
         }
-        return new LanguageService(languagesImportUtility);
+        return languagesImportUtility;
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(Application.class);
+    }
 
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
 }

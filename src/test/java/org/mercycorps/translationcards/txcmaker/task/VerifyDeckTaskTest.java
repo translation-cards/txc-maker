@@ -10,17 +10,15 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
-import org.mercycorps.translationcards.txcmaker.service.LanguageService;
+import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 

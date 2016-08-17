@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.service;
+package org.mercycorps.translationcards.txcmaker.language;
 
 public final class JsonKeys {
     public static final String DECK_LABEL = "deck_label";

@@ -1,7 +1,6 @@
-package org.mercycorps.translationcards.txcmaker.api.resource;
+package org.mercycorps.translationcards.txcmaker.resource;
 
 import com.google.api.services.drive.Drive;
-import org.mercycorps.translationcards.txcmaker.api.response.CreateDeckResponse;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;

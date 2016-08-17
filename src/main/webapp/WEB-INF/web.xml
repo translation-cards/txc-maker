@@ -3,7 +3,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>org.mercycorps.translationcards.txcmaker.MySpringApplication</param-value>
+        <param-value>org.mercycorps.translationcards.txcmaker.Application</param-value>
     </context-param>
 
     <listener>

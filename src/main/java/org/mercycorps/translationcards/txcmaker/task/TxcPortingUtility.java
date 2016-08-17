@@ -5,14 +5,12 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
-import org.mercycorps.translationcards.txcmaker.service.LanguageService;
+import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class TxcPortingUtility {

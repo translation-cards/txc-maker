@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.service;
+package org.mercycorps.translationcards.txcmaker.language;
 
 import org.mercycorps.translationcards.txcmaker.model.Language;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.api.response;
+package org.mercycorps.translationcards.txcmaker.resource;
 
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.springframework.http.ResponseEntity;
