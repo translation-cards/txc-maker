@@ -1,10 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.ChildList;
-import com.google.api.services.drive.model.ChildReference;
-import com.google.api.services.drive.model.File;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.task.TxcPortingUtility;
@@ -12,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 
 @Component
@@ -29,10 +23,12 @@ public class FileVerifier {
     private List<String> warnings;
     private Map<String, String> audioFileIds;
     private TxcPortingUtility txcPortingUtility;
+    private DriveService driveService;
 
     @Autowired
-    public FileVerifier(TxcPortingUtility txcPortingUtility) {
+    public FileVerifier(TxcPortingUtility txcPortingUtility, DriveService driveService) {
         this.txcPortingUtility = txcPortingUtility;
+        this.driveService = driveService;
     }
 
     public void verify(String audioDirString, String spreadsheetFileString, Drive drive) throws IOException {
@@ -41,41 +37,26 @@ public class FileVerifier {
         audioFileIds  = new HashMap<>();
 
         String audioDirId = txcPortingUtility.parseAudioDirId(audioDirString);
-        fetchAudioFileIds(drive, audioDirId);
+        audioFileIds = driveService.fetchAudioFilesInDriveDirectory(drive, audioDirId);
 
-        String spreadsheetFileId = txcPortingUtility.getSpreadsheetId(spreadsheetFileString);
-        checkForErrors(drive, spreadsheetFileId);
+        String spreadsheetFileId = txcPortingUtility.parseDocId(spreadsheetFileString);
+        CSVParser parser = driveService.fetchParsableCsv(drive, spreadsheetFileId);
+        checkForErrors(parser);
     }
 
-    private void checkForErrors(Drive drive, String spreadsheetFileId) throws IOException {
-        Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
-        Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
-        CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
+    private void checkForErrors(CSVParser parser) throws IOException {
         Set<String> includedAudioFiles = new HashSet<>();
 
-        try {
-            for (CSVRecord row : parser) {
-                String filename = row.get(SRC_HEADER_FILENAME);
-                if (includedAudioFiles.contains(filename)) {
-                    warnings.add(String.format("Used %s multiple times.", filename));
-                    continue;
-                }
-                includedAudioFiles.add(filename);
-                if (!audioFileIds.containsKey(filename)) {
-                    errors.add(String.format("Unknown file %s.", filename));
-                }
+        for (CSVRecord row : parser) {
+            String filename = row.get(SRC_HEADER_FILENAME);
+            if (includedAudioFiles.contains(filename)) {
+                warnings.add(String.format("Used %s multiple times.", filename));
+                continue;
             }
-        } finally {
-            parser.close();
-            reader.close();
-        }
-    }
-
-    private void fetchAudioFileIds(Drive drive, String audioDirId) throws IOException {
-        ChildList audioList = drive.children().list(audioDirId).execute();
-        for (ChildReference audioRef : audioList.getItems()) {
-            File audioFile = drive.files().get(audioRef.getId()).execute();
-            audioFileIds.put(audioFile.getOriginalFilename(), audioRef.getId());
+            includedAudioFiles.add(filename);
+            if (!audioFileIds.containsKey(filename)) {
+                errors.add(String.format("Unknown file %s.", filename));
+            }
         }
     }
 

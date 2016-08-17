@@ -67,10 +67,6 @@ public class VerifyDeckTaskTest {
 
         when(txcPortingUtility.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
 
-        Map<String, String> audioFileIds = new HashMap<>();
-        audioFileIds.put("stub", "value");
-        when(driveService.fetchAudioFilesInDriveDirectory(drive, AUDIO_DIR_ID)).thenReturn(audioFileIds);
-
         CSVParser parser = new CSVParser(new StringReader("Sure wish I could mock this"), CSVFormat.DEFAULT);
         when(driveService.fetchParsableCsv(drive, DOC_ID)).thenReturn(parser);
 
@@ -86,20 +82,6 @@ public class VerifyDeckTaskTest {
         verifyDeckTask.verifyDeck(request);
 
         verify(authUtils).getDriveOrOAuth(servletContext, null, null, false, SESSION_ID);
-    }
-
-    @Test
-    public void shouldParseTheAudioDirectoryIdFromTheURL() throws Exception {
-        verifyDeckTask.verifyDeck(request);
-
-        verify(txcPortingUtility).parseAudioDirId(AUDIO_DIR_URL);
-    }
-
-    @Test
-    public void shouldFetchAudioFiles() throws Exception {
-        verifyDeckTask.verifyDeck(request);
-
-        verify(driveService).fetchAudioFilesInDriveDirectory(drive, AUDIO_DIR_ID);
     }
 
     @Test

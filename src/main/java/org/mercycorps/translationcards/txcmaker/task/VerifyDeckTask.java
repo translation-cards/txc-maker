@@ -49,13 +49,7 @@ public class VerifyDeckTask {
         String sessionId = request.getParameter("sessionId");
         Drive drive = getDrive(sessionId);
 
-        String audioDirId = txcPortingUtility.parseAudioDirId(request.getParameter("audioDirId"));
-        Map<String, String> audioFileIds = driveService.fetchAudioFilesInDriveDirectory(drive, audioDirId);
         CSVParser parser = driveService.fetchParsableCsv(drive, request.getParameter("docId"));
-
-        if(audioFileIds.isEmpty() || parser == null) {
-            return null;
-        }
 
         txcPortingUtility.parseCsvIntoDeck(deck, parser);
 

@@ -32,7 +32,7 @@ public class DriveService {
     }
 
     public CSVParser fetchParsableCsv(Drive drive, String documentId) {
-        String spreadsheetFileId = txcPortingUtility.getSpreadsheetId(documentId);
+        String spreadsheetFileId = txcPortingUtility.parseDocId(documentId);
         CSVParser parser = null;
         try {
             Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);

@@ -38,7 +38,7 @@ public class TxcPortingUtility {
     return gson.toJson(exportSpec);
   }
 
-  public String getSpreadsheetId(String spreadsheetFileString) {
+  public String parseDocId(String spreadsheetFileString) {
     Matcher spreadsheetFileIdMatcher = FILE_URL_MATCHER.matcher(spreadsheetFileString);
     if (spreadsheetFileIdMatcher.matches()) {
       spreadsheetFileString = spreadsheetFileIdMatcher.group(1);

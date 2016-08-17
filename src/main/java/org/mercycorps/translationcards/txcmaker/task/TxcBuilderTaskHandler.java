@@ -98,7 +98,7 @@ public class TxcBuilderTaskHandler extends HttpServlet {
     String audioDirId = txcPortingUtility.parseAudioDirId(req.getParameter("audioDirId"));
     ChildList audioList = drive.children().list(audioDirId).execute();
     Map<String, String> audioFileIds = readAudioFileIdsFromCsv(drive, audioList);
-    String spreadsheetFileId = txcPortingUtility.getSpreadsheetId(req.getParameter("docId"));
+    String spreadsheetFileId = txcPortingUtility.parseDocId(req.getParameter("docId"));
     Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
     Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
     CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
