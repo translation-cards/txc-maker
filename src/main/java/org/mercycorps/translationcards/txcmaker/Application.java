@@ -4,6 +4,8 @@ import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.gson.Gson;
 import org.mercycorps.translationcards.txcmaker.language.LanguagesImportUtility;
 import org.springframework.boot.SpringApplication;
@@ -46,6 +48,11 @@ public class Application extends SpringBootServletInitializer {
             //do something
         }
         return languagesImportUtility;
+    }
+
+    @Bean
+    public GcsService gcsService() {
+        return GcsServiceFactory.createGcsService();
     }
 
     @Override

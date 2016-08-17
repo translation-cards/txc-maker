@@ -8,9 +8,10 @@ import org.apache.commons.csv.CSVParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
-import org.mercycorps.translationcards.txcmaker.language.LanguageService;
+import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
@@ -18,9 +19,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -50,9 +50,13 @@ public class VerifyDeckTaskTest {
     @Mock
     private TxcPortingUtility txcPortingUtility;
     @Mock
+    private GcsStreamFactory gcsStreamFactory;
+    @Mock
     private HttpServletRequest request;
     @Mock
     private Drive drive;
+    @Mock
+    private OutputStream outputStream;
 
     private VerifyDeckTask verifyDeckTask;
 
@@ -74,7 +78,9 @@ public class VerifyDeckTaskTest {
 
         when(txcPortingUtility.buildTxcJson(any(Deck.class))).thenReturn(DECK_AS_JSON);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcPortingUtility);
+        when(gcsStreamFactory.getOutputStream(SESSION_ID)).thenReturn(outputStream);
+
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcPortingUtility, gcsStreamFactory);
     }
 
     @Test
@@ -118,5 +124,14 @@ public class VerifyDeckTaskTest {
 
         ChannelMessage channelMessage = channelMessageArgumentCaptor.getValue();
         assertThat(channelMessage.getMessage(), is(DECK_AS_JSON));
+    }
+
+    @Test
+    public void shouldWriteDeckToStorage() throws Exception {
+        verifyDeckTask.verifyDeck(request);
+
+        verify(outputStream).write(DECK_AS_JSON.getBytes());
+        verify(outputStream).close();
+
     }
 }
