@@ -17,7 +17,7 @@ public class TxcMakerParser {
     private static final Pattern FILE_URL_MATCHER = Pattern.compile(
             "https?://docs.google.com/spreadsheets/d/(.*?)(/.*)?$");
     private static final Pattern DIR_URL_MATCHER = Pattern.compile(
-            "https?://drive.google.com/corp/drive/folders/(.*)$");
+            "https?://drive.google.com/drive/(.*)folders/(.*)$");
 
     private static final String SRC_HEADER_LANGUAGE = "Language";
     private static final String SRC_HEADER_LABEL = "Label";
@@ -31,20 +31,22 @@ public class TxcMakerParser {
         this.languageService = languageService;
     }
 
-    public String parseDocId(String spreadsheetFileString) {
-        Matcher spreadsheetFileIdMatcher = FILE_URL_MATCHER.matcher(spreadsheetFileString);
-        if (spreadsheetFileIdMatcher.matches()) {
-            spreadsheetFileString = spreadsheetFileIdMatcher.group(1);
+    public String parseDocId(String spreadsheetUrl) {
+        Matcher spreadsheetIdMatcher = FILE_URL_MATCHER.matcher(spreadsheetUrl);
+        String spreadsheetId = "";
+        if (spreadsheetIdMatcher.matches()) {
+            spreadsheetId = spreadsheetIdMatcher.group(1);
         }
-        return spreadsheetFileString;
+        return spreadsheetId;
     }
 
-    public String parseAudioDirId(String audioDirString) {
-        Matcher audioDirIdMatcher = DIR_URL_MATCHER.matcher(audioDirString);
-        if (audioDirIdMatcher.matches()) {
-            audioDirString = audioDirIdMatcher.group(1);
+    public String parseAudioDirId(String audioDirectoryUrl) {
+        Matcher audioDirectoryIdMatcher = DIR_URL_MATCHER.matcher(audioDirectoryUrl);
+        String audioDirectoryId = "";
+        if (audioDirectoryIdMatcher.matches()) {
+            audioDirectoryId = audioDirectoryIdMatcher.group(2);
         }
-        return audioDirString;
+        return audioDirectoryId;
     }
 
     public void parseCsvIntoDeck(Deck deck, CSVParser parser) {
