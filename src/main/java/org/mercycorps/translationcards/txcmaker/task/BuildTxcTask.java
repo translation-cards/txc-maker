@@ -6,9 +6,11 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.model.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
+import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,27 +36,47 @@ public class BuildTxcTask {
     private DriveService driveService;
     private ChannelService channelService;
     private StorageService storageService;
+    private GsonWrapper gsonWrapper;
 
     @Autowired
-    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, GcsStreamFactory gcsStreamFactory, DriveService driveService, ChannelService channelService, StorageService storageService) {
+    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, GcsStreamFactory gcsStreamFactory, DriveService driveService, ChannelService channelService, StorageService storageService, GsonWrapper gsonWrapper) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.gcsStreamFactory = gcsStreamFactory;
         this.driveService = driveService;
         this.channelService = channelService;
         this.storageService = storageService;
+        this.gsonWrapper = gsonWrapper;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(HttpServletRequest request) {
         final String sessionId = request.getParameter("sessionId");
-        final String directoryId = request.getParameter("audioDirId");
+        final DeckMetadata deckMetadata = readDeckMetaData(sessionId + "-metadata.json");
+        final String directoryId = deckMetadata.directoryId;
         final Drive drive = getDrive(sessionId);
         final String deckJson = storageService.readJson(drive, sessionId);
         Map<String, String> audioFiles = driveService.fetchAudioFilesInDriveDirectory(drive, directoryId);
 
         zipTxc(sessionId, drive, deckJson, audioFiles);
         pushTxcToDrive(drive, directoryId, "deck.txc");
+    }
+
+    private DeckMetadata readDeckMetaData(String fileName) {
+        InputStream inputStream = gcsStreamFactory.getInputStream(fileName);
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while(((line = bufferedReader.readLine())) != null) {
+                stringBuilder.append(line);
+            }
+        } catch(IOException e) {
+            //do something
+        }
+
+        return gsonWrapper.fromJson(stringBuilder.toString(), DeckMetadata.class);
     }
 
     private void pushTxcToDrive(Drive drive, String audioDirId, String targetFilename) {

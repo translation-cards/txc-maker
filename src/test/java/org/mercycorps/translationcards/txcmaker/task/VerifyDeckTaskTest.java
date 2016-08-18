@@ -38,6 +38,7 @@ public class VerifyDeckTaskTest {
     private static final String DOC_ID = "document id";
     public static final String DECK_AS_JSON = "deck as JSON";
     private static final String AUDIO_DIR_URL = "audio dir url";
+    public static final String DECK_METADATA_AS_JSON = "deck metadata as json";
     @Mock
     private AuthUtils authUtils;
     @Mock
@@ -79,9 +80,12 @@ public class VerifyDeckTaskTest {
 
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID)).thenReturn(drive);
 
-        when(gsonWrapper.toJson(any(Deck.class))).thenReturn(DECK_AS_JSON);
+        when(gsonWrapper.toJson(any(Deck.class)))
+                .thenReturn(DECK_AS_JSON)
+                .thenReturn(DECK_METADATA_AS_JSON);
 
-        when(gcsStreamFactory.getOutputStream(SESSION_ID)).thenReturn(outputStream);
+        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-deck.json")).thenReturn(outputStream);
+        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-metadata.json")).thenReturn(outputStream);
 
         verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcMakerParser, gcsStreamFactory, gsonWrapper);
     }
@@ -134,7 +138,12 @@ public class VerifyDeckTaskTest {
         verifyDeckTask.verifyDeck(request);
 
         verify(outputStream).write(DECK_AS_JSON.getBytes());
-        verify(outputStream).close();
+    }
 
+    @Test
+    public void shouldWriteDeckMetadataToStorage() throws Exception {
+        verifyDeckTask.verifyDeck(request);
+
+        verify(outputStream).write(DECK_METADATA_AS_JSON.getBytes());
     }
 }

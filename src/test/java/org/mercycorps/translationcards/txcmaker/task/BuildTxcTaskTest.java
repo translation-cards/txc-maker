@@ -8,6 +8,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
+import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mockito.Mock;
 
 import javax.servlet.ServletContext;
@@ -40,6 +41,8 @@ public class BuildTxcTaskTest {
     private HttpServletRequest request;
     @Mock
     private StorageService storageService;
+    @Mock
+    private GsonWrapper gsonWrapper;
     private BuildTxcTask buildTxcTask;
 
     @Before
@@ -55,7 +58,7 @@ public class BuildTxcTaskTest {
         when(storageService.readJson(drive, SESSION_ID))
                 .thenReturn(DECK_AS_JSON);
 
-        buildTxcTask = new BuildTxcTask(servletContext, authUtils, gcsStreamFactory, driveService, channelService, storageService);
+        buildTxcTask = new BuildTxcTask(servletContext, authUtils, gcsStreamFactory, driveService, channelService, storageService, gsonWrapper);
 
     }
 

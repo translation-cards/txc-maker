@@ -6,6 +6,7 @@ import com.google.appengine.api.channel.ChannelService;
 import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
@@ -49,18 +50,30 @@ public class VerifyDeckTask {
     public void verifyDeck(HttpServletRequest request) throws ServletException, IOException {
         final String sessionId = request.getParameter("sessionId");
         final String documentId = request.getParameter("docId");
+        final String directoryId = request.getParameter("audioDirId");
 
+        final String deckJson = writeDeckJsonToStorage(request, sessionId, documentId);
+        writeDeckMetadataToStorage(sessionId, documentId, directoryId);
+        sendDeckToClient(deckJson, sessionId);
+    }
+
+    private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {
+        final DeckMetadata deckMetadata = new DeckMetadata(documentId, directoryId);
+        final String deckMetadataJson = gsonWrapper.toJson(deckMetadata);
+        writeFileToStorage(deckMetadataJson, sessionId + "-metadata.json");
+    }
+
+    private String writeDeckJsonToStorage(HttpServletRequest request, String sessionId, String documentId) throws IOException {
         final Deck deck = Deck.initializeDeckWithFormData(request);
         final Drive drive = getDrive(sessionId);
         final String deckJson = assembleDeckJson(deck, drive, documentId);
-
-        sendDeckToClient(deckJson, sessionId);
-        writeDeckToStorage(deckJson, sessionId);
+        writeFileToStorage(deckJson, sessionId + "-deck.json");
+        return deckJson;
     }
 
-    private void writeDeckToStorage(String deckJson, String sessionId) throws IOException {
-        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId);
-        gcsOutput.write(deckJson.getBytes());
+    private void writeFileToStorage(String content, String fileName) throws IOException {
+        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(fileName);
+        gcsOutput.write(content.getBytes());
         gcsOutput.close();
     }
 

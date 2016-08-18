@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tasks/txc-build")
+@RequestMapping("/tasks/txc-build-old")
 public class TxcBuilderTaskHandler {
 
     private static final String CSV_EXPORT_TYPE = "text/csv";
