@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
-import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
@@ -50,7 +49,7 @@ public class VerifyDeckTaskTest {
     @Mock
     private ChannelService channelService;
     @Mock
-    private CsvParsingUtility csvParsingUtility;
+    private TxcMakerParser txcMakerParser;
     @Mock
     private GcsStreamFactory gcsStreamFactory;
     @Mock
@@ -73,7 +72,7 @@ public class VerifyDeckTaskTest {
         when(request.getParameter("audioDirId")).thenReturn(AUDIO_DIR_URL);
         when(request.getParameter("docId")).thenReturn(DOC_ID);
 
-        when(csvParsingUtility.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
+        when(txcMakerParser.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
 
         CSVParser parser = new CSVParser(new StringReader("Sure wish I could mock this"), CSVFormat.DEFAULT);
         when(driveService.fetchParsableCsv(drive, DOC_ID)).thenReturn(parser);
@@ -84,7 +83,7 @@ public class VerifyDeckTaskTest {
 
         when(gcsStreamFactory.getOutputStream(SESSION_ID)).thenReturn(outputStream);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, csvParsingUtility, gcsStreamFactory, gsonWrapper);
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcMakerParser, gcsStreamFactory, gsonWrapper);
     }
 
     @Test
@@ -105,7 +104,7 @@ public class VerifyDeckTaskTest {
     public void shouldParseTheCsvDataIntoTheDeck() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(csvParsingUtility).parseCsvIntoDeck(any(Deck.class), any(CSVParser.class));
+        verify(txcMakerParser).parseCsvIntoDeck(any(Deck.class), any(CSVParser.class));
     }
 
     @Test

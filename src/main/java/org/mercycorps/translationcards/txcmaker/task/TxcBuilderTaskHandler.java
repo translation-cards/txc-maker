@@ -30,7 +30,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -61,14 +60,14 @@ public class TxcBuilderTaskHandler {
 
     private final ServletContext servletContext;
     private AuthUtils authUtils;
-    private CsvParsingUtility csvParsingUtility;
+    private TxcMakerParser txcMakerParser;
     private final GsonWrapper gsonWrapper;
 
     @Autowired
-    public TxcBuilderTaskHandler(ServletContext servletContext, AuthUtils authUtils, CsvParsingUtility csvParsingUtility, GsonWrapper gsonWrapper) {
+    public TxcBuilderTaskHandler(ServletContext servletContext, AuthUtils authUtils, TxcMakerParser txcMakerParser, GsonWrapper gsonWrapper) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
-        this.csvParsingUtility = csvParsingUtility;
+        this.txcMakerParser = txcMakerParser;
         this.gsonWrapper = gsonWrapper;
     }
 
@@ -96,10 +95,10 @@ public class TxcBuilderTaskHandler {
 
     private String assembleTxc(HttpServletRequest req, Drive drive, OutputStream gcsOutput) throws IOException {
         Deck exportSpec = createExportSpec(req);
-        String audioDirId = csvParsingUtility.parseAudioDirId(req.getParameter("audioDirId"));
+        String audioDirId = txcMakerParser.parseAudioDirId(req.getParameter("audioDirId"));
         ChildList audioList = drive.children().list(audioDirId).execute();
         Map<String, String> audioFileIds = readAudioFileIdsFromCsv(drive, audioList);
-        String spreadsheetFileId = csvParsingUtility.parseDocId(req.getParameter("docId"));
+        String spreadsheetFileId = txcMakerParser.parseDocId(req.getParameter("docId"));
         Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
         Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
         CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());

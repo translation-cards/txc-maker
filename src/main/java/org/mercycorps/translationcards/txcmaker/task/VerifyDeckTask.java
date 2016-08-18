@@ -30,17 +30,17 @@ public class VerifyDeckTask {
     private AuthUtils authUtils;
     private DriveService driveService;
     private ChannelService channelService;
-    private CsvParsingUtility csvParsingUtility;
+    private TxcMakerParser txcMakerParser;
     private GcsStreamFactory gcsStreamFactory;
     private GsonWrapper gsonWrapper;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, CsvParsingUtility csvParsingUtility, GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper) {
+    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
         this.channelService = channelService;
-        this.csvParsingUtility = csvParsingUtility;
+        this.txcMakerParser = txcMakerParser;
         this.gcsStreamFactory = gcsStreamFactory;
         this.gsonWrapper = gsonWrapper;
     }
@@ -66,7 +66,7 @@ public class VerifyDeckTask {
 
     private String assembleDeckJson(Deck deck, Drive drive, String docId) {
         CSVParser parser = driveService.fetchParsableCsv(drive, docId);
-        csvParsingUtility.parseCsvIntoDeck(deck, parser);
+        txcMakerParser.parseCsvIntoDeck(deck, parser);
         return gsonWrapper.toJson(deck);
     }
 

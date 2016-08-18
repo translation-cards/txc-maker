@@ -3,7 +3,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 import com.google.api.services.drive.Drive;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.mercycorps.translationcards.txcmaker.task.CsvParsingUtility;
+import org.mercycorps.translationcards.txcmaker.task.TxcMakerParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +22,12 @@ public class FileVerifier {
     private List<String> errors;
     private List<String> warnings;
     private Map<String, String> audioFileIds;
-    private CsvParsingUtility csvParsingUtility;
+    private TxcMakerParser txcMakerParser;
     private DriveService driveService;
 
     @Autowired
-    public FileVerifier(CsvParsingUtility csvParsingUtility, DriveService driveService) {
-        this.csvParsingUtility = csvParsingUtility;
+    public FileVerifier(TxcMakerParser txcMakerParser, DriveService driveService) {
+        this.txcMakerParser = txcMakerParser;
         this.driveService = driveService;
     }
 
@@ -36,10 +36,10 @@ public class FileVerifier {
         warnings = new ArrayList<>();
         audioFileIds  = new HashMap<>();
 
-        String audioDirId = csvParsingUtility.parseAudioDirId(audioDirString);
+        String audioDirId = txcMakerParser.parseAudioDirId(audioDirString);
         audioFileIds = driveService.fetchAudioFilesInDriveDirectory(drive, audioDirId);
 
-        String spreadsheetFileId = csvParsingUtility.parseDocId(spreadsheetFileString);
+        String spreadsheetFileId = txcMakerParser.parseDocId(spreadsheetFileString);
         CSVParser parser = driveService.fetchParsableCsv(drive, spreadsheetFileId);
         checkForErrors(parser);
     }
