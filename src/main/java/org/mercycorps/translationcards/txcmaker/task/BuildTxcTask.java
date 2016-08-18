@@ -12,6 +12,7 @@ import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,33 +51,15 @@ public class BuildTxcTask {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public void buildTxc(HttpServletRequest request) {
-        final String sessionId = request.getParameter("sessionId");
-        final DeckMetadata deckMetadata = readDeckMetaData(sessionId + "-metadata.json");
+    public void buildTxc(@RequestBody String sessionId) {
+        final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "-metadata.json");
         final String directoryId = deckMetadata.directoryId;
         final Drive drive = getDrive(sessionId);
-        final String deckJson = storageService.readJson(drive, sessionId);
+        final String deckJson = storageService.readFile(sessionId + "-deck.json");
         Map<String, String> audioFiles = driveService.fetchAudioFilesInDriveDirectory(drive, directoryId);
 
         zipTxc(sessionId, drive, deckJson, audioFiles);
-        pushTxcToDrive(drive, directoryId, "deck.txc");
-    }
-
-    private DeckMetadata readDeckMetaData(String fileName) {
-        InputStream inputStream = gcsStreamFactory.getInputStream(fileName);
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while(((line = bufferedReader.readLine())) != null) {
-                stringBuilder.append(line);
-            }
-        } catch(IOException e) {
-            //do something
-        }
-
-        return gsonWrapper.fromJson(stringBuilder.toString(), DeckMetadata.class);
+        pushTxcToDrive(drive, directoryId, sessionId + ".txc");
     }
 
     private void pushTxcToDrive(Drive drive, String audioDirId, String targetFilename) {
@@ -94,7 +77,7 @@ public class BuildTxcTask {
     private void zipTxc(String sessionId, Drive drive, String deckJson, Map<String, String> audioFiles) {
         OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + ".txc");
         ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
-        Set<String> includedAudioFiles = new HashSet<String>();
+        Set<String> includedAudioFiles = new HashSet<>();
         try {
             zipOutputStream.putNextEntry(new ZipEntry("card_deck.json"));
             zipOutputStream.write(deckJson.getBytes());

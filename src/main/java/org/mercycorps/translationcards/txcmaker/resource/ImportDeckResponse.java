@@ -10,7 +10,7 @@ import java.util.List;
 public class ImportDeckResponse {
     private List<Error> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
-    private int id = -1;
+    private String id = "";
     private String channelToken;
 
     public ResponseEntity build() throws URISyntaxException {
@@ -44,7 +44,7 @@ public class ImportDeckResponse {
         warnings.add(warning);
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -56,7 +56,7 @@ public class ImportDeckResponse {
         return warnings;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

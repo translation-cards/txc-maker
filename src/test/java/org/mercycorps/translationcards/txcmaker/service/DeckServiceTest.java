@@ -58,24 +58,6 @@ public class DeckServiceTest {
         channelToken = "channel token";
     }
 
-
-    @Test
-    public void verifyFormData_shouldAssignAnIdToTheNewDeck() throws Exception {
-        deckService.verifyFormData(importDeckResponse, fields);
-
-        assertThat(importDeckResponse.getId(), is(10));
-    }
-
-    @Test
-    public void verifyFormData_shouldAssignAnInvalidIdWhenThereAreErrors() throws Exception {
-        Field failedField = mock(Field.class);
-        when(failedField.verify()).thenReturn(Collections.singletonList(error));
-        fields.add(failedField);
-        deckService.verifyFormData(importDeckResponse, fields);
-
-        assertThat(importDeckResponse.getId(), is(-1));
-    }
-
     @Test
     public void verifyFormData_shouldAddErrorsToTheResponseWhenThereAreErrors() throws Exception {
         Field failedField = mock(Field.class);
@@ -85,6 +67,22 @@ public class DeckServiceTest {
         deckService.verifyFormData(importDeckResponse, fields);
 
         assertThat(importDeckResponse.getErrors(), is(fieldErrors));
+    }
+
+    @Test
+    public void kickoffVerifyDeckTask_shouldAssignAnIdToTheNewDeck() throws Exception {
+        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+
+        assertThat(importDeckResponse.getId(), is(sessionId));
+    }
+
+    @Test
+    public void kickoffVerifyDeckTask_shouldAssignAnInvalidIdWhenThereAreErrors() throws Exception {
+        importDeckResponse.addError(error);
+
+        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+
+        assertThat(importDeckResponse.getId(), is(""));
     }
 
     @Test

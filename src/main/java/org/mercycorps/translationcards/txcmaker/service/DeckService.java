@@ -28,18 +28,14 @@ public class DeckService {
         for(Field field : fields) {
             importDeckResponse.addErrors(field.verify());
         }
-
-        if (importDeckResponse.hasErrors()) {
-            importDeckResponse.setId(-1);
-        } else {
-            importDeckResponse.setId(10);
-        }
     }
 
     public void kickoffVerifyDeckTask(ImportDeckResponse importDeckResponse, String sessionId, ImportDeckForm importDeckForm) {
         if(importDeckResponse.hasErrors()) {
+            importDeckResponse.setId("");
             return;
         }
+        importDeckResponse.setId(sessionId);
         String token = channelService.createChannel(sessionId);
         importDeckResponse.setChannelToken(token);
         TaskOptions taskOptions = buildTaskOptions(sessionId, importDeckForm);

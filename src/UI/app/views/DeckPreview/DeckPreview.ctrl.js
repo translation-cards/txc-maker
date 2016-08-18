@@ -1,5 +1,5 @@
 
-function DeckPreviewController($scope, $timeout, $routeParams, BackendService) {
+function DeckPreviewController($scope, $routeParams, BackendService) {
   $scope.deckId = $routeParams.id;
 
   var messageHandler = function(data) {
@@ -15,7 +15,4 @@ function DeckPreviewController($scope, $timeout, $routeParams, BackendService) {
 angular.module('txcmaker')
 
 .controller('DeckPreviewCtrl',
-  ['$scope', '$timeout', '$routeParams', 'BackendService', DeckPreviewController])
-
-.value('timeoutDuration', 1000)
-.value('maxFetches', 120);
+  ['$scope', '$routeParams', 'BackendService', DeckPreviewController]);

@@ -32,5 +32,16 @@ angular.module('txcmaker')
     socket.onmessage = messageHandler;
   };
 
+  service.buildDeck = function(deckId) {
+    return $http({
+      url: 'tasks/txc-build',
+      method: 'POST',
+      data: deckId,
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    });
+  }
+
   return service;
 });
