@@ -31,22 +31,20 @@ public class TxcMakerParser {
         this.languageService = languageService;
     }
 
-    public String parseDocId(String spreadsheetUrl) {
-        Matcher spreadsheetIdMatcher = FILE_URL_MATCHER.matcher(spreadsheetUrl);
-        String spreadsheetId = "";
+    public String parseDocId(String spreadsheetIdString) {
+        Matcher spreadsheetIdMatcher = FILE_URL_MATCHER.matcher(spreadsheetIdString);
         if (spreadsheetIdMatcher.matches()) {
-            spreadsheetId = spreadsheetIdMatcher.group(1);
+            spreadsheetIdString = spreadsheetIdMatcher.group(1);
         }
-        return spreadsheetId;
+        return spreadsheetIdString;
     }
 
-    public String parseAudioDirId(String audioDirectoryUrl) {
-        Matcher audioDirectoryIdMatcher = DIR_URL_MATCHER.matcher(audioDirectoryUrl);
-        String audioDirectoryId = "";
+    public String parseAudioDirId(String audioDirectoryString) {
+        Matcher audioDirectoryIdMatcher = DIR_URL_MATCHER.matcher(audioDirectoryString);
         if (audioDirectoryIdMatcher.matches()) {
-            audioDirectoryId = audioDirectoryIdMatcher.group(2);
+            audioDirectoryString = audioDirectoryIdMatcher.group(2);
         }
-        return audioDirectoryId;
+        return audioDirectoryString;
     }
 
     public void parseCsvIntoDeck(Deck deck, CSVParser parser) {

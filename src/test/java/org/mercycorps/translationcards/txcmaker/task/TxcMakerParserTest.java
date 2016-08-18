@@ -50,8 +50,26 @@ public class TxcMakerParserTest {
     }
 
     @Test
+    public void shouldParseAudioDirectoryIdFromId() throws Exception {
+        String audioDirectoryUrl = "0B0o--EJjbYvqbWRXRGgzeDZ1X0U";
+
+        String audioDirectoryId = txcMakerParser.parseAudioDirId(audioDirectoryUrl);
+
+        assertThat(audioDirectoryId, is("0B0o--EJjbYvqbWRXRGgzeDZ1X0U"));
+    }
+
+    @Test
     public void shouldParseSpreadsheetIdFromUrl() throws Exception {
         String spreadsheetUrl = "https://docs.google.com/spreadsheets/d/1GKHlnVLIc_GrBra5wCAk1BCxgXIAJZLAu7tcLCLPAAw/edit#gid=0";
+
+        String spreadsheetId = txcMakerParser.parseDocId(spreadsheetUrl);
+
+        assertThat(spreadsheetId, is("1GKHlnVLIc_GrBra5wCAk1BCxgXIAJZLAu7tcLCLPAAw"));
+    }
+
+    @Test
+    public void shouldParseSpreadsheetIdFromId() throws Exception {
+        String spreadsheetUrl = "1GKHlnVLIc_GrBra5wCAk1BCxgXIAJZLAu7tcLCLPAAw";
 
         String spreadsheetId = txcMakerParser.parseDocId(spreadsheetUrl);
 
