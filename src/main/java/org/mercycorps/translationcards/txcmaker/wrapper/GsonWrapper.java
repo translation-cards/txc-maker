@@ -14,7 +14,11 @@ public class GsonWrapper {
         gson = new Gson();
     }
 
-    public String toJson(@Nullable Object object) {
+    public String toJson(Object object) {
         return gson.toJson(object);
+    }
+
+    public <T> T fromJson(String json, Class<T> type) {
+        return gson.fromJson(json, type);
     }
 }

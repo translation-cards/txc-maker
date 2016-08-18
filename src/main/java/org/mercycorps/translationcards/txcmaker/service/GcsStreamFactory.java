@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.Channels;
 
@@ -15,6 +16,7 @@ import java.nio.channels.Channels;
 public class GcsStreamFactory {
 
     private static final String GCS_BUCKET_NAME = "translation-cards-dev.appspot.com";
+    private static final int BUFFER_SIZE = 1024;
 
     private GcsService gcsService;
 
@@ -34,5 +36,12 @@ public class GcsStreamFactory {
             //do something
         }
         return gcsOutput;
+    }
+
+    public InputStream getInputStream(String fileName) {
+        GcsFilename gcsFilename = new GcsFilename(GCS_BUCKET_NAME, fileName);
+        return Channels.newInputStream(
+                gcsService.openPrefetchingReadChannel(gcsFilename, 0, BUFFER_SIZE)
+        );
     }
 }
