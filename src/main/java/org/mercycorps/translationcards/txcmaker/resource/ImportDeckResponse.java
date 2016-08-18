@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateDeckResponse {
+public class ImportDeckResponse {
     private List<Error> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
     private int id = -1;

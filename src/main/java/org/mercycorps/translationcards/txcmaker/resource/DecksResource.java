@@ -25,34 +25,36 @@ public class DecksResource {
 
     private DeckService deckService;
     private AuthUtils authUtils;
-    ServletContext servletContext;
+    private ServletContext servletContext;
+    private ResponseFactory responseFactory;
 
     @Autowired
-    public DecksResource(DeckService deckService, AuthUtils authUtils, ServletContext servletContext) {
+    public DecksResource(DeckService deckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory) {
         this.deckService = deckService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
+        this.responseFactory = responseFactory;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity importDeck(@RequestBody ImportDeckForm importDeckForm, HttpServletRequest request) throws URISyntaxException {
-        CreateDeckResponse createDeckResponse = new CreateDeckResponse();
-        Drive drive = getDrive(request, createDeckResponse);
+        ImportDeckResponse importDeckResponse = responseFactory.newImportDeckResponse();
+        Drive drive = getDrive(request, importDeckResponse);
         final String sessionId = request.getSession().getId();
         final List<Field> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
-            deckService.verifyFormData(createDeckResponse, fieldsToVerify);
-            deckService.kickoffVerifyDeckTask(createDeckResponse, sessionId, importDeckForm);
+            deckService.verifyFormData(importDeckResponse, fieldsToVerify);
+            deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
         }
-        return createDeckResponse.build();
+        return importDeckResponse.build();
     }
 
-    private Drive getDrive(HttpServletRequest request, CreateDeckResponse createDeckResponse) {
+    private Drive getDrive(HttpServletRequest request, ImportDeckResponse importDeckResponse) {
         Drive drive = null;
         try {
             drive = authUtils.getDriveOrOAuth(servletContext, request, null, false, request.getSession().getId());
         } catch(IOException e) {
-            createDeckResponse.addError(new Error("", "Authorization failed"));
+            importDeckResponse.addError(new Error("", "Authorization failed"));
         }
         return drive;
     }

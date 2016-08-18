@@ -4,7 +4,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.TaskOptions;
-import org.mercycorps.translationcards.txcmaker.resource.CreateDeckResponse;
+import org.mercycorps.translationcards.txcmaker.resource.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +24,24 @@ public class DeckService {
         this.taskQueue = taskQueue;
     }
 
-    public void verifyFormData(CreateDeckResponse createDeckResponse, List<Field> fields) {
+    public void verifyFormData(ImportDeckResponse importDeckResponse, List<Field> fields) {
         for(Field field : fields) {
-            createDeckResponse.addErrors(field.verify());
+            importDeckResponse.addErrors(field.verify());
         }
 
-        if (createDeckResponse.hasErrors()) {
-            createDeckResponse.setId(-1);
+        if (importDeckResponse.hasErrors()) {
+            importDeckResponse.setId(-1);
         } else {
-            createDeckResponse.setId(10);
+            importDeckResponse.setId(10);
         }
     }
 
-    public void kickoffVerifyDeckTask(CreateDeckResponse createDeckResponse, String sessionId, ImportDeckForm importDeckForm) {
-        if(createDeckResponse.hasErrors()) {
+    public void kickoffVerifyDeckTask(ImportDeckResponse importDeckResponse, String sessionId, ImportDeckForm importDeckForm) {
+        if(importDeckResponse.hasErrors()) {
             return;
         }
         String token = channelService.createChannel(sessionId);
-        createDeckResponse.setChannelToken(token);
+        importDeckResponse.setChannelToken(token);
         TaskOptions taskOptions = buildTaskOptions(sessionId, importDeckForm);
         taskQueue.add(taskOptions);
     }
