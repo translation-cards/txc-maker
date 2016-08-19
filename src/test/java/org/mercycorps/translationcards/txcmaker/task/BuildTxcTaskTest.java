@@ -58,7 +58,7 @@ public class BuildTxcTaskTest {
         when(storageService.readJson(drive, SESSION_ID))
                 .thenReturn(DECK_AS_JSON);
 
-        buildTxcTask = new BuildTxcTask(servletContext, authUtils, gcsStreamFactory, driveService, channelService, storageService);
+        buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService);
 
     }
 

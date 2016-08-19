@@ -1,21 +1,22 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.ChildList;
 import com.google.api.services.drive.model.ChildReference;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.ParentReference;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.task.TxcMakerParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.DocumentId.CSV_EXPORT_TYPE;
 
@@ -25,10 +26,12 @@ public class DriveService {
     private static final Logger log = Logger.getLogger(DriveService.class.getName());
 
     TxcMakerParser txcMakerParser;
+    private GcsStreamFactory gcsStreamFactory;
 
     @Autowired
-    public DriveService(TxcMakerParser txcMakerParser) {
+    public DriveService(TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory) {
         this.txcMakerParser = txcMakerParser;
+        this.gcsStreamFactory = gcsStreamFactory;
     }
 
     public CSVParser fetchParsableCsv(Drive drive, String documentId) {
@@ -79,5 +82,43 @@ public class DriveService {
             log.info("Fetching audio file with id '" + audioRef.getId() + "' failed.");
         }
         return audioFile;
+    }
+
+    public void pushTxcToDrive(Drive drive, String audioDirId, String targetFilename) {
+        File targetFileInfo = new File();
+        targetFileInfo.setTitle(targetFilename);
+        targetFileInfo.setParents(Collections.singletonList(new ParentReference().setId(audioDirId)));
+        InputStream txcContentStream = gcsStreamFactory.getInputStream(targetFilename);
+        try {
+            drive.files().insert(targetFileInfo, new InputStreamContent(null, txcContentStream)).execute();
+        } catch(IOException e) {
+            //do something
+        }
+    }
+
+    public void fetchAudioFileAndWriteToZip(Drive drive, ZipOutputStream zipOutputStream, Set<String> includedAudioFiles, String audioFileName, String audioFileId) throws IOException {
+        if (includedAudioFiles.contains(audioFileName)) {
+            return;
+        }
+        includedAudioFiles.add(audioFileName);
+        zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
+        drive.files().get(audioFileId).executeMediaAndDownloadTo(zipOutputStream);
+    }
+
+    public void zipTxc(String sessionId, Drive drive, String deckJson, Map<String, String> audioFiles) {
+        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + ".txc");
+        ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
+        Set<String> includedAudioFiles = new HashSet<>();
+        try {
+            zipOutputStream.putNextEntry(new ZipEntry("card_deck.json"));
+            zipOutputStream.write(deckJson.getBytes());
+            for (String audioFileName : audioFiles.keySet()) {
+                fetchAudioFileAndWriteToZip(drive, zipOutputStream, includedAudioFiles, audioFileName, audioFiles.get(audioFileName));
+            }
+            zipOutputStream.close();
+            gcsOutput.close();
+        } catch(IOException e) {
+            //do something
+        }
     }
 }
