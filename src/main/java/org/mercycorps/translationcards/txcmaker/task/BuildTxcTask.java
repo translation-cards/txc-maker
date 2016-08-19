@@ -39,11 +39,11 @@ public class BuildTxcTask {
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(@RequestBody String sessionId) {
         final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "-metadata.json");
-        final String directoryId = deckMetadata.directoryId;
-        final Drive drive = getDrive(sessionId);
         final String deckJson = storageService.readFile(sessionId + "-deck.json");
-        final Map<String, String> audioFiles = driveService.fetchAudioFilesInDriveDirectory(drive, directoryId);
-        driveService.zipTxc(sessionId, drive, deckJson, audioFiles);
+        final Drive drive = getDrive(sessionId);
+        final String directoryId = deckMetadata.directoryId;
+        final Map<String, String> audioFiles = driveService.fetchAllAudioFileMetaData(drive, directoryId);
+        driveService.downloadAudioFilesAndZipTxc(sessionId, drive, deckJson, audioFiles);
         driveService.pushTxcToDrive(drive, directoryId, sessionId + ".txc");
         channelService.sendMessage(new ChannelMessage(sessionId, deckJson));
     }

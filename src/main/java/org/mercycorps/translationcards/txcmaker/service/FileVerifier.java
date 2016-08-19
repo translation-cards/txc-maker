@@ -37,7 +37,7 @@ public class FileVerifier {
         audioFileIds  = new HashMap<>();
 
         String audioDirId = txcMakerParser.parseAudioDirId(audioDirString);
-        audioFileIds = driveService.fetchAudioFilesInDriveDirectory(drive, audioDirId);
+        audioFileIds = driveService.fetchAllAudioFileMetaData(drive, audioDirId);
 
         String spreadsheetFileId = txcMakerParser.parseDocId(spreadsheetFileString);
         CSVParser parser = driveService.fetchParsableCsv(drive, spreadsheetFileId);

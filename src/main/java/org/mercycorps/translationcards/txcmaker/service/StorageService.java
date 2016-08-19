@@ -24,10 +24,6 @@ public class StorageService {
         this.gsonWrapper = gsonWrapper;
     }
 
-    public String readJson(Drive drive, String sessionId) {
-        return null;
-    }
-
     public DeckMetadata readDeckMetaData(String fileName) {
         String deckMetadataJson = readFile(fileName);
 

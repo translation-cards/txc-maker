@@ -47,7 +47,7 @@ public class DriveService {
         return parser;
     }
 
-    public Map<String, String> fetchAudioFilesInDriveDirectory(Drive drive, String directoryId) {
+    public Map<String, String> fetchAllAudioFileMetaData(Drive drive, String directoryId) {
         Map<String, String> audioFileIds = new HashMap<>();
         final ChildList childList = fetchAudioFileReferences(drive, directoryId);
         for (ChildReference audioRef : childList.getItems()) {
@@ -105,7 +105,7 @@ public class DriveService {
         drive.files().get(audioFileId).executeMediaAndDownloadTo(zipOutputStream);
     }
 
-    public void zipTxc(String sessionId, Drive drive, String deckJson, Map<String, String> audioFiles) {
+    public void downloadAudioFilesAndZipTxc(String sessionId, Drive drive, String deckJson, Map<String, String> audioFiles) {
         OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + ".txc");
         ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
         Set<String> includedAudioFiles = new HashSet<>();
