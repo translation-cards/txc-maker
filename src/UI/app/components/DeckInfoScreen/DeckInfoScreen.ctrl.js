@@ -11,17 +11,10 @@ function DeckInfoScreenController($scope, BackendService) {
         $scope.destinationLanguages.push(language.language_label);
       });
     }
-
-    if(changesObj.deckId && changesObj.deckId.currentValue) {
-      $scope.deckId = changesObj.deckId.currentValue;
-    }
   }
 
   $scope.publish = function() {
-    console.log('hi');
-    console.log($scope.deck);
-    console.log($scope.deckId);
-    BackendService.buildDeck($scope.deckId).then(
+    BackendService.buildDeck($scope.deck.id).then(
         function(response) {
           console.log(response);
         }
@@ -33,7 +26,6 @@ angular.module('txcmaker').component('deckInfoScreen', {
   templateUrl: 'components/DeckInfoScreen/DeckInfoScreen.html',
   controller: DeckInfoScreenController,
   bindings: {
-    deckId: '<',
     deck: '<'
   }
 });

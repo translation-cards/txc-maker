@@ -66,7 +66,7 @@ public class VerifyDeckTask {
     private String writeDeckJsonToStorage(HttpServletRequest request, String sessionId, String documentId) throws IOException {
         final Deck deck = Deck.initializeDeckWithFormData(request);
         final Drive drive = getDrive(sessionId);
-        final String deckJson = assembleDeckJson(deck, drive, documentId);
+        final String deckJson = assembleDeckJson(deck, drive, documentId, sessionId);
         writeFileToStorage(deckJson, sessionId + "-deck.json");
         return deckJson;
     }
@@ -77,9 +77,10 @@ public class VerifyDeckTask {
         gcsOutput.close();
     }
 
-    private String assembleDeckJson(Deck deck, Drive drive, String docId) {
+    private String assembleDeckJson(Deck deck, Drive drive, String docId, String sessionId) {
         CSVParser parser = driveService.fetchParsableCsv(drive, docId);
         txcMakerParser.parseCsvIntoDeck(deck, parser);
+        deck.id = sessionId;
         return gsonWrapper.toJson(deck);
     }
 

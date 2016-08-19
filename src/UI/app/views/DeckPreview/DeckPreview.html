@@ -11,8 +11,7 @@
     </md-toolbar>
     <md-tabs class="md-primary md-hue-1" md-dynamic-height>
       <md-tab label="Deck Info">
-        {{deckId}}
-        <deck-info-screen deck="deck" deckId="deckId">
+        <deck-info-screen deck="deck">
         </deck-info-screen>
       </md-tab>
       <md-tab label="{{language.language_label}}" ng-repeat="language in deck.languages">
