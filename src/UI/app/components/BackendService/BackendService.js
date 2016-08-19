@@ -28,20 +28,20 @@ angular.module('txcmaker')
 
   service.openChannel = function(messageHandler) {
     var channel = new goog.appengine.Channel(service.channelToken);
-    var socket = channel.open();
-    socket.onmessage = messageHandler;
+    service.socket = channel.open();
+    service.socket.onmessage = messageHandler;
+  };
+
+  service.updateHandler = function(messageHandler) {
+    service.socket.onmessage = messageHandler;
   };
 
   service.buildDeck = function(deckId) {
     return $http({
-      url: 'tasks/txc-build',
-      method: 'POST',
-      data: deckId,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
+      url: '/api/decks/' + deckId,
+      method: 'POST'
     });
-  }
+  };
 
   return service;
 });

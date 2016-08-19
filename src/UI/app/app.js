@@ -12,11 +12,16 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
     templateUrl: 'views/DeckImport/DeckImport.html',
     controller: 'DeckImportCtrl',
     css: 'views/DeckImport/DeckImport.css'
-  }) 
+  })
   .when('/DeckPreview/:id', {
     templateUrl: 'views/DeckPreview/DeckPreview.html',
     controller: 'DeckPreviewCtrl',
     css: 'views/DeckPreview/DeckPreview.css'
+  })
+  .when('/DeckPublish', {
+    templateUrl: 'views/DeckPublish/DeckPublish.html',
+    controller: 'DeckPublishCtrl',
+    css: 'views/DeckPublish/DeckPublish.css'
   })
   .when('/FAQ', {
     templateUrl: 'views/FAQ/FAQ.html',

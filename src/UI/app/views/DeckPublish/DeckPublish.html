@@ -1,0 +1,38 @@
+<div layout="column">
+  <deck-maker-header subtitle="'Your deck is live'"></deck-maker-header>
+  <loading-screen
+      ng-show="!deck"
+      headline="'Assembling Deck'"
+      subhead="'This could take a couple minutes, please be patient.'">
+  </loading-screen>
+  <div ng-show="deck" layout="row" layout-align="center center" layout-padding>
+    <div flex="50">
+      <md-card>
+        <md-card-title>
+          <md-card-title-text>
+            <span class="md-headline">{{deck.deck_label}}</span>
+            <span class="md-subhead">{{deck.publisher}}</span>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content layout="column">
+          <md-divider></md-divider>
+          <div layout="row" layout-align="start center" layout-padding >
+            <div flex="20">
+              <div class="chip">
+                {{sourceLanguage}}
+              </div>
+            </div>
+            <md-icon flex="10" class="large-icon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
+            <div flex="70">
+              <div class="chip" ng-repeat="language in destinationLanguages">
+                {{language}}
+              </div>
+            </div>
+          </div>
+          <md-divider></md-divider>
+          Your deck has been placed in the Audio Directory you specified.
+        </md-card-content>
+      </md-card>
+      </div>
+  </div>
+</div>

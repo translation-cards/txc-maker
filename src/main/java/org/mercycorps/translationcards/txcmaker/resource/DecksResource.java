@@ -8,10 +8,7 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckF
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -49,9 +46,9 @@ public class DecksResource {
         return importDeckResponse.build();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public void assembleDeck(@RequestBody String sessionId) {
-        deckService.kickoffBuildDeckTask(sessionId);
+    @RequestMapping(path = "/{id}", method = RequestMethod.POST)
+    public void assembleDeck(@PathVariable String id) {
+        deckService.kickoffBuildDeckTask(id);
     }
 
     private Drive getDrive(HttpServletRequest request, ImportDeckResponse importDeckResponse) {
