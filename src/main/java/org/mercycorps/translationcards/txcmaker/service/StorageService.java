@@ -1,6 +1,5 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
-import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import java.io.InputStreamReader;
 
 @Component
 public class StorageService {
-
 
     private GcsStreamFactory gcsStreamFactory;
     private GsonWrapper gsonWrapper;
