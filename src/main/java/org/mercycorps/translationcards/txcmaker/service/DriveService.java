@@ -59,7 +59,11 @@ public class DriveService {
     private ChildList fetchAudioFileReferences(Drive drive, String directoryId) {
         ChildList childList = new ChildList();
         try {
-            childList = drive.children().list(directoryId).execute();
+            childList = drive
+                    .children()
+                    .list(directoryId)
+                    .setQ("trashed = false")
+                    .execute();
         } catch (IOException e) {
             log.info("Fetching audio files in directory " + directoryId + " failed.");
 
