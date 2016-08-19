@@ -126,4 +126,18 @@ public class DeckServiceTest {
         assertNull(importDeckResponse.getChannelToken());
         verify(taskQueue, times(0)).add(any(TaskOptions.class));
     }
+
+    @Test
+    public void kickoffBuildDeckTask_shouldAddTheBuildDeckTaskToTheQueue() throws Exception {
+        deckService.kickoffBuildDeckTask(sessionId);
+
+        ArgumentCaptor<TaskOptions> taskOptionsArgumentCaptor = ArgumentCaptor.forClass(TaskOptions.class);
+        verify(taskQueue).add(taskOptionsArgumentCaptor.capture());
+
+        TaskOptions taskOptions = taskOptionsArgumentCaptor.getValue();
+        assertThat(taskOptions.getUrl(), is("/tasks/txc-build"));
+        assertThat(taskOptions.getHeaders().get("Content-Type").get(0), is("text/plain"));
+        assertThat(taskOptions.getPayload(), is(sessionId.getBytes()));
+
+    }
 }

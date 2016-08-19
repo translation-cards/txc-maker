@@ -4,6 +4,7 @@ import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
+import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.DeckMetadata;
@@ -37,17 +38,15 @@ public class BuildTxcTask {
     private DriveService driveService;
     private ChannelService channelService;
     private StorageService storageService;
-    private GsonWrapper gsonWrapper;
 
     @Autowired
-    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, GcsStreamFactory gcsStreamFactory, DriveService driveService, ChannelService channelService, StorageService storageService, GsonWrapper gsonWrapper) {
+    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, GcsStreamFactory gcsStreamFactory, DriveService driveService, ChannelService channelService, StorageService storageService) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.gcsStreamFactory = gcsStreamFactory;
         this.driveService = driveService;
         this.channelService = channelService;
         this.storageService = storageService;
-        this.gsonWrapper = gsonWrapper;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -60,6 +59,7 @@ public class BuildTxcTask {
 
         zipTxc(sessionId, drive, deckJson, audioFiles);
         pushTxcToDrive(drive, directoryId, sessionId + ".txc");
+        sendDeckToClient(deckJson, sessionId);
     }
 
     private void pushTxcToDrive(Drive drive, String audioDirId, String targetFilename) {
@@ -108,5 +108,9 @@ public class BuildTxcTask {
             //do something
         }
         return drive;
+    }
+
+    private void sendDeckToClient(String deckJson, String sessionId) {
+        channelService.sendMessage(new ChannelMessage(sessionId, deckJson));
     }
 }

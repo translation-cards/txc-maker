@@ -38,11 +38,11 @@ public class DeckService {
         importDeckResponse.setId(sessionId);
         String token = channelService.createChannel(sessionId);
         importDeckResponse.setChannelToken(token);
-        TaskOptions taskOptions = buildTaskOptions(sessionId, importDeckForm);
+        TaskOptions taskOptions = verifyDeckTaskOptions(sessionId, importDeckForm);
         taskQueue.add(taskOptions);
     }
 
-    private TaskOptions buildTaskOptions(String sessionId, ImportDeckForm importDeckForm) {
+    private TaskOptions verifyDeckTaskOptions(String sessionId, ImportDeckForm importDeckForm) {
         return TaskOptions.Builder
                 .withUrl("/tasks/txc-verify")
                 .param("sessionId", sessionId)
@@ -52,5 +52,17 @@ public class DeckService {
                 .param("audioDirId", importDeckForm.getAudioDirId())
                 .param("deckId", "deck id")
                 .param("licenseUrl", "license url");
+    }
+
+    public void kickoffBuildDeckTask(String sessionId) {
+        TaskOptions taskOptions = buildDeckTaskOptions(sessionId);
+        taskQueue.add(taskOptions);
+    }
+
+    private TaskOptions buildDeckTaskOptions(String sessionId) {
+        return TaskOptions.Builder
+                .withUrl("/tasks/txc-build")
+                .header("Content-Type", "text/plain")
+                .payload(sessionId);
     }
 }

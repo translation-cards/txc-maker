@@ -49,6 +49,11 @@ public class DecksResource {
         return importDeckResponse.build();
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public void assembleDeck(@RequestBody String sessionId) {
+        deckService.kickoffBuildDeckTask(sessionId);
+    }
+
     private Drive getDrive(HttpServletRequest request, ImportDeckResponse importDeckResponse) {
         Drive drive = null;
         try {

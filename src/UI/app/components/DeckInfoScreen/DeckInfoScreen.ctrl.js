@@ -1,5 +1,5 @@
 
-function DeckInfoScreenController($scope, BackendService) {
+function DeckInfoScreenController($scope, $location, BackendService) {
   this.$onChanges = function (changesObj) {
     if(changesObj.deck && changesObj.deck.currentValue) {
       $scope.deck = changesObj.deck.currentValue;
@@ -17,6 +17,7 @@ function DeckInfoScreenController($scope, BackendService) {
     BackendService.buildDeck($scope.deck.id).then(
         function(response) {
           console.log(response);
+          $location.path('/DeckPublish')
         }
     );
   }

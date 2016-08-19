@@ -92,4 +92,11 @@ public class DecksResourceTest {
 
         assertThat(actualResponse, is(expectedResponse));
     }
+
+    @Test
+    public void shouldKickOffBuildDeckTask() throws Exception {
+        decksResource.assembleDeck(SESSION_ID);
+
+        verify(deckService).kickoffBuildDeckTask(SESSION_ID);
+    }
 }

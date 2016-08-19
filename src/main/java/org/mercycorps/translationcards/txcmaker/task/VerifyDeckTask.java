@@ -94,7 +94,7 @@ public class VerifyDeckTask {
         return drive;
     }
 
-    private void sendDeckToClient(String deckJson, String sessionId) throws IOException {
+    private void sendDeckToClient(String deckJson, String sessionId) {
         channelService.sendMessage(new ChannelMessage(sessionId, deckJson));
     }
 }
