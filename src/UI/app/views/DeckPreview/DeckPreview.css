@@ -1,17 +1,7 @@
 
-
-.languageDisplayContainer {
-  display: block;
-  padding: 1.5em 0em;
-}
-
-.languageDisplayComponents {
-  float: left;
-}
-
-.large-icon {
-  width: 4em;
-  height: 4em;
+.icon {
+  fill: black;
+  fill-opacity: .54;
 }
 
 .chip {
@@ -24,8 +14,8 @@
   display: block;
   height: 32px;
   line-height: 32px;
-  margin: 8px 8px 0 0;
-  padding: 0 12px;
+  margin: 4px 4px;
+  padding: 0 8px;
   float: left;
   box-sizing: border-box;
   max-width: 100%;
@@ -38,7 +28,7 @@
 }
 
 .notification-card {
-  padding: 0px;
+  padding: 0;
 }
 
 .notification-card_image {
@@ -48,4 +38,13 @@
 
 .secondary-header-text {
   width: 70%;
+}
+
+.deck-info_languages {
+  padding: 1em 0;
+}
+
+md-card {
+  margin-bottom: 0;
+  margin-top: 1.5em;
 }

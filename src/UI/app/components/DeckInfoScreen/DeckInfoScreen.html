@@ -1,51 +1,48 @@
-
-<div layout="column" >
-  <div layout="row" layout-align="center center" layout-padding>
-    <div flex="50">
-      <md-card>
-        <md-card-title>
-          <md-card-title-text>
-            <span class="md-headline">{{deck.deck_label}}</span>
-            <span class="md-subhead">{{deck.publisher}}</span>
-          </md-card-title-text>
-        </md-card-title>
-        <md-card-content layout="column">
-          <md-divider></md-divider>
-          <div layout="row" layout-align="start center" layout-padding >
-            <div flex="20">
-              <div class="chip">
-                {{sourceLanguage}}
-              </div>
-            </div>
-            <md-icon flex="10" class="large-icon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
-            <div flex="70">
-              <div class="chip" ng-repeat="language in destinationLanguages">
-                {{language}}
-              </div>
+<div layout="row" layout-align="center">
+  <div flex="50" layout="column">
+    <md-card>
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-headline">{{deck.deck_label}}</span>
+          <span class="md-subhead">{{deck.publisher}}</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content layout="column">
+        <md-divider></md-divider>
+        <div layout="row" layout-align="start center" class="deck-info_languages" >
+          <div>
+            <div class="chip">
+              {{sourceLanguage}}
             </div>
           </div>
-          <md-divider></md-divider>
+          <md-icon class="icon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
+          <div flex>
+            <div class="chip" ng-repeat="language in destinationLanguages">
+              {{language}}
+            </div>
+          </div>
+        </div>
+        <md-divider></md-divider>
+      </md-card-content>
+    </md-card>
+    <div layout="row">
+      <md-card flex="70">
+        <md-card-content layout="row" layout-align="space-between center" class="notification-card">
+          <img src="resources/check_mark.png" class="notification-card_image"/>
+          <div layout-padding layout-fill>
+            Be sure to look over the cards in each language before publishing your deck.
+          </div>
         </md-card-content>
       </md-card>
-      <div layout="row">
-        <md-card flex="70">
-          <md-card-content layout="row" layout-align="space-between center" class="notification-card">
-            <img src="resources/check_mark.png" class="notification-card_image"/>
-            <div layout-padding layout-fill>
-              Be sure to look over the cards in each language before publishing your deck.
-            </div>
-          </md-card-content>
-        </md-card>
-        <md-card flex="30" class="publish-button" ng-click="publish()">
-          <md-card-content layout="column" layout-align="center center" >
-            <md-icon md-svg-src="resources/ic_file_upload_white_48px.svg"></md-icon>
-            <br />
-            <div>
-              PUBLISH DECK
-            </div>
-          </md-card-content>
-        </md-card>
-      </div>
+      <md-card flex="30" class="publish-button" ng-click="publish()">
+        <md-card-content layout="column" layout-align="center center" >
+          <md-icon md-svg-src="resources/ic_file_upload_white_48px.svg"></md-icon>
+          <br />
+          <div>
+            PUBLISH DECK
+          </div>
+        </md-card-content>
+      </md-card>
     </div>
   </div>
 </div>
