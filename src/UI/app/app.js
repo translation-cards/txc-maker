@@ -30,17 +30,21 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
 
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
 
-  var altBlue = $mdThemingProvider.extendPalette('blue', {
+  var customBlue = $mdThemingProvider.extendPalette('blue', {
     '800': '#01579B',
     '900': '#00447A'
   });
-  // Register the new color palette map with the name <code>neonRed</code>
-  $mdThemingProvider.definePalette('altBlue', altBlue);
+  $mdThemingProvider.definePalette('customBlue', customBlue);
+
+  var customAccent = $mdThemingProvider.extendPalette('amber', {
+    'A100': '#ffffff'
+  });
+  $mdThemingProvider.definePalette('customAccent', customAccent);
 
   $mdThemingProvider.theme('default')
-    .primaryPalette('altBlue', {
+    .primaryPalette('customBlue', {
       'default': '800',
       'hue-1': '900'
     })
-    .accentPalette('amber');
+    .accentPalette('customAccent');
 }]);
