@@ -37,6 +37,15 @@
   background-color: #43A047;
 }
 
-.check-icon {
-  fill: #2196F3;
+.notification-card {
+  padding: 0px;
+}
+
+.notification-card_image {
+  width: 100px;
+  background-color: gainsboro;
+}
+
+.secondary-header-text {
+  width: 70%;
 }
