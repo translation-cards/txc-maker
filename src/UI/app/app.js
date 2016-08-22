@@ -30,8 +30,15 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
 
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
 
+  var altBlue = $mdThemingProvider.extendPalette('blue', {
+    '800': '#01579B',
+    '900': '#00447A'
+  });
+  // Register the new color palette map with the name <code>neonRed</code>
+  $mdThemingProvider.definePalette('altBlue', altBlue);
+
   $mdThemingProvider.theme('default')
-    .primaryPalette('blue', {
+    .primaryPalette('altBlue', {
       'default': '800',
       'hue-1': '900'
     })
