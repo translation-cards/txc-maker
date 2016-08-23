@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
 import org.mockito.Mock;
 
 import java.io.StringReader;

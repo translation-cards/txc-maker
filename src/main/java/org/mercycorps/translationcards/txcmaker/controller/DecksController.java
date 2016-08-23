@@ -1,10 +1,12 @@
-package org.mercycorps.translationcards.txcmaker.resource;
+package org.mercycorps.translationcards.txcmaker.controller;
 
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
+import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
+import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/decks")
-public class DecksResource {
+public class DecksController {
 
     private DeckService deckService;
     private AuthUtils authUtils;
@@ -26,7 +28,7 @@ public class DecksResource {
     private ResponseFactory responseFactory;
 
     @Autowired
-    public DecksResource(DeckService deckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory) {
+    public DecksController(DeckService deckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory) {
         this.deckService = deckService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;

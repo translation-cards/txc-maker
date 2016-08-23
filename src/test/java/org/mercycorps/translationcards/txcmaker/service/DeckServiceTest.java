@@ -8,8 +8,7 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
-import org.mercycorps.translationcards.txcmaker.resource.ImportDeckResponse;
-import org.mercycorps.translationcards.txcmaker.task.TxcMakerParser;
+import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 

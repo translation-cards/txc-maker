@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.resource;
+package org.mercycorps.translationcards.txcmaker.response;
 
 import org.springframework.stereotype.Service;
 

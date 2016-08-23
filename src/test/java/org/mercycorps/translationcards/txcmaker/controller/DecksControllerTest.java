@@ -1,9 +1,11 @@
-package org.mercycorps.translationcards.txcmaker.resource;
+package org.mercycorps.translationcards.txcmaker.controller;
 
 import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
+import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.DeckService;
@@ -22,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class DecksResourceTest {
+public class DecksControllerTest {
     public static final String SESSION_ID = "session id";
     @Mock
     private DeckService deckService;
@@ -43,7 +45,7 @@ public class DecksResourceTest {
     @Mock
     private ImportDeckResponse importDeckResponse;
     private List<Field> fields;
-    private DecksResource decksResource;
+    private DecksController decksController;
 
     @Before
     public void setUp() throws Exception {
@@ -59,33 +61,33 @@ public class DecksResourceTest {
         fields = Arrays.asList(field);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(fields);
 
-        decksResource = new DecksResource(deckService, authUtils, servletContext, responseFactory);
+        decksController = new DecksController(deckService, authUtils, servletContext, responseFactory);
     }
 
     @Test
     public void shouldPreProcessForm() throws Exception {
-        decksResource.importDeck(importDeckForm, request);
+        decksController.importDeck(importDeckForm, request);
 
         verify(deckService).preProcessForm(importDeckForm);
     }
 
     @Test
     public void shouldGetTheDriveAssociatedWithTheSession() throws Exception {
-        decksResource.importDeck(importDeckForm, request);
+        decksController.importDeck(importDeckForm, request);
 
         verify(authUtils).getDriveOrOAuth(servletContext, request, null, false, SESSION_ID);
     }
 
     @Test
     public void shouldVerifyFormData() throws Exception {
-        decksResource.importDeck(importDeckForm, request);
+        decksController.importDeck(importDeckForm, request);
 
         verify(deckService).verifyFormData(importDeckResponse, fields);
     }
 
     @Test
     public void shouldKickOffVerifyDeckTask() throws Exception {
-        decksResource.importDeck(importDeckForm, request);
+        decksController.importDeck(importDeckForm, request);
 
         verify(deckService).kickoffVerifyDeckTask(importDeckResponse, SESSION_ID, importDeckForm);
     }
@@ -95,14 +97,14 @@ public class DecksResourceTest {
         ResponseEntity expectedResponse = ResponseEntity.ok().build();
         when(importDeckResponse.build()).thenReturn(expectedResponse);
 
-        ResponseEntity actualResponse = decksResource.importDeck(importDeckForm, request);
+        ResponseEntity actualResponse = decksController.importDeck(importDeckForm, request);
 
         assertThat(actualResponse, is(expectedResponse));
     }
 
     @Test
     public void shouldKickOffBuildDeckTask() throws Exception {
-        decksResource.assembleDeck(SESSION_ID);
+        decksController.assembleDeck(SESSION_ID);
 
         verify(deckService).kickoffBuildDeckTask(SESSION_ID);
     }

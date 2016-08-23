@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.task;
+package org.mercycorps.translationcards.txcmaker.service;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
