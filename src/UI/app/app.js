@@ -20,8 +20,7 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
   })
   .when('/DeckPublish', {
     templateUrl: 'views/DeckPublish/DeckPublish.html',
-    controller: 'DeckPublishCtrl',
-    css: 'views/DeckPublish/DeckPublish.css'
+    controller: 'DeckPublishCtrl'
   })
   .when('/FAQ', {
     templateUrl: 'views/FAQ/FAQ.html',
