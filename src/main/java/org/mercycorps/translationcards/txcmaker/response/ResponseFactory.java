@@ -7,4 +7,8 @@ public class ResponseFactory {
     public ImportDeckResponse newImportDeckResponse() {
         return new ImportDeckResponse();
     }
+
+    public BuildTxcTaskResponse newBuildTxcTaskResponse() {
+        return new BuildTxcTaskResponse();
+    }
 }

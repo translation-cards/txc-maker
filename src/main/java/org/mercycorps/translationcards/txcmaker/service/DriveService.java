@@ -82,16 +82,20 @@ public class DriveService {
         return audioFile;
     }
 
-    public void pushTxcToDrive(Drive drive, String audioDirId, String targetFilename) {
+    public String pushTxcToDrive(Drive drive, String audioDirId, String targetFilename) {
         File targetFileInfo = new File();
         targetFileInfo.setTitle(targetFilename);
         targetFileInfo.setParents(Collections.singletonList(new ParentReference().setId(audioDirId)));
         InputStream txcContentStream = gcsStreamFactory.getInputStream(targetFilename);
+        String downloadUrl = "";
         try {
-            drive.files().insert(targetFileInfo, new InputStreamContent(null, txcContentStream)).execute();
+            File file = drive.files().insert(targetFileInfo, new InputStreamContent(null, txcContentStream)).execute();
+            downloadUrl = file.getAlternateLink();
         } catch(IOException e) {
             //do something
         }
+
+        return downloadUrl;
     }
 
     public void fetchAudioFileAndWriteToZip(Drive drive, ZipOutputStream zipOutputStream, Set<String> includedAudioFiles, String audioFileName, String audioFileId) throws IOException {

@@ -6,9 +6,13 @@ import com.google.appengine.api.channel.ChannelService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.model.Deck;
 import org.mercycorps.translationcards.txcmaker.model.DeckMetadata;
+import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
+import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
+import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
@@ -29,6 +33,7 @@ public class BuildTxcTaskTest {
     public static final String DECK_AS_JSON = "deck as json";
     public static final String DIRECTORY_ID = "directory id";
     public static final String DOCUMENT = "document id";
+    public static final String DOWNLOAD_URL = "download url";
     @Mock
     private ServletContext servletContext;
     @Mock
@@ -41,9 +46,13 @@ public class BuildTxcTaskTest {
     private Drive drive;
     @Mock
     private StorageService storageService;
+    @Mock
+    private ResponseFactory responseFactory;
+    @Mock
+    private GsonWrapper gsonWrapper;
     private BuildTxcTask buildTxcTask;
     private Map<String, String> audioFiles = new HashMap<>();
-    ;
+    private BuildTxcTaskResponse response;
 
     @Before
     public void setUp() throws Exception {
@@ -63,7 +72,14 @@ public class BuildTxcTaskTest {
         when(driveService.fetchAllAudioFileMetaData(drive, DIRECTORY_ID))
                 .thenReturn(audioFiles);
 
-        buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService);
+        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + ".txc"))
+                .thenReturn(DOWNLOAD_URL);
+
+        response = new BuildTxcTaskResponse();
+        when(responseFactory.newBuildTxcTaskResponse())
+                .thenReturn(response);
+
+        buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService, responseFactory, gsonWrapper);
 
     }
 
@@ -110,7 +126,26 @@ public class BuildTxcTaskTest {
     }
 
     @Test
-    public void shouldSendDeckToClient() throws Exception {
+    public void shouldInitializeTheResponse() throws Exception {
+        Deck deck = new Deck();
+        when(gsonWrapper.fromJson(DECK_AS_JSON, Deck.class))
+                .thenReturn(deck);
+
+        buildTxcTask.buildTxc(SESSION_ID);
+
+        ArgumentCaptor<BuildTxcTaskResponse> argumentCaptor = ArgumentCaptor.forClass(BuildTxcTaskResponse.class);
+        verify(gsonWrapper).toJson(argumentCaptor.capture());
+
+        BuildTxcTaskResponse response = argumentCaptor.getValue();
+        assertThat(response.getDeck(), is(deck));
+        assertThat(response.getDownloadUrl(), is(DOWNLOAD_URL));
+    }
+
+    @Test
+    public void shouldSendDeckAndDownLoadUrlToClient() throws Exception {
+        when(gsonWrapper.toJson(response))
+                .thenReturn("response string");
+
         buildTxcTask.buildTxc(SESSION_ID);
 
         ArgumentCaptor<ChannelMessage> argumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
@@ -118,6 +153,6 @@ public class BuildTxcTaskTest {
 
         ChannelMessage channelMessage = argumentCaptor.getValue();
         assertThat(channelMessage.getClientId(), is(SESSION_ID));
-        assertThat(channelMessage.getMessage(), is(DECK_AS_JSON));
+        assertThat(channelMessage.getMessage(), is("response string"));
     }
 }
