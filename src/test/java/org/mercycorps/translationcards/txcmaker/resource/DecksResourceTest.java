@@ -63,6 +63,13 @@ public class DecksResourceTest {
     }
 
     @Test
+    public void shouldPreProcessForm() throws Exception {
+        decksResource.importDeck(importDeckForm, request);
+
+        verify(deckService).preProcessForm(importDeckForm);
+    }
+
+    @Test
     public void shouldGetTheDriveAssociatedWithTheSession() throws Exception {
         decksResource.importDeck(importDeckForm, request);
 

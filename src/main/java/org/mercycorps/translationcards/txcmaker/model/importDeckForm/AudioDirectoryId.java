@@ -2,7 +2,6 @@ package org.mercycorps.translationcards.txcmaker.model.importDeckForm;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.ChildList;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 
 import java.io.IOException;
@@ -17,24 +16,24 @@ public class AudioDirectoryId implements Field {
     public static final Error REQUIRED_FIELD = new Error(FIELD_NAME, REQUIRED_FIELD_MESSAGE);
 
     private Drive drive;
-    private String audioDirectoryIdString;
+    private String audioDirectoryId;
 
-    public AudioDirectoryId(Drive drive, String audioDirectoryIdString) {
+    public AudioDirectoryId(Drive drive, String audioDirectoryId) {
         this.drive = drive;
-        this.audioDirectoryIdString = audioDirectoryIdString;
+        this.audioDirectoryId = audioDirectoryId;
     }
 
     @Override
     public List<Error> verify() {
         List<Error> errors = new ArrayList<>();
 
-        if(audioDirectoryIdString == null) {
+        if(audioDirectoryId == null) {
             errors.add(REQUIRED_FIELD);
             return errors;
         }
 
         try {
-            drive.children().list(audioDirectoryIdString).execute();
+            drive.children().list(audioDirectoryId).execute();
         } catch(GoogleJsonResponseException e) {
             errors.add(INVALID_AUDIO_DIRECTORY_ID);
         } catch(IOException e) {

@@ -35,10 +35,9 @@ public class DriveService {
     }
 
     public CSVParser fetchParsableCsv(Drive drive, String documentId) {
-        String spreadsheetFileId = txcMakerParser.parseDocId(documentId);
         CSVParser parser = null;
         try {
-            Drive.Files.Export sheetExport = drive.files().export(spreadsheetFileId, CSV_EXPORT_TYPE);
+            Drive.Files.Export sheetExport = drive.files().export(documentId, CSV_EXPORT_TYPE);
             Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
             parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
         } catch(IOException e) {

@@ -25,8 +25,6 @@ import java.io.OutputStream;
 @RequestMapping("/tasks/txc-verify")
 public class VerifyDeckTask {
 
-    private static final int BUFFER_SIZE = 1024;
-
     private ServletContext servletContext;
     private AuthUtils authUtils;
     private DriveService driveService;

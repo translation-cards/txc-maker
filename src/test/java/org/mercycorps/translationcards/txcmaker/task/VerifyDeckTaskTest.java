@@ -73,8 +73,6 @@ public class VerifyDeckTaskTest {
         when(request.getParameter("audioDirId")).thenReturn(AUDIO_DIR_URL);
         when(request.getParameter("docId")).thenReturn(DOC_ID);
 
-        when(txcMakerParser.parseAudioDirId(AUDIO_DIR_URL)).thenReturn(AUDIO_DIR_ID);
-
         CSVParser parser = new CSVParser(new StringReader("Sure wish I could mock this"), CSVFormat.DEFAULT);
         when(driveService.fetchParsableCsv(drive, DOC_ID)).thenReturn(parser);
 

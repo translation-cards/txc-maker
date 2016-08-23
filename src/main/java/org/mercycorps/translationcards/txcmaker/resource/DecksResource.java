@@ -35,6 +35,7 @@ public class DecksResource {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity importDeck(@RequestBody ImportDeckForm importDeckForm, HttpServletRequest request) throws URISyntaxException {
+        deckService.preProcessForm(importDeckForm);
         ImportDeckResponse importDeckResponse = responseFactory.newImportDeckResponse();
         Drive drive = getDrive(request, importDeckResponse);
         final String sessionId = request.getSession().getId();

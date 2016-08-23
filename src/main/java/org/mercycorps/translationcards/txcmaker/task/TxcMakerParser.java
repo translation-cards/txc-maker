@@ -31,12 +31,12 @@ public class TxcMakerParser {
         this.languageService = languageService;
     }
 
-    public String parseDocId(String spreadsheetIdString) {
-        Matcher spreadsheetIdMatcher = FILE_URL_MATCHER.matcher(spreadsheetIdString);
+    public String parseDocId(String documentIdString) {
+        Matcher spreadsheetIdMatcher = FILE_URL_MATCHER.matcher(documentIdString);
         if (spreadsheetIdMatcher.matches()) {
-            spreadsheetIdString = spreadsheetIdMatcher.group(1);
+            documentIdString = spreadsheetIdMatcher.group(1);
         }
-        return spreadsheetIdString;
+        return documentIdString;
     }
 
     public String parseAudioDirId(String audioDirectoryString) {

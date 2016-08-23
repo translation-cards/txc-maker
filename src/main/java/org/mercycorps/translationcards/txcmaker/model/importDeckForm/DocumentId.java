@@ -20,24 +20,24 @@ public class DocumentId implements Field {
     public static final Error REQUIRED_FIELD = new Error(FIELD_NAME, REQUIRED_FIELD_MESSAGE);
 
     private Drive drive;
-    private String documentIdString;
+    private String documentId;
 
-    public DocumentId(Drive drive, String documentIdString) {
+    public DocumentId(Drive drive, String documentId) {
         this.drive = drive;
-        this.documentIdString = documentIdString;
+        this.documentId = documentId;
     }
 
     @Override
     public List<Error> verify() {
         List<Error> errors = new ArrayList<>();
 
-        if(documentIdString == null) {
+        if(documentId == null) {
             errors.add(REQUIRED_FIELD);
             return errors;
         }
 
         try {
-            drive.files().export(documentIdString, CSV_EXPORT_TYPE).executeMediaAsInputStream().close();
+            drive.files().export(documentId, CSV_EXPORT_TYPE).executeMediaAsInputStream().close();
         } catch(GoogleJsonResponseException e) {
             errors.add(INVALID_DOCUMENT_ID);
         } catch(IOException e) {

@@ -9,7 +9,9 @@ import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.resource.ImportDeckResponse;
+import org.mercycorps.translationcards.txcmaker.task.TxcMakerParser;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DeckServiceTest {
 
@@ -27,33 +30,37 @@ public class DeckServiceTest {
 
     List<Field> fields;
 
-    private ImportDeckResponse importDeckResponse;
     Error error;
+    @Mock
     private ChannelService channelService;
+    @Mock
     private Queue taskQueue;
+    @Mock
+    private TxcMakerParser txcMakerParser;
+
     private String sessionId;
     private String channelToken;
+    private ImportDeckResponse importDeckResponse;
     private ImportDeckForm importDeckForm;
 
     @Before
     public void setup() throws IOException{
+        initMocks(this);
 
         fields = new ArrayList<>();
         Field field = mock(Field.class);
         when(field.verify()).thenReturn(Collections.<Error>emptyList());
         fields.add(field);
-        channelService = mock(ChannelService.class);
-        taskQueue = mock(Queue.class);
 
         importDeckResponse = new ImportDeckResponse();
         error = new Error("someField", "some message");
         importDeckForm = new ImportDeckForm()
                 .setDeckName("deck name")
-                .setAudioDirId("audio dir id")
-                .setDocId("doc id")
+                .setAudioDirId("audio dir id string")
+                .setDocId("doc id string")
                 .setPublisher("publisher");
 
-        deckService = new DeckService(channelService, taskQueue);
+        deckService = new DeckService(channelService, taskQueue, txcMakerParser);
         sessionId = "session ID";
         channelToken = "channel token";
     }
@@ -111,8 +118,8 @@ public class DeckServiceTest {
         assertThat(taskOptions.getUrl(), is("/tasks/txc-verify"));
         assertThat(taskOptions.getStringParams().get("sessionId").get(0), is(sessionId));
         assertThat(taskOptions.getStringParams().get("deckName").get(0), is("deck name"));
-        assertThat(taskOptions.getStringParams().get("docId").get(0), is("doc id"));
-        assertThat(taskOptions.getStringParams().get("audioDirId").get(0), is("audio dir id"));
+        assertThat(taskOptions.getStringParams().get("docId").get(0), is("doc id string"));
+        assertThat(taskOptions.getStringParams().get("audioDirId").get(0), is("audio dir id string"));
         assertThat(taskOptions.getStringParams().get("publisher").get(0), is("publisher"));
     }
 
@@ -138,6 +145,26 @@ public class DeckServiceTest {
         assertThat(taskOptions.getUrl(), is("/tasks/txc-build"));
         assertThat(taskOptions.getHeaders().get("Content-Type").get(0), is("text/plain"));
         assertThat(taskOptions.getPayload(), is(sessionId.getBytes()));
+    }
+
+    @Test
+    public void preProcessForm_shouldParseTheDocumentId() throws Exception {
+        when(txcMakerParser.parseDocId("doc id string"))
+                .thenReturn("doc id");
+
+        deckService.preProcessForm(importDeckForm);
+
+        assertThat(importDeckForm.getDocId(), is("doc id"));
+    }
+
+    @Test
+    public void preProcessForm_shouldParseTheAudioDirectoryId() throws Exception {
+        when(txcMakerParser.parseAudioDirId("audio dir id string"))
+                .thenReturn("audio dir id");
+
+        deckService.preProcessForm(importDeckForm);
+
+        assertThat(importDeckForm.getAudioDirId(), is("audio dir id"));
 
     }
 }
