@@ -3,9 +3,10 @@
 function DeckPublishController($scope, BackendService) {
 
 
-  var messageHandler = function(data) {
-    $scope.deck_url = 'https://google.com';
-    $scope.deck = angular.fromJson(data.data);
+  var messageHandler = function(response) {
+    var data = angular.fromJson(response.data);
+    $scope.downloadUrl = data.downloadUrl;
+    $scope.deck = data.deck
     $scope.sourceLanguage = $scope.deck.language_label;
 
     $scope.destinationLanguages = [];
