@@ -31,6 +31,7 @@ config(['$locationProvider', '$routeProvider', '$mdThemingProvider', function($l
   $routeProvider.otherwise({redirectTo: '/DeckImport'});
 
   var customBlue = $mdThemingProvider.extendPalette('blue', {
+    '100': '#ffffff',
     '800': '#01579B',
     '900': '#00447A'
   });
