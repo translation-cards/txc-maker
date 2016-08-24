@@ -31,9 +31,9 @@ public class Card {
 
     public List<Error> verify() {
         List<Field> fieldsToVerify = Arrays.asList((Field)
-                        new RequiredString(card_label, "card_label", "This card has no label"),
-                        new RequiredString(dest_audio, "dest_audio", "This card has no audio recording"),
-                        new RequiredString(dest_txt, "dest_txt", "This card has no text translation")
+                        new RequiredString(card_label, "card_label", "This card has no label", true),
+                        new RequiredString(dest_audio, "dest_audio", "This card has no audio recording", true),
+                        new RequiredString(dest_txt, "dest_txt", "This card has no text translation", false)
         );
 
         errors = new ArrayList<>();

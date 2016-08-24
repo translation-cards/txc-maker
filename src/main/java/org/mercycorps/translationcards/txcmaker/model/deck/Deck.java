@@ -4,11 +4,11 @@ import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.Language;
 
-import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Deck {
 
@@ -90,12 +90,11 @@ public class Deck {
                 .setLanguageLabel("English");
     }
 
-    public List<Error> verify() {
+    public void verify() {
         List<Error> errors = new ArrayList<>();
         for(Language language : languages) {
             errors.addAll(language.verify());
         }
-        return errors;
     }
 
 }

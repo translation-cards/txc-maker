@@ -14,8 +14,14 @@ body {
   fill-opacity: .54;
 }
 
+.fatal{
+  fill: #F44336;
+  color:#F44336;
+}
+
 .warning {
-  fill: red;
+  fill: #FFC107;
+  color: #FFC107;
 }
 
 .chip {

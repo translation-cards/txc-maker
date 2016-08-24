@@ -52,7 +52,6 @@ public class VerifyDeckTask {
         final String directoryId = request.getParameter("audioDirId");
 
         final Deck deck = Deck.initializeDeckWithFormData(request);
-        //deck.verify();
 
         final String deckJson = writeDeckJsonToStorage(deck, sessionId, documentId);
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
