@@ -4,6 +4,9 @@ import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.Language;
 
+import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
