@@ -51,7 +51,10 @@ public class VerifyDeckTask {
         final String documentId = request.getParameter("docId");
         final String directoryId = request.getParameter("audioDirId");
 
-        final String deckJson = writeDeckJsonToStorage(request, sessionId, documentId);
+        final Deck deck = Deck.initializeDeckWithFormData(request);
+        //deck.verify();
+
+        final String deckJson = writeDeckJsonToStorage(deck, sessionId, documentId);
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
         sendDeckToClient(deckJson, sessionId);
     }
@@ -62,8 +65,7 @@ public class VerifyDeckTask {
         writeFileToStorage(deckMetadataJson, sessionId + "-metadata.json");
     }
 
-    private String writeDeckJsonToStorage(HttpServletRequest request, String sessionId, String documentId) throws IOException {
-        final Deck deck = Deck.initializeDeckWithFormData(request);
+    private String writeDeckJsonToStorage(Deck deck, String sessionId, String documentId) throws IOException {
         final Drive drive = getDrive(sessionId);
         final String deckJson = assembleDeckJson(deck, drive, documentId, sessionId);
         writeFileToStorage(deckJson, sessionId + "-deck.json");
@@ -80,6 +82,7 @@ public class VerifyDeckTask {
         CSVParser parser = driveService.fetchParsableCsv(drive, docId);
         txcMakerParser.parseCsvIntoDeck(deck, parser);
         deck.id = sessionId;
+        deck.verify();
         return gsonWrapper.toJson(deck);
     }
 

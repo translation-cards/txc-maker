@@ -1,5 +1,8 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
+import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -14,6 +17,7 @@ public class Deck {
     public String license_url;
     public boolean locked;
     public List<Language> languages;
+    public List<Error> errors;
     private transient Map<String, Language> languageLookup;
 
     public Deck() {
@@ -80,6 +84,14 @@ public class Deck {
                 .setLicenseUrl(req.getParameter("licenseUrl"))
                 .setLanguage("en")
                 .setLanguageLabel("English");
+    }
+
+    public List<Error> verify() {
+        List<Error> errors = new ArrayList<>();
+        for(Language language : languages) {
+            errors.addAll(language.verify());
+        }
+        return errors;
     }
 
 }

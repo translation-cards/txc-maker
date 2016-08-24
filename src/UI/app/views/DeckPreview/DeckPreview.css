@@ -24,3 +24,7 @@ md-card {
 .card-container {
   padding-bottom: 1.5em;
 }
+
+.error {
+  color: red;
+}

@@ -1,6 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Language {
@@ -24,5 +25,13 @@ public class Language {
     public Language addCard(Card card) {
         cards.add(card);
         return this;
+    }
+
+    public List<Error> verify() {
+        List<Error> errors = new ArrayList<>();
+        for(Card card : cards) {
+            errors.addAll(card.verify());
+        }
+        return errors;
     }
 }

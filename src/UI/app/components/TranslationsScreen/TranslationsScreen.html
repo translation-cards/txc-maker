@@ -17,6 +17,10 @@
         </div>
         <span flex></span>
         <md-divider></md-divider>
+        <div ng-repeat="error in card.errors" class="error">
+            <md-icon md-svg-src="resources/ic_announcement_white_24px.svg"></md-icon>
+            {{error.message}}
+        </div>
       </md-card-content>
     </md-card>
   </div>
