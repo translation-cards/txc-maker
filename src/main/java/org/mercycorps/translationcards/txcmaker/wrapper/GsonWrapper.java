@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.CardSerializer;
+import org.mercycorps.translationcards.txcmaker.model.DeckSerializer;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
 
 @Component
 public class GsonWrapper {
@@ -16,6 +16,7 @@ public class GsonWrapper {
     public GsonWrapper() {
         gson = new GsonBuilder()
                 .registerTypeAdapter(Card.class, new CardSerializer())
+                .registerTypeAdapter(Deck.class, new DeckSerializer())
                 .create();
     }
 
