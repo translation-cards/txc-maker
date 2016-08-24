@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.model;
+package org.mercycorps.translationcards.txcmaker.model.deck;
 
 public class DeckMetadata {
 

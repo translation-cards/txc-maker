@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
-import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;

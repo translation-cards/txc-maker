@@ -1,6 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
-import org.mercycorps.translationcards.txcmaker.model.DeckMetadata;
+import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

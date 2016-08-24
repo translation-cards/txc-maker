@@ -1,6 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.response;
 
-import org.mercycorps.translationcards.txcmaker.model.Deck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 
 public class BuildTxcTaskResponse {
 
