@@ -11,6 +11,7 @@ import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +33,10 @@ public class BuildTxcTask {
     private StorageService storageService;
     private ResponseFactory responseFactory;
     private GsonWrapper gsonWrapper;
+    private UrlShortenerWrapper urlShortenerWrapper;
 
     @Autowired
-    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper) {
+    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
@@ -42,6 +44,7 @@ public class BuildTxcTask {
         this.storageService = storageService;
         this.responseFactory = responseFactory;
         this.gsonWrapper = gsonWrapper;
+        this.urlShortenerWrapper = urlShortenerWrapper;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -53,9 +56,10 @@ public class BuildTxcTask {
         final Map<String, String> audioFiles = driveService.fetchAllAudioFileMetaData(drive, directoryId);
         driveService.downloadAudioFilesAndZipTxc(sessionId, drive, deckJson, audioFiles);
         String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + ".txc");
+        String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
         BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
                 .setDeck(gsonWrapper.fromJson(deckJson, Deck.class))
-                .setDownloadUrl(downloadUrl);
+                .setDownloadUrl(shortUrl);
         channelService.sendMessage(new ChannelMessage(sessionId, gsonWrapper.toJson(response)));
     }
 

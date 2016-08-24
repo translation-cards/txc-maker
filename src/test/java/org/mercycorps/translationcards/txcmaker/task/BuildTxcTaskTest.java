@@ -13,6 +13,7 @@ import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
@@ -34,6 +35,7 @@ public class BuildTxcTaskTest {
     public static final String DIRECTORY_ID = "directory id";
     public static final String DOCUMENT = "document id";
     public static final String DOWNLOAD_URL = "download url";
+    public static final String SHORT_URL = "short url";
     @Mock
     private ServletContext servletContext;
     @Mock
@@ -50,6 +52,8 @@ public class BuildTxcTaskTest {
     private ResponseFactory responseFactory;
     @Mock
     private GsonWrapper gsonWrapper;
+    @Mock
+    private UrlShortenerWrapper urlShortenerWrapper;
     private BuildTxcTask buildTxcTask;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;
@@ -75,11 +79,15 @@ public class BuildTxcTaskTest {
         when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + ".txc"))
                 .thenReturn(DOWNLOAD_URL);
 
+        when(urlShortenerWrapper.getShortUrl(DOWNLOAD_URL))
+                .thenReturn(SHORT_URL);
+
         response = new BuildTxcTaskResponse();
         when(responseFactory.newBuildTxcTaskResponse())
                 .thenReturn(response);
 
-        buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService, responseFactory, gsonWrapper);
+        buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService,
+                responseFactory, gsonWrapper, urlShortenerWrapper);
 
     }
 
@@ -126,6 +134,13 @@ public class BuildTxcTaskTest {
     }
 
     @Test
+    public void shouldGetAShortenedUrl() throws Exception {
+        buildTxcTask.buildTxc(SESSION_ID);
+
+        verify(urlShortenerWrapper).getShortUrl(DOWNLOAD_URL);
+    }
+
+    @Test
     public void shouldInitializeTheResponse() throws Exception {
         Deck deck = new Deck();
         when(gsonWrapper.fromJson(DECK_AS_JSON, Deck.class))
@@ -138,7 +153,7 @@ public class BuildTxcTaskTest {
 
         BuildTxcTaskResponse response = argumentCaptor.getValue();
         assertThat(response.getDeck(), is(deck));
-        assertThat(response.getDownloadUrl(), is(DOWNLOAD_URL));
+        assertThat(response.getDownloadUrl(), is(SHORT_URL));
     }
 
     @Test
