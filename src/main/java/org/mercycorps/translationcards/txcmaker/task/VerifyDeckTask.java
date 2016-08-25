@@ -50,12 +50,23 @@ public class VerifyDeckTask {
         final String sessionId = request.getParameter("sessionId");
         final String documentId = request.getParameter("docId");
         final String directoryId = request.getParameter("audioDirId");
+        final Drive drive = getDrive(sessionId);
 
-        final Deck deck = Deck.initializeDeckWithFormData(request);
+        final Deck deck = assembleDeck(request, sessionId, documentId, drive);
+        deck.verify();
 
-        final String deckJson = writeDeckJsonToStorage(deck, sessionId, documentId);
+        final String deckJson = gsonWrapper.toJson(deck);
+        writeFileToStorage(deckJson, sessionId + "-deck.json");
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
         sendDeckToClient(deckJson, sessionId);
+    }
+
+    private Deck assembleDeck(HttpServletRequest request, String sessionId, String documentId, Drive drive) {
+        final Deck deck = Deck.initializeDeckWithFormData(request);
+        CSVParser parser = driveService.fetchParsableCsv(drive, documentId);
+        txcMakerParser.parseCsvIntoDeck(deck, parser);
+        deck.id = sessionId;
+        return deck;
     }
 
     private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {
@@ -64,25 +75,10 @@ public class VerifyDeckTask {
         writeFileToStorage(deckMetadataJson, sessionId + "-metadata.json");
     }
 
-    private String writeDeckJsonToStorage(Deck deck, String sessionId, String documentId) throws IOException {
-        final Drive drive = getDrive(sessionId);
-        final String deckJson = assembleDeckJson(deck, drive, documentId, sessionId);
-        writeFileToStorage(deckJson, sessionId + "-deck.json");
-        return deckJson;
-    }
-
     private void writeFileToStorage(String content, String fileName) throws IOException {
         OutputStream gcsOutput = gcsStreamFactory.getOutputStream(fileName);
         gcsOutput.write(content.getBytes());
         gcsOutput.close();
-    }
-
-    private String assembleDeckJson(Deck deck, Drive drive, String docId, String sessionId) {
-        CSVParser parser = driveService.fetchParsableCsv(drive, docId);
-        txcMakerParser.parseCsvIntoDeck(deck, parser);
-        deck.id = sessionId;
-        deck.verify();
-        return gsonWrapper.toJson(deck);
     }
 
     private Drive getDrive(String sessionId) {
