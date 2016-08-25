@@ -1,7 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
 import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ public class Card {
     }
 
     public List<Error> verify() {
-        List<Field> fieldsToVerify = Arrays.asList((Field)
+        List<Constraint> constraints = Arrays.asList((Constraint)
                         new RequiredString(card_label, NO_LABEL),
                         new RequiredString(dest_audio, NO_AUDIO),
                         new RequiredString(dest_txt, NO_TEXT)
@@ -42,8 +42,8 @@ public class Card {
 
         errors = new ArrayList<>();
 
-        for(Field field : fieldsToVerify) {
-            errors.addAll(field.verify());
+        for(Constraint constraint : constraints) {
+            errors.addAll(constraint.verify());
         }
 
         return errors;

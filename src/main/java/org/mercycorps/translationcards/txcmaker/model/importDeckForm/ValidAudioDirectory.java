@@ -8,17 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AudioDirectoryId implements Field {
-    public static final String FIELD_NAME = "audioDirId";
-    public static final String INVALID_AUDIO_DIRECTORY_ID_MESSAGE = "Invalid Audio Directory ID";
-    public static final Error INVALID_AUDIO_DIRECTORY_ID = new Error(INVALID_AUDIO_DIRECTORY_ID_MESSAGE, true);
-    public static final String REQUIRED_FIELD_MESSAGE = "Audio Directory ID is a required field.";
-    public static final Error REQUIRED_FIELD = new Error(REQUIRED_FIELD_MESSAGE, true);
+public class ValidAudioDirectory implements Constraint {
+    public static final Error INVALID_AUDIO_DIRECTORY_ID = new Error("Invalid Audio Directory ID", true);
 
     private Drive drive;
     private String audioDirectoryId;
 
-    public AudioDirectoryId(Drive drive, String audioDirectoryId) {
+    public ValidAudioDirectory(Drive drive, String audioDirectoryId) {
         this.drive = drive;
         this.audioDirectoryId = audioDirectoryId;
     }
@@ -27,17 +23,12 @@ public class AudioDirectoryId implements Field {
     public List<Error> verify() {
         List<Error> errors = new ArrayList<>();
 
-        if(audioDirectoryId == null) {
-            errors.add(REQUIRED_FIELD);
-            return errors;
-        }
-
         try {
             drive.children().list(audioDirectoryId).execute();
         } catch(GoogleJsonResponseException e) {
             errors.add(INVALID_AUDIO_DIRECTORY_ID);
         } catch(IOException e) {
-            errors.add(DocumentId.FATAL_DRIVE_ERROR);
+            errors.add(ValidDocumentId.FATAL_DRIVE_ERROR);
         }
         return errors;
     }

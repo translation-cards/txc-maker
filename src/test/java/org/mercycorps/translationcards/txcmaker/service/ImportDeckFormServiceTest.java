@@ -5,7 +5,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mockito.Mock;
@@ -25,7 +25,7 @@ public class ImportDeckFormServiceTest {
 
     ImportDeckFormService importDeckFormService;
 
-    List<Field> fields;
+    List<Constraint> constraints;
 
     Error error;
     @Mock
@@ -42,10 +42,10 @@ public class ImportDeckFormServiceTest {
     public void setup() throws IOException{
         initMocks(this);
 
-        fields = new ArrayList<>();
-        Field field = mock(Field.class);
-        when(field.verify()).thenReturn(Collections.<Error>emptyList());
-        fields.add(field);
+        constraints = new ArrayList<>();
+        Constraint constraint = mock(Constraint.class);
+        when(constraint.verify()).thenReturn(Collections.<Error>emptyList());
+        constraints.add(constraint);
 
         importDeckResponse = new ImportDeckResponse();
         error = new Error("some message", true);
@@ -60,11 +60,11 @@ public class ImportDeckFormServiceTest {
 
     @Test
     public void verifyFormData_shouldAddErrorsToTheResponseWhenThereAreErrors() throws Exception {
-        Field failedField = mock(Field.class);
+        Constraint failedConstraint = mock(Constraint.class);
         List<Error> fieldErrors = Collections.singletonList(error);
-        when(failedField.verify()).thenReturn(fieldErrors);
-        fields.add(failedField);
-        importDeckFormService.verifyFormData(importDeckResponse, fields);
+        when(failedConstraint.verify()).thenReturn(fieldErrors);
+        constraints.add(failedConstraint);
+        importDeckFormService.verifyFormData(importDeckResponse, constraints);
 
         assertThat(importDeckResponse.getErrors(), is(fieldErrors));
     }

@@ -2,7 +2,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +26,9 @@ public class ImportDeckFormService {
         importDeckForm.setAudioDirId(audioDirectoryId);
     }
 
-    public void verifyFormData(ImportDeckResponse importDeckResponse, List<Field> fields) {
-        for(Field field : fields) {
-            importDeckResponse.addErrors(field.verify());
+    public void verifyFormData(ImportDeckResponse importDeckResponse, List<Constraint> constraints) {
+        for(Constraint constraint : constraints) {
+            importDeckResponse.addErrors(constraint.verify());
         }
     }
 

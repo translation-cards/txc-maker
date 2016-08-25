@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.DocumentId.CSV_EXPORT_TYPE;
+import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.ValidDocumentId.CSV_EXPORT_TYPE;
 
 @Service
 public class DriveService {

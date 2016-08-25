@@ -3,7 +3,7 @@ package org.mercycorps.translationcards.txcmaker.controller;
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
@@ -44,7 +44,7 @@ public class DecksController {
         ImportDeckResponse importDeckResponse = responseFactory.newImportDeckResponse();
         Drive drive = getDrive(request, importDeckResponse);
         final String sessionId = request.getSession().getId();
-        final List<Field> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
+        final List<Constraint> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
             importDeckFormService.verifyFormData(importDeckResponse, fieldsToVerify);
             taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);

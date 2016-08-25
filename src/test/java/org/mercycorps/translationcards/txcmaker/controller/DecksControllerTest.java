@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
+import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckFormService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
@@ -36,7 +36,7 @@ public class DecksControllerTest {
     @Mock
     private ImportDeckForm importDeckForm;
     @Mock
-    private Field field;
+    private Constraint constraint;
     @Mock
     private Drive drive;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
@@ -47,7 +47,7 @@ public class DecksControllerTest {
     private ImportDeckResponse importDeckResponse;
     @Mock
     private TaskService taskService;
-    private List<Field> fields;
+    private List<Constraint> constraints;
     private DecksController decksController;
 
     @Before
@@ -61,8 +61,8 @@ public class DecksControllerTest {
         when(authUtils.getDriveOrOAuth(servletContext, request, null, false, SESSION_ID))
                 .thenReturn(drive);
 
-        fields = Arrays.asList(field);
-        when(importDeckForm.getFieldsToVerify(drive)).thenReturn(fields);
+        constraints = Arrays.asList(constraint);
+        when(importDeckForm.getFieldsToVerify(drive)).thenReturn(constraints);
 
         decksController = new DecksController(importDeckFormService, authUtils, servletContext, responseFactory, taskService);
     }
@@ -85,7 +85,7 @@ public class DecksControllerTest {
     public void shouldVerifyFormData() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(importDeckFormService).verifyFormData(importDeckResponse, fields);
+        verify(importDeckFormService).verifyFormData(importDeckResponse, constraints);
     }
 
     @Test
