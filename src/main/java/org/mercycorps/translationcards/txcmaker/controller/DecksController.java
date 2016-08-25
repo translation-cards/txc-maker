@@ -59,7 +59,7 @@ public class DecksController {
         try {
             drive = authUtils.getDriveOrOAuth(servletContext, request, null, false, request.getSession().getId());
         } catch(IOException e) {
-            importDeckResponse.addError(new Error("", "Authorization failed", true));
+            importDeckResponse.addError(new Error("Authorization failed", true));
         }
         return drive;
     }

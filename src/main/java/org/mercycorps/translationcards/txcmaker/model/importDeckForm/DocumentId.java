@@ -14,10 +14,10 @@ public class DocumentId implements Field {
     public static final String FIELD_NAME = "docId";
     public static final String INVALID_DOCUMENT_ID_MESSAGE = "Invalid Document ID";
     public static final String FATAL_DRIVE_ERROR_MESSAGE = "There was an error accessing the provided document. Please try again.";
-    public static final Error INVALID_DOCUMENT_ID = new Error(FIELD_NAME, INVALID_DOCUMENT_ID_MESSAGE, true);
-    public static final Error FATAL_DRIVE_ERROR = new Error("", FATAL_DRIVE_ERROR_MESSAGE, true);
+    public static final Error INVALID_DOCUMENT_ID = new Error(INVALID_DOCUMENT_ID_MESSAGE, true);
+    public static final Error FATAL_DRIVE_ERROR = new Error(FATAL_DRIVE_ERROR_MESSAGE, true);
     public static final String REQUIRED_FIELD_MESSAGE = "Document ID is a required field.";
-    public static final Error REQUIRED_FIELD = new Error(FIELD_NAME, REQUIRED_FIELD_MESSAGE, true);
+    public static final Error REQUIRED_FIELD = new Error(REQUIRED_FIELD_MESSAGE, true);
 
     private Drive drive;
     private String documentId;

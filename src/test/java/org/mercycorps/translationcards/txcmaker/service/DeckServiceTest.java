@@ -52,7 +52,7 @@ public class DeckServiceTest {
         fields.add(field);
 
         importDeckResponse = new ImportDeckResponse();
-        error = new Error("someField", "some message", true);
+        error = new Error("some message", true);
         importDeckForm = new ImportDeckForm()
                 .setDeckName("deck name")
                 .setAudioDirId("audio dir id string")

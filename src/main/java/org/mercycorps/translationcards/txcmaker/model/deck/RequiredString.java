@@ -8,16 +8,12 @@ import java.util.List;
 
 public class RequiredString implements Field {
 
-    private String value;
-    private String key;
-    private String message;
-    private final boolean fatal;
+    private final String value;
+    private final Error error;
 
-    public RequiredString(String value, String key, String message, boolean fatal) {
+    public RequiredString(String value, Error error) {
         this.value = value;
-        this.key = key;
-        this.message = message;
-        this.fatal = fatal;
+        this.error = error;
     }
 
     @Override
@@ -25,7 +21,7 @@ public class RequiredString implements Field {
         List<Error> errors = new ArrayList<>();
 
         if(value == null || value.equals("")) {
-            errors.add(new Error(key, message, fatal));
+            errors.add(error);
         }
 
         return errors;

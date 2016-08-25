@@ -25,8 +25,9 @@ public class Deck {
     private transient Map<String, Language> languageLookup;
 
     public Deck() {
-        languages = new ArrayList<Language>();
-        languageLookup = new HashMap<String, Language>();
+        languages = new ArrayList<>();
+        errors = new ArrayList<>();
+        languageLookup = new HashMap<>();
     }
 
     public Deck setDeckLabel(String deckLabel) {
@@ -70,12 +71,12 @@ public class Deck {
     }
 
     public Deck addCard(String iso_code, String language_label, Card card) {
-        if (!languageLookup.containsKey(iso_code)) {
+        if (!languageLookup.containsKey(language_label)) {
             Language langSpec = new Language(iso_code, language_label);
             languages.add(langSpec);
-            languageLookup.put(iso_code, langSpec);
+            languageLookup.put(language_label, langSpec);
         }
-        languageLookup.get(iso_code).addCard(card);
+        languageLookup.get(language_label).addCard(card);
         return this;
     }
 
@@ -91,7 +92,6 @@ public class Deck {
     }
 
     public void verify() {
-        List<Error> errors = new ArrayList<>();
         for(Language language : languages) {
             errors.addAll(language.verify());
         }

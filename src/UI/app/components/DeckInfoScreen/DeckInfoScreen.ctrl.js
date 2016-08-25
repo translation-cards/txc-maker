@@ -16,7 +16,6 @@ function DeckInfoScreenController($scope, $location, BackendService) {
   $scope.publish = function() {
     BackendService.buildDeck($scope.deck.id).then(
         function(response) {
-          console.log(response);
           $location.path('/DeckPublish')
         }
     );

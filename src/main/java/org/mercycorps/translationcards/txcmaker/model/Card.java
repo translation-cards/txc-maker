@@ -9,6 +9,10 @@ import java.util.List;
 
 public class Card {
 
+    public final static Error NO_LABEL = new Error("This card has no label", true);
+    public final static Error NO_AUDIO = new Error("This card has no audio recording", true);
+    public final static Error NO_TEXT = new Error("This card has no text translation", false);
+
     public String card_label;
     public String dest_audio;
     public String dest_txt;
@@ -31,9 +35,9 @@ public class Card {
 
     public List<Error> verify() {
         List<Field> fieldsToVerify = Arrays.asList((Field)
-                        new RequiredString(card_label, "card_label", "This card has no label", true),
-                        new RequiredString(dest_audio, "dest_audio", "This card has no audio recording", true),
-                        new RequiredString(dest_txt, "dest_txt", "This card has no text translation", false)
+                        new RequiredString(card_label, NO_LABEL),
+                        new RequiredString(dest_audio, NO_AUDIO),
+                        new RequiredString(dest_txt, NO_TEXT)
         );
 
         errors = new ArrayList<>();

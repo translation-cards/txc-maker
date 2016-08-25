@@ -36,6 +36,13 @@ public class TxcMakerParserTest {
     public void setUp() throws Exception {
         initMocks(this);
 
+        when(languageService.getLanguageDisplayName("ar"))
+                .thenReturn("Arabic");
+        when(languageService.getLanguageDisplayName("ps"))
+                .thenReturn("Pashto");
+        when(languageService.getLanguageDisplayName("fa"))
+                .thenReturn("Farsi");
+
         txcMakerParser = new TxcMakerParser(languageService);
         csvParser = new CSVParser(new StringReader(STUBBED_CSV), CSVFormat.DEFAULT.withHeader());
         deck = new Deck();
