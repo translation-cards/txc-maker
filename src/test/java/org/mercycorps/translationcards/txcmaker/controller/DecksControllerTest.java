@@ -8,7 +8,8 @@ import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
-import org.mercycorps.translationcards.txcmaker.service.DeckService;
+import org.mercycorps.translationcards.txcmaker.service.ImportDeckFormService;
+import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class DecksControllerTest {
     public static final String SESSION_ID = "session id";
     @Mock
-    private DeckService deckService;
+    private ImportDeckFormService importDeckFormService;
     @Mock
     private AuthUtils authUtils;
     @Mock
@@ -44,6 +45,8 @@ public class DecksControllerTest {
     private ResponseFactory responseFactory;
     @Mock
     private ImportDeckResponse importDeckResponse;
+    @Mock
+    private TaskService taskService;
     private List<Field> fields;
     private DecksController decksController;
 
@@ -61,14 +64,14 @@ public class DecksControllerTest {
         fields = Arrays.asList(field);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(fields);
 
-        decksController = new DecksController(deckService, authUtils, servletContext, responseFactory);
+        decksController = new DecksController(importDeckFormService, authUtils, servletContext, responseFactory, taskService);
     }
 
     @Test
     public void shouldPreProcessForm() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(deckService).preProcessForm(importDeckForm);
+        verify(importDeckFormService).preProcessForm(importDeckForm);
     }
 
     @Test
@@ -82,14 +85,14 @@ public class DecksControllerTest {
     public void shouldVerifyFormData() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(deckService).verifyFormData(importDeckResponse, fields);
+        verify(importDeckFormService).verifyFormData(importDeckResponse, fields);
     }
 
     @Test
     public void shouldKickOffVerifyDeckTask() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(deckService).kickoffVerifyDeckTask(importDeckResponse, SESSION_ID, importDeckForm);
+        verify(taskService).kickoffVerifyDeckTask(importDeckResponse, SESSION_ID, importDeckForm);
     }
 
     @Test
@@ -106,6 +109,6 @@ public class DecksControllerTest {
     public void shouldKickOffBuildDeckTask() throws Exception {
         decksController.assembleDeck(SESSION_ID);
 
-        verify(deckService).kickoffBuildDeckTask(SESSION_ID);
+        verify(taskService).kickoffBuildDeckTask(SESSION_ID);
     }
 }

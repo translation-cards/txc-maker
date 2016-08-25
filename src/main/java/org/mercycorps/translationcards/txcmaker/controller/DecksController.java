@@ -7,7 +7,8 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
-import org.mercycorps.translationcards.txcmaker.service.DeckService;
+import org.mercycorps.translationcards.txcmaker.service.ImportDeckFormService;
+import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,36 +23,38 @@ import java.util.List;
 @RequestMapping("/api/decks")
 public class DecksController {
 
-    private DeckService deckService;
+    private ImportDeckFormService importDeckFormService;
     private AuthUtils authUtils;
     private ServletContext servletContext;
     private ResponseFactory responseFactory;
+    private TaskService taskService;
 
     @Autowired
-    public DecksController(DeckService deckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory) {
-        this.deckService = deckService;
+    public DecksController(ImportDeckFormService importDeckFormService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService) {
+        this.importDeckFormService = importDeckFormService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
         this.responseFactory = responseFactory;
+        this.taskService = taskService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity importDeck(@RequestBody ImportDeckForm importDeckForm, HttpServletRequest request) throws URISyntaxException {
-        deckService.preProcessForm(importDeckForm);
+        importDeckFormService.preProcessForm(importDeckForm);
         ImportDeckResponse importDeckResponse = responseFactory.newImportDeckResponse();
         Drive drive = getDrive(request, importDeckResponse);
         final String sessionId = request.getSession().getId();
         final List<Field> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
-            deckService.verifyFormData(importDeckResponse, fieldsToVerify);
-            deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+            importDeckFormService.verifyFormData(importDeckResponse, fieldsToVerify);
+            taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
         }
         return importDeckResponse.build();
     }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.POST)
     public void assembleDeck(@PathVariable String id) {
-        deckService.kickoffBuildDeckTask(id);
+        taskService.kickoffBuildDeckTask(id);
     }
 
     private Drive getDrive(HttpServletRequest request, ImportDeckResponse importDeckResponse) {

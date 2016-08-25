@@ -6,51 +6,38 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Field;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class DeckServiceTest {
-
-    DeckService deckService;
-
-    List<Field> fields;
-
-    Error error;
-    @Mock
-    private ChannelService channelService;
-    @Mock
-    private Queue taskQueue;
-    @Mock
-    private TxcMakerParser txcMakerParser;
+public class TaskServiceTest {
 
     private String sessionId;
     private String channelToken;
     private ImportDeckResponse importDeckResponse;
     private ImportDeckForm importDeckForm;
+    Error error;
+    private TaskService taskService;
+    @Mock
+    private ChannelService channelService;
+    @Mock
+    private Queue taskQueue;
 
     @Before
-    public void setup() throws IOException{
+    public void setUp() throws Exception {
         initMocks(this);
 
-        fields = new ArrayList<>();
-        Field field = mock(Field.class);
-        when(field.verify()).thenReturn(Collections.<Error>emptyList());
-        fields.add(field);
-
+        sessionId = "session id";
+        channelToken = "channel token";
         importDeckResponse = new ImportDeckResponse();
         error = new Error("some message", true);
         importDeckForm = new ImportDeckForm()
@@ -58,26 +45,13 @@ public class DeckServiceTest {
                 .setAudioDirId("audio dir id string")
                 .setDocId("doc id string")
                 .setPublisher("publisher");
-
-        deckService = new DeckService(channelService, taskQueue, txcMakerParser);
-        sessionId = "session ID";
-        channelToken = "channel token";
-    }
-
-    @Test
-    public void verifyFormData_shouldAddErrorsToTheResponseWhenThereAreErrors() throws Exception {
-        Field failedField = mock(Field.class);
-        List<Error> fieldErrors = Collections.singletonList(error);
-        when(failedField.verify()).thenReturn(fieldErrors);
-        fields.add(failedField);
-        deckService.verifyFormData(importDeckResponse, fields);
-
-        assertThat(importDeckResponse.getErrors(), is(fieldErrors));
+        
+        taskService = new TaskService(channelService, taskQueue);
     }
 
     @Test
     public void kickoffVerifyDeckTask_shouldAssignAnIdToTheNewDeck() throws Exception {
-        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+        taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
 
         assertThat(importDeckResponse.getId(), is(sessionId));
     }
@@ -86,14 +60,14 @@ public class DeckServiceTest {
     public void kickoffVerifyDeckTask_shouldAssignAnInvalidIdWhenThereAreErrors() throws Exception {
         importDeckResponse.addError(error);
 
-        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+        taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
 
         assertThat(importDeckResponse.getId(), is(""));
     }
 
     @Test
     public void kickoffVerifyDeckTask_shouldCreateAChannel() throws Exception {
-        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+        taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
 
         verify(channelService).createChannel(sessionId);
     }
@@ -101,14 +75,14 @@ public class DeckServiceTest {
     @Test
     public void kickoffVerifyDeckTask_shouldAddTheChannelTokenToTheResponse() throws Exception {
         when(channelService.createChannel(sessionId)).thenReturn(channelToken);
-        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+        taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
 
         assertThat(importDeckResponse.getChannelToken(), is(channelToken));
     }
 
     @Test
     public void kickoffVerifyDeckTask_shouldAddTheVerifyDeckTaskToTheQueue() throws Exception {
-        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+        taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
 
         ArgumentCaptor<TaskOptions> taskOptionsArgumentCaptor = ArgumentCaptor.forClass(TaskOptions.class);
         verify(taskQueue).add(taskOptionsArgumentCaptor.capture());
@@ -126,7 +100,7 @@ public class DeckServiceTest {
     public void kickoffVerifyDeckTask_shouldDoNothingIfThereAreErrorsPresent() throws Exception {
         importDeckResponse.addError(error);
 
-        deckService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
+        taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
 
         verify(channelService, times(0)).createChannel(sessionId);
         assertNull(importDeckResponse.getChannelToken());
@@ -135,7 +109,7 @@ public class DeckServiceTest {
 
     @Test
     public void kickoffBuildDeckTask_shouldAddTheBuildDeckTaskToTheQueue() throws Exception {
-        deckService.kickoffBuildDeckTask(sessionId);
+        taskService.kickoffBuildDeckTask(sessionId);
 
         ArgumentCaptor<TaskOptions> taskOptionsArgumentCaptor = ArgumentCaptor.forClass(TaskOptions.class);
         verify(taskQueue).add(taskOptionsArgumentCaptor.capture());
@@ -146,24 +120,4 @@ public class DeckServiceTest {
         assertThat(taskOptions.getPayload(), is(sessionId.getBytes()));
     }
 
-    @Test
-    public void preProcessForm_shouldParseTheDocumentId() throws Exception {
-        when(txcMakerParser.parseDocId("doc id string"))
-                .thenReturn("doc id");
-
-        deckService.preProcessForm(importDeckForm);
-
-        assertThat(importDeckForm.getDocId(), is("doc id"));
-    }
-
-    @Test
-    public void preProcessForm_shouldParseTheAudioDirectoryId() throws Exception {
-        when(txcMakerParser.parseAudioDirId("audio dir id string"))
-                .thenReturn("audio dir id");
-
-        deckService.preProcessForm(importDeckForm);
-
-        assertThat(importDeckForm.getAudioDirId(), is("audio dir id"));
-
-    }
 }
