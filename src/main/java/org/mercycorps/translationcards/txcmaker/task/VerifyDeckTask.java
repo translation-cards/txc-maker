@@ -3,7 +3,6 @@ package org.mercycorps.translationcards.txcmaker.task;
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
-import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
@@ -52,21 +51,13 @@ public class VerifyDeckTask {
         final String directoryId = request.getParameter("audioDirId");
         final Drive drive = getDrive(sessionId);
 
-        final Deck deck = assembleDeck(request, sessionId, documentId, drive);
+        final Deck deck = driveService.assembleDeck(request, sessionId, documentId, drive);
         deck.verify();
 
         final String deckJson = gsonWrapper.toJson(deck);
         writeFileToStorage(deckJson, sessionId + "-deck.json");
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
         sendDeckToClient(deckJson, sessionId);
-    }
-
-    private Deck assembleDeck(HttpServletRequest request, String sessionId, String documentId, Drive drive) {
-        final Deck deck = Deck.initializeDeckWithFormData(request);
-        CSVParser parser = driveService.fetchParsableCsv(drive, documentId);
-        txcMakerParser.parseCsvIntoDeck(deck, parser);
-        deck.id = sessionId;
-        return deck;
     }
 
     private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {

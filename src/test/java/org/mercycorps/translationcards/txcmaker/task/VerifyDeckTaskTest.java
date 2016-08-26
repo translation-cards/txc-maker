@@ -33,7 +33,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class VerifyDeckTaskTest {
 
-
     private static final String SESSION_ID = "session id";
     private static final String AUDIO_DIR_ID = "audio dir id";
     private static final String DOC_ID = "document id";
@@ -70,21 +69,32 @@ public class VerifyDeckTaskTest {
     public void setup() throws ServletException, IOException {
         initMocks(this);
 
-        when(request.getParameter("sessionId")).thenReturn(SESSION_ID);
-        when(request.getParameter("audioDirId")).thenReturn(AUDIO_DIR_URL);
-        when(request.getParameter("docId")).thenReturn(DOC_ID);
+        when(request.getParameter("sessionId"))
+                .thenReturn(SESSION_ID);
+        when(request.getParameter("audioDirId"))
+                .thenReturn(AUDIO_DIR_URL);
+        when(request.getParameter("docId"))
+                .thenReturn(DOC_ID);
 
         CSVParser parser = new CSVParser(new StringReader("Sure wish I could mock this"), CSVFormat.DEFAULT);
-        when(driveService.fetchParsableCsv(drive, DOC_ID)).thenReturn(parser);
+        when(driveService.fetchParsableCsv(drive, DOC_ID))
+                .thenReturn(parser);
 
-        when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID)).thenReturn(drive);
+        when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
+                .thenReturn(drive);
 
-        when(gsonWrapper.toJson(any(Deck.class)))
+        final Deck deck = new Deck();
+        when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
+                .thenReturn(deck);
+
+        when(gsonWrapper.toJson(any(Object.class)))
                 .thenReturn(DECK_AS_JSON)
                 .thenReturn(DECK_METADATA_AS_JSON);
 
-        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-deck.json")).thenReturn(outputStream);
-        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-metadata.json")).thenReturn(outputStream);
+        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-deck.json"))
+                .thenReturn(outputStream);
+        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-metadata.json"))
+                .thenReturn(outputStream);
 
         verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcMakerParser, gcsStreamFactory, gsonWrapper);
     }
@@ -97,17 +107,10 @@ public class VerifyDeckTaskTest {
     }
 
     @Test
-    public void shouldFetchCsv() throws Exception {
+    public void shouldAssembleTheDeck() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(driveService).fetchParsableCsv(drive, DOC_ID);
-    }
-
-    @Test
-    public void shouldParseTheCsvDataIntoTheDeck() throws Exception {
-        verifyDeckTask.verifyDeck(request);
-
-        verify(txcMakerParser).parseCsvIntoDeck(any(Deck.class), any(CSVParser.class));
+        verify(driveService).assembleDeck(request, SESSION_ID, DOC_ID, drive);
     }
 
     @Test

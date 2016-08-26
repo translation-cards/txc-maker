@@ -8,9 +8,11 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
@@ -122,5 +124,13 @@ public class DriveService {
         } catch(IOException e) {
             //do something
         }
+    }
+
+    public Deck assembleDeck(HttpServletRequest request, String sessionId, String documentId, Drive drive) {
+        final Deck deck = Deck.initializeDeckWithFormData(request);
+        CSVParser parser = fetchParsableCsv(drive, documentId);
+        txcMakerParser.parseCsvIntoDeck(deck, parser);
+        deck.id = sessionId;
+        return deck;
     }
 }
