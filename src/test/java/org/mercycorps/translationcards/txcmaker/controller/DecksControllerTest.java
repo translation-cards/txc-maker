@@ -4,10 +4,12 @@ import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
-import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
+import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
+import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckFormService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.mockito.Answers;
@@ -16,13 +18,13 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DecksControllerTest {
@@ -47,8 +49,11 @@ public class DecksControllerTest {
     private ImportDeckResponse importDeckResponse;
     @Mock
     private TaskService taskService;
+    @Mock
+    private DriveService driveService;
     private List<Constraint> constraints;
     private DecksController decksController;
+    private Deck deck;
 
     @Before
     public void setUp() throws Exception {
@@ -64,7 +69,11 @@ public class DecksControllerTest {
         constraints = Arrays.asList(constraint);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(constraints);
 
-        decksController = new DecksController(importDeckFormService, authUtils, servletContext, responseFactory, taskService);
+        deck = new Deck();
+        when(driveService.assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive))
+                .thenReturn(deck);
+
+        decksController = new DecksController(importDeckFormService, authUtils, servletContext, responseFactory, taskService, driveService);
     }
 
     @Test
@@ -110,5 +119,20 @@ public class DecksControllerTest {
         decksController.assembleDeck(SESSION_ID);
 
         verify(taskService).kickoffBuildDeckTask(SESSION_ID);
+    }
+
+    @Test
+    public void shouldAssembleDeckWhenImporting() throws Exception {
+        decksController.importDeck(importDeckForm, request);
+
+        verify(driveService).assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive);
+
+    }
+
+    @Test
+    public void shouldVerifyDeckWhenImporting() throws Exception {
+        decksController.importDeck(importDeckForm, request);
+
+        verify(importDeckFormService).verifyDeck(deck, importDeckResponse);
     }
 }

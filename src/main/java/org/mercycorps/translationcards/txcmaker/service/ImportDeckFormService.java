@@ -1,6 +1,8 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 
+import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
@@ -33,4 +35,15 @@ public class ImportDeckFormService {
     }
 
 
+    public void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
+        String errorMessage = "The ISO Code on rows ";
+
+        for(Error error : deck.errors) {
+            errorMessage += error.message + ", ";
+        }
+        errorMessage = errorMessage.substring(0, errorMessage.length() - 2);
+
+        errorMessage += " are invalid. See www.translation-cards.com/iso-codes for a list of supported codes";
+        importDeckResponse.addError(new Error(errorMessage, true));
+    }
 }

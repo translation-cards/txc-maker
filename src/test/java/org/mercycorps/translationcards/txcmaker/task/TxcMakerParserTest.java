@@ -133,4 +133,22 @@ public class TxcMakerParserTest {
         assertThat(deck.languages.get(PASHTO).cards.get(0).dest_audio, is("ps.mp3"));
         assertThat(deck.languages.get(FARSI).cards.get(0).dest_audio, is("fa.mp3"));
     }
+
+    @Test
+    public void parseCsvIntoDeck_shouldAddErrorsForInvalidISOCodes() throws Exception {
+        String stubbedCsv =
+                "Language,Label,Translation,Filename\n" +
+                "abc,ar phrase,ar translation,ar.mp3\n" +
+                "abc,ps phrase,ps translation,ps.mp3\n" +
+                "fa,fa phrase,fa translation,fa.mp3";
+        csvParser = new CSVParser(new StringReader(stubbedCsv), CSVFormat.DEFAULT.withHeader());
+        when(languageService.getLanguageDisplayName("abc"))
+                .thenReturn("INVALID");
+
+        txcMakerParser.parseCsvIntoDeck(deck, csvParser);
+
+        assertThat(deck.errors.size(), is(2));
+        assertThat(deck.errors.get(0).message, is("2"));
+        assertThat(deck.errors.get(1).message, is("3"));
+    }
 }

@@ -3,6 +3,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.model.Card;
+import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,15 +49,20 @@ public class TxcMakerParser {
     }
 
     public void parseCsvIntoDeck(Deck deck, CSVParser parser) {
+        int lineNumber = 2;
         for (CSVRecord row : parser) {
             String languageIso = row.get(SRC_HEADER_LANGUAGE);
             String languageLabel = languageService.getLanguageDisplayName(languageIso);
+            if("INVALID".equals(languageLabel)) {
+                deck.errors.add(new Error(lineNumber + "", true));
+            }
             String audioFileName = row.get(SRC_HEADER_FILENAME);
             Card card = new Card()
                     .setLabel(row.get(SRC_HEADER_LABEL))
                     .setFilename(audioFileName)
                     .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
             deck.addCard(languageIso, languageLabel, card);
+            lineNumber++;
         }
     }
 

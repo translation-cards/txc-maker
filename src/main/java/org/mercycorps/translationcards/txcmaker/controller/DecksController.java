@@ -3,10 +3,12 @@ package org.mercycorps.translationcards.txcmaker.controller;
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckFormService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +30,16 @@ public class DecksController {
     private ServletContext servletContext;
     private ResponseFactory responseFactory;
     private TaskService taskService;
+    private DriveService driveService;
 
     @Autowired
-    public DecksController(ImportDeckFormService importDeckFormService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService) {
+    public DecksController(ImportDeckFormService importDeckFormService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService, DriveService driveService) {
         this.importDeckFormService = importDeckFormService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
         this.responseFactory = responseFactory;
         this.taskService = taskService;
+        this.driveService = driveService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -47,6 +51,8 @@ public class DecksController {
         final List<Constraint> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
             importDeckFormService.verifyFormData(importDeckResponse, fieldsToVerify);
+            final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
+            importDeckFormService.verifyDeck(deck, importDeckResponse);
             taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
         }
         return importDeckResponse.build();

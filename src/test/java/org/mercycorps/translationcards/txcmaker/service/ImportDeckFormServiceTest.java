@@ -5,6 +5,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class ImportDeckFormServiceTest {
 
     private ImportDeckResponse importDeckResponse;
     private ImportDeckForm importDeckForm;
+    private Deck deck;
 
     @Before
     public void setup() throws IOException{
@@ -87,6 +90,23 @@ public class ImportDeckFormServiceTest {
         importDeckFormService.preProcessForm(importDeckForm);
 
         assertThat(importDeckForm.getAudioDirId(), is("audio dir id"));
+
+    }
+
+    @Test
+    public void verifyDeck_shouldAddAnErrorForInvalidIsoCodes() throws Exception {
+        deck = new Deck();
+        deck.errors.addAll(
+                Arrays.asList(
+                        new Error("1", true),
+                        new Error("4", true),
+                        new Error("56", true)
+                ));
+
+        importDeckFormService.verifyDeck(deck, importDeckResponse);
+
+        assertThat(importDeckResponse.getErrors().size(), is(1));
+        assertThat(importDeckResponse.getErrors().get(0).message, is("The ISO Code on rows 1, 4, 56 are invalid. See www.translation-cards.com/iso-codes for a list of supported codes"));
 
     }
 }
