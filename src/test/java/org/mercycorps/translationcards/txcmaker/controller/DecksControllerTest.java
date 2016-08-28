@@ -10,7 +10,7 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckF
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
-import org.mercycorps.translationcards.txcmaker.service.ImportDeckFormService;
+import org.mercycorps.translationcards.txcmaker.service.ImportDeckService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.mockito.Answers;
 import org.mockito.Mock;
@@ -30,7 +30,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class DecksControllerTest {
     public static final String SESSION_ID = "session id";
     @Mock
-    private ImportDeckFormService importDeckFormService;
+    private ImportDeckService importDeckService;
     @Mock
     private AuthUtils authUtils;
     @Mock
@@ -73,14 +73,14 @@ public class DecksControllerTest {
         when(driveService.assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive))
                 .thenReturn(deck);
 
-        decksController = new DecksController(importDeckFormService, authUtils, servletContext, responseFactory, taskService, driveService);
+        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService, driveService);
     }
 
     @Test
     public void shouldPreProcessForm() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(importDeckFormService).preProcessForm(importDeckForm);
+        verify(importDeckService).preProcessForm(importDeckForm);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class DecksControllerTest {
     public void shouldVerifyFormData() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(importDeckFormService).verifyFormData(importDeckResponse, constraints);
+        verify(importDeckService).verifyFormData(importDeckResponse, constraints);
     }
 
     @Test
@@ -133,6 +133,6 @@ public class DecksControllerTest {
     public void shouldVerifyDeckWhenImporting() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
-        verify(importDeckFormService).verifyDeck(deck, importDeckResponse);
+        verify(importDeckService).verifyDeck(deck, importDeckResponse);
     }
 }

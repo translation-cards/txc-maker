@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
+import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelService;
 import com.google.appengine.api.taskqueue.Queue;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckF
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mockito.Mock;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +25,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ImportDeckFormServiceTest {
+public class ImportDeckServiceTest {
 
-    ImportDeckFormService importDeckFormService;
+    private static final String SESSION_ID = "session id";
+    ImportDeckService importDeckService;
 
     List<Constraint> constraints;
 
@@ -36,7 +39,12 @@ public class ImportDeckFormServiceTest {
     private Queue taskQueue;
     @Mock
     private TxcMakerParser txcMakerParser;
-
+    @Mock
+    private DriveService driveService;
+    @Mock
+    private Drive drive;
+    @Mock
+    private HttpServletRequest request;
     private ImportDeckResponse importDeckResponse;
     private ImportDeckForm importDeckForm;
     private Deck deck;
@@ -58,7 +66,11 @@ public class ImportDeckFormServiceTest {
                 .setDocId("doc id string")
                 .setPublisher("publisher");
 
-        importDeckFormService = new ImportDeckFormService(txcMakerParser);
+        deck = new Deck();
+        when(driveService.assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive))
+                .thenReturn(deck);
+
+        importDeckService = new ImportDeckService(txcMakerParser, driveService);
     }
 
     @Test
@@ -67,7 +79,7 @@ public class ImportDeckFormServiceTest {
         List<Error> fieldErrors = Collections.singletonList(error);
         when(failedConstraint.verify()).thenReturn(fieldErrors);
         constraints.add(failedConstraint);
-        importDeckFormService.verifyFormData(importDeckResponse, constraints);
+        importDeckService.verifyFormData(importDeckResponse, constraints);
 
         assertThat(importDeckResponse.getErrors(), is(fieldErrors));
     }
@@ -77,7 +89,7 @@ public class ImportDeckFormServiceTest {
         when(txcMakerParser.parseDocId("doc id string"))
                 .thenReturn("doc id");
 
-        importDeckFormService.preProcessForm(importDeckForm);
+        importDeckService.preProcessForm(importDeckForm);
 
         assertThat(importDeckForm.getDocId(), is("doc id"));
     }
@@ -87,7 +99,7 @@ public class ImportDeckFormServiceTest {
         when(txcMakerParser.parseAudioDirId("audio dir id string"))
                 .thenReturn("audio dir id");
 
-        importDeckFormService.preProcessForm(importDeckForm);
+        importDeckService.preProcessForm(importDeckForm);
 
         assertThat(importDeckForm.getAudioDirId(), is("audio dir id"));
 
@@ -103,10 +115,14 @@ public class ImportDeckFormServiceTest {
                         new Error("56", true)
                 ));
 
-        importDeckFormService.verifyDeck(deck, importDeckResponse);
+        importDeckService.verifyDeck(deck, importDeckResponse);
 
         assertThat(importDeckResponse.getErrors().size(), is(1));
         assertThat(importDeckResponse.getErrors().get(0).message, is("The ISO Code on rows 1, 4, 56 are invalid. See www.translation-cards.com/iso-codes for a list of supported codes"));
+    }
+
+    @Test
+    public void processForm_should() throws Exception {
 
     }
 }

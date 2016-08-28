@@ -1,6 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 
+import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
@@ -8,17 +9,21 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
-public class ImportDeckFormService {
+public class ImportDeckService {
 
     private TxcMakerParser txcMakerParser;
+    private DriveService driveService;
 
     @Autowired
-    public ImportDeckFormService(TxcMakerParser txcMakerParser) {
+    public ImportDeckService(TxcMakerParser txcMakerParser, DriveService driveService) {
         this.txcMakerParser = txcMakerParser;
+        this.driveService = driveService;
     }
 
     public void preProcessForm(ImportDeckForm importDeckForm) {
@@ -45,5 +50,14 @@ public class ImportDeckFormService {
 
         errorMessage += " are invalid. See www.translation-cards.com/iso-codes for a list of supported codes";
         importDeckResponse.addError(new Error(errorMessage, true));
+    }
+
+    public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
+        preProcessForm(importDeckForm);
+        verifyFormData(importDeckResponse, fieldsToVerify);
+        if(!importDeckResponse.hasErrors()) {
+            final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
+            verifyDeck(deck, importDeckResponse);
+        }
     }
 }
