@@ -22,12 +22,15 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ImportDeckServiceTest {
 
     private static final String SESSION_ID = "session id";
+    public static final String DOC_ID = "doc id";
+    public static final String AUDIO_DIR_ID = "audio dir id";
     ImportDeckService importDeckService;
 
     List<Constraint> constraints;
@@ -66,48 +69,54 @@ public class ImportDeckServiceTest {
                 .setDocId("doc id string")
                 .setPublisher("publisher");
 
+        when(txcMakerParser.parseDocId("doc id string"))
+                .thenReturn(DOC_ID);
+        when(txcMakerParser.parseAudioDirId("audio dir id string"))
+                .thenReturn(AUDIO_DIR_ID);
+
         deck = new Deck();
-        when(driveService.assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive))
+        when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
                 .thenReturn(deck);
 
         importDeckService = new ImportDeckService(txcMakerParser, driveService);
     }
 
     @Test
-    public void verifyFormData_shouldAddErrorsToTheResponseWhenThereAreErrors() throws Exception {
+    public void shouldAddErrorsToTheResponseWhenThereAreErrors() throws Exception {
         Constraint failedConstraint = mock(Constraint.class);
         List<Error> fieldErrors = Collections.singletonList(error);
         when(failedConstraint.verify()).thenReturn(fieldErrors);
         constraints.add(failedConstraint);
-        importDeckService.verifyFormData(importDeckResponse, constraints);
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
         assertThat(importDeckResponse.getErrors(), is(fieldErrors));
     }
 
     @Test
-    public void preProcessForm_shouldParseTheDocumentId() throws Exception {
-        when(txcMakerParser.parseDocId("doc id string"))
-                .thenReturn("doc id");
+    public void shouldParseTheDocumentId() throws Exception {
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
-        importDeckService.preProcessForm(importDeckForm);
-
-        assertThat(importDeckForm.getDocId(), is("doc id"));
+        assertThat(importDeckForm.getDocId(), is(DOC_ID));
     }
 
     @Test
-    public void preProcessForm_shouldParseTheAudioDirectoryId() throws Exception {
-        when(txcMakerParser.parseAudioDirId("audio dir id string"))
-                .thenReturn("audio dir id");
+    public void shouldParseTheAudioDirectoryId() throws Exception {
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
-        importDeckService.preProcessForm(importDeckForm);
-
-        assertThat(importDeckForm.getAudioDirId(), is("audio dir id"));
+        assertThat(importDeckForm.getAudioDirId(), is(AUDIO_DIR_ID));
 
     }
 
     @Test
-    public void verifyDeck_shouldAddAnErrorForInvalidIsoCodes() throws Exception {
-        deck = new Deck();
+    public void shouldAssembleDeckWhenImporting() throws Exception {
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
+
+        verify(driveService).assembleDeck(request, SESSION_ID, DOC_ID, drive);
+
+    }
+
+    @Test
+    public void shouldAddAnErrorForInvalidIsoCodes() throws Exception {
         deck.errors.addAll(
                 Arrays.asList(
                         new Error("1", true),
@@ -115,14 +124,16 @@ public class ImportDeckServiceTest {
                         new Error("56", true)
                 ));
 
-        importDeckService.verifyDeck(deck, importDeckResponse);
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
         assertThat(importDeckResponse.getErrors().size(), is(1));
         assertThat(importDeckResponse.getErrors().get(0).message, is("The ISO Code on rows 1, 4, 56 are invalid. See www.translation-cards.com/iso-codes for a list of supported codes"));
     }
 
     @Test
-    public void processForm_should() throws Exception {
+    public void shouldDoNothingWhenThereAreNoErrors() throws Exception {
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
+        assertThat(importDeckResponse.getErrors().size(), is(0));
     }
 }

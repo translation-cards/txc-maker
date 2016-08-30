@@ -77,13 +77,6 @@ public class DecksControllerTest {
     }
 
     @Test
-    public void shouldPreProcessForm() throws Exception {
-        decksController.importDeck(importDeckForm, request);
-
-        verify(importDeckService).preProcessForm(importDeckForm);
-    }
-
-    @Test
     public void shouldGetTheDriveAssociatedWithTheSession() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
@@ -91,17 +84,17 @@ public class DecksControllerTest {
     }
 
     @Test
-    public void shouldVerifyFormData() throws Exception {
-        decksController.importDeck(importDeckForm, request);
-
-        verify(importDeckService).verifyFormData(importDeckResponse, constraints);
-    }
-
-    @Test
     public void shouldKickOffVerifyDeckTask() throws Exception {
         decksController.importDeck(importDeckForm, request);
 
         verify(taskService).kickoffVerifyDeckTask(importDeckResponse, SESSION_ID, importDeckForm);
+    }
+
+    @Test
+    public void shouldProcessTheForm() throws Exception {
+        decksController.importDeck(importDeckForm, request);
+
+        verify(importDeckService).processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
     }
 
     @Test
@@ -119,20 +112,5 @@ public class DecksControllerTest {
         decksController.assembleDeck(SESSION_ID);
 
         verify(taskService).kickoffBuildDeckTask(SESSION_ID);
-    }
-
-    @Test
-    public void shouldAssembleDeckWhenImporting() throws Exception {
-        decksController.importDeck(importDeckForm, request);
-
-        verify(driveService).assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive);
-
-    }
-
-    @Test
-    public void shouldVerifyDeckWhenImporting() throws Exception {
-        decksController.importDeck(importDeckForm, request);
-
-        verify(importDeckService).verifyDeck(deck, importDeckResponse);
     }
 }

@@ -9,7 +9,6 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -26,34 +25,36 @@ public class ImportDeckService {
         this.driveService = driveService;
     }
 
-    public void preProcessForm(ImportDeckForm importDeckForm) {
+    private void parseDriveIds(ImportDeckForm importDeckForm) {
         String documentId = txcMakerParser.parseDocId(importDeckForm.getDocId());
         importDeckForm.setDocId(documentId);
         String audioDirectoryId = txcMakerParser.parseAudioDirId(importDeckForm.getAudioDirId());
         importDeckForm.setAudioDirId(audioDirectoryId);
     }
 
-    public void verifyFormData(ImportDeckResponse importDeckResponse, List<Constraint> constraints) {
+    private void verifyFormData(ImportDeckResponse importDeckResponse, List<Constraint> constraints) {
         for(Constraint constraint : constraints) {
             importDeckResponse.addErrors(constraint.verify());
         }
     }
 
 
-    public void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
-        String errorMessage = "The ISO Code on rows ";
+    private void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
+        if(!deck.errors.isEmpty()) {
+            String errorMessage = "The ISO Code on rows ";
 
-        for(Error error : deck.errors) {
-            errorMessage += error.message + ", ";
+            for (Error error : deck.errors) {
+                errorMessage += error.message + ", ";
+            }
+            errorMessage = errorMessage.substring(0, errorMessage.length() - 2);
+
+            errorMessage += " are invalid. See www.translation-cards.com/iso-codes for a list of supported codes";
+            importDeckResponse.addError(new Error(errorMessage, true));
         }
-        errorMessage = errorMessage.substring(0, errorMessage.length() - 2);
-
-        errorMessage += " are invalid. See www.translation-cards.com/iso-codes for a list of supported codes";
-        importDeckResponse.addError(new Error(errorMessage, true));
     }
 
     public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
-        preProcessForm(importDeckForm);
+        parseDriveIds(importDeckForm);
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
             final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
