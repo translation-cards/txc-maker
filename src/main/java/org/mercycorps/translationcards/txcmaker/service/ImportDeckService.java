@@ -25,7 +25,7 @@ public class ImportDeckService {
         this.driveService = driveService;
     }
 
-    private void parseDriveIds(ImportDeckForm importDeckForm) {
+    public void preProcessForm(ImportDeckForm importDeckForm) {
         String documentId = txcMakerParser.parseDocId(importDeckForm.getDocId());
         importDeckForm.setDocId(documentId);
         String audioDirectoryId = txcMakerParser.parseAudioDirId(importDeckForm.getAudioDirId());
@@ -54,7 +54,6 @@ public class ImportDeckService {
     }
 
     public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
-        parseDriveIds(importDeckForm);
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
             final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);

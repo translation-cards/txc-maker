@@ -79,6 +79,17 @@ public class ImportDeckServiceTest {
                 .thenReturn(deck);
 
         importDeckService = new ImportDeckService(txcMakerParser, driveService);
+        importDeckService.preProcessForm(importDeckForm);
+    }
+
+    @Test
+    public void shouldParseTheDocumentId() throws Exception {
+        assertThat(importDeckForm.getDocId(), is(DOC_ID));
+    }
+
+    @Test
+    public void shouldParseTheAudioDirectoryId() throws Exception {
+        assertThat(importDeckForm.getAudioDirId(), is(AUDIO_DIR_ID));
     }
 
     @Test
@@ -90,21 +101,6 @@ public class ImportDeckServiceTest {
         importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
         assertThat(importDeckResponse.getErrors(), is(fieldErrors));
-    }
-
-    @Test
-    public void shouldParseTheDocumentId() throws Exception {
-        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
-
-        assertThat(importDeckForm.getDocId(), is(DOC_ID));
-    }
-
-    @Test
-    public void shouldParseTheAudioDirectoryId() throws Exception {
-        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
-
-        assertThat(importDeckForm.getAudioDirId(), is(AUDIO_DIR_ID));
-
     }
 
     @Test

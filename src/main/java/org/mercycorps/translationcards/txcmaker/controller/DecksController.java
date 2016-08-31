@@ -29,25 +29,24 @@ public class DecksController {
     private ServletContext servletContext;
     private ResponseFactory responseFactory;
     private TaskService taskService;
-    private DriveService driveService;
 
     @Autowired
-    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService, DriveService driveService) {
+    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService) {
         this.importDeckService = importDeckService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
         this.responseFactory = responseFactory;
         this.taskService = taskService;
-        this.driveService = driveService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity importDeck(@RequestBody ImportDeckForm importDeckForm, HttpServletRequest request) throws URISyntaxException {
         ImportDeckResponse importDeckResponse = responseFactory.newImportDeckResponse();
         Drive drive = getDrive(request, importDeckResponse);
-        final String sessionId = request.getSession().getId();
-        final List<Constraint> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
         if(drive != null) {
+            importDeckService.preProcessForm(importDeckForm);
+            final String sessionId = request.getSession().getId();
+            final List<Constraint> fieldsToVerify = importDeckForm.getFieldsToVerify(drive);
             importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, sessionId, fieldsToVerify);
             taskService.kickoffVerifyDeckTask(importDeckResponse, sessionId, importDeckForm);
         }

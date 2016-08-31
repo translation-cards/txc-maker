@@ -49,11 +49,8 @@ public class DecksControllerTest {
     private ImportDeckResponse importDeckResponse;
     @Mock
     private TaskService taskService;
-    @Mock
-    private DriveService driveService;
     private List<Constraint> constraints;
     private DecksController decksController;
-    private Deck deck;
 
     @Before
     public void setUp() throws Exception {
@@ -69,11 +66,7 @@ public class DecksControllerTest {
         constraints = Arrays.asList(constraint);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(constraints);
 
-        deck = new Deck();
-        when(driveService.assembleDeck(request, SESSION_ID, importDeckForm.getDocId(), drive))
-                .thenReturn(deck);
-
-        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService, driveService);
+        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService);
     }
 
     @Test
@@ -81,6 +74,13 @@ public class DecksControllerTest {
         decksController.importDeck(importDeckForm, request);
 
         verify(authUtils).getDriveOrOAuth(servletContext, request, null, false, SESSION_ID);
+    }
+
+    @Test
+    public void shouldPreProcessTheForm() throws Exception {
+        decksController.importDeck(importDeckForm, request);
+
+        verify(importDeckService).preProcessForm(importDeckForm);
     }
 
     @Test
