@@ -113,7 +113,7 @@ public class ImportDeckServiceTest {
 
     @Test
     public void shouldAddAnErrorForInvalidIsoCodes() throws Exception {
-        deck.errors.addAll(
+        deck.parseErrors.addAll(
                 Arrays.asList(
                         new Error("1", true),
                         new Error("4", true),

@@ -40,10 +40,10 @@ public class ImportDeckService {
 
 
     private void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
-        if(!deck.errors.isEmpty()) {
+        if(!deck.parseErrors.isEmpty()) {
             String errorMessage = "The ISO Code on rows ";
 
-            for (Error error : deck.errors) {
+            for (Error error : deck.parseErrors) {
                 errorMessage += error.message + ", ";
             }
             errorMessage = errorMessage.substring(0, errorMessage.length() - 2);

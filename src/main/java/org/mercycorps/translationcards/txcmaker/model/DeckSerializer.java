@@ -19,10 +19,8 @@ public class DeckSerializer implements JsonSerializer<Deck> {
         jsonObject.addProperty("id", deck.id);
         jsonObject.addProperty("timestamp", deck.timestamp);
         jsonObject.addProperty("locked", deck.locked);
+        jsonObject.addProperty("numberOfErrors", deck.numberOfErrors);
         jsonObject.add("languages", jsonSerializationContext.serialize(deck.languages));
-        if(deck.errors != null && !deck.errors.isEmpty()) {
-            jsonObject.add("errors", jsonSerializationContext.serialize(deck.errors));
-        }
         return  jsonObject;
     }
 }

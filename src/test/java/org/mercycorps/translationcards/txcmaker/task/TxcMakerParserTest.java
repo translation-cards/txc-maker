@@ -147,8 +147,8 @@ public class TxcMakerParserTest {
 
         txcMakerParser.parseCsvIntoDeck(deck, csvParser);
 
-        assertThat(deck.errors.size(), is(2));
-        assertThat(deck.errors.get(0).message, is("2"));
-        assertThat(deck.errors.get(1).message, is("3"));
+        assertThat(deck.parseErrors.size(), is(2));
+        assertThat(deck.parseErrors.get(0).message, is("2"));
+        assertThat(deck.parseErrors.get(1).message, is("3"));
     }
 }

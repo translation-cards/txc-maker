@@ -54,7 +54,7 @@ public class TxcMakerParser {
             String languageIso = row.get(SRC_HEADER_LANGUAGE);
             String languageLabel = languageService.getLanguageDisplayName(languageIso);
             if("INVALID".equals(languageLabel)) {
-                deck.errors.add(new Error(lineNumber + "", true));
+                deck.parseErrors.add(new Error(lineNumber + "", true));
             }
             String audioFileName = row.get(SRC_HEADER_FILENAME);
             Card card = new Card()
