@@ -1,6 +1,13 @@
 .publish-button {
   color: white;
   background-color: #43A047;
+  cursor: pointer;
+}
+
+.publish-button_disabled {
+  color: white;
+  background-color: gainsboro;
+  cursor: not-allowed;
 }
 
 .notification-card {
@@ -10,6 +17,15 @@
 .notification-card_image {
   width: 100px;
   background-color: gainsboro;
+}
+
+.notification-card_error {
+  width: 100px;
+  height: 100px;
+  float: left;
+  background-color: #D32F2F;
+  color: white;
+  font-size: 2.5em;
 }
 
 .secondary-header-text {

@@ -24,7 +24,7 @@
         </div>
       </md-card-content>
     </md-card>
-    <div layout="row">
+    <div layout="row" ng-show="deck.numberOfErrors == 0">
       <md-card flex="70">
         <md-card-content layout="row" layout-align="space-between center" class="notification-card">
           <img src="resources/check_mark.png" class="notification-card_image"/>
@@ -34,6 +34,27 @@
         </md-card-content>
       </md-card>
       <md-card flex="30" class="publish-button" ng-click="publish()">
+        <md-card-content layout="column" layout-align="center center" >
+          <md-icon md-svg-src="resources/ic_file_upload_white_48px.svg"></md-icon>
+          <br />
+          <div>
+            PUBLISH DECK
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+    <div layout="row" ng-show="deck.numberOfErrors > 0">
+      <md-card flex="70">
+        <md-card-content layout="row" layout-align="start center" class="notification-card">
+          <div class="notification-card_error" layout="row" layout-align="center center">
+            {{deck.numberOfErrors}}
+          </div>
+          <div layout-padding layout-fill>
+            There are {{deck.numberOfErrors}} across your deck. Review the cards and resolve the errors before publishing.
+          </div>
+        </md-card-content>
+      </md-card>
+      <md-card flex="30" class="publish-button_disabled">
         <md-card-content layout="column" layout-align="center center" >
           <md-icon md-svg-src="resources/ic_file_upload_white_48px.svg"></md-icon>
           <br />
