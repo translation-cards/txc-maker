@@ -1,9 +1,16 @@
 
-function TranslationsScreenController($scope) {
+function TranslationsScreenController($scope, $sce) {
   this.$onChanges = function (changesObj) {
-    if(changesObj.language && changesObj.language.currentValue) {
-      $scope.language = changesObj.language.currentValue;
+    if(changesObj.data && changesObj.data.currentValue) {
+      var data = changesObj.data.currentValue;
+      $scope.language = data.language;
+      $scope.deckId = data.deckId;
     }
+  }
+
+  $scope.playAudio = function(path) {
+    var audio = new Audio('/api/decks/' + $scope.deckId + '/' + path);
+    audio.play();
   }
 }
 
@@ -12,6 +19,6 @@ angular.module('txcmaker').component('translationsScreen', {
   templateUrl: 'components/TranslationsScreen/TranslationsScreen.html',
   controller: TranslationsScreenController,
   bindings: {
-    language: '<'
+    data: '<'
   }
 });

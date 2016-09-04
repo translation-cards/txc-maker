@@ -44,3 +44,7 @@ md-card {
 .error {
   color: red;
 }
+
+.translation-card {
+  cursor: pointer;
+}

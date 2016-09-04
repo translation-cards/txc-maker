@@ -15,7 +15,7 @@
         </deck-info-screen>
       </md-tab>
       <md-tab label="{{language.language_label}}" ng-repeat="language in deck.languages">
-        <translations-screen language="language">
+        <translations-screen data="{language: language, deckId: deck.id}">
         </translations-screen>
       </md-tab>
     </md-tabs>

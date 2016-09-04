@@ -51,13 +51,13 @@ public class VerifyDeckTask {
         final Deck deck = driveService.assembleDeck(request, sessionId, documentId, drive);
         deck.verify();
 
+        Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
+        driveService.downloadAudioFiles(drive, audioFiles, sessionId);
+
         final String deckJson = gsonWrapper.toJson(deck);
         storageService.writeFileToStorage(deckJson, sessionId + "/deck.json");
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
         sendDeckToClient(deckJson, sessionId);
-
-        Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
-        driveService.downloadAudioFiles(drive, audioFiles, sessionId);
     }
 
     private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {
