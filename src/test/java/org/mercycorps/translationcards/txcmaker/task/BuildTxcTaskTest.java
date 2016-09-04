@@ -63,10 +63,10 @@ public class BuildTxcTaskTest {
         initMocks(this);
 
         DeckMetadata deckMetadata = new DeckMetadata(DOCUMENT, DIRECTORY_ID);
-        when(storageService.readDeckMetaData(SESSION_ID + "-metadata.json"))
+        when(storageService.readDeckMetaData(SESSION_ID + "/metadata.json"))
                 .thenReturn(deckMetadata);
 
-        when(storageService.readFile(SESSION_ID + "-deck.json"))
+        when(storageService.readFile(SESSION_ID + "/deck.json"))
                 .thenReturn(DECK_AS_JSON);
 
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
@@ -76,7 +76,7 @@ public class BuildTxcTaskTest {
         when(driveService.downloadAllAudioFileMetaData(drive, DIRECTORY_ID))
                 .thenReturn(audioFiles);
 
-        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + ".txc"))
+        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc"))
                 .thenReturn(DOWNLOAD_URL);
 
         when(urlShortenerWrapper.getShortUrl(DOWNLOAD_URL))
@@ -95,14 +95,14 @@ public class BuildTxcTaskTest {
     public void shouldReadDeckMetadataFromStorage() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(storageService).readDeckMetaData(SESSION_ID + "-metadata.json");
+        verify(storageService).readDeckMetaData(SESSION_ID + "/metadata.json");
     }
 
     @Test
     public void shouldReadDeckJsonFromStorage() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(storageService).readFile(SESSION_ID + "-deck.json");
+        verify(storageService).readFile(SESSION_ID + "/deck.json");
     }
 
     @Test
@@ -123,14 +123,14 @@ public class BuildTxcTaskTest {
     public void shouldZipTheTxc() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(driveService).downloadAudioFilesAndZipTxc(SESSION_ID, drive, DECK_AS_JSON, audioFiles);
+        verify(driveService).zipTxc(SESSION_ID, DECK_AS_JSON, audioFiles);
     }
 
     @Test
     public void shouldPushTxcToDrive() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + ".txc");
+        verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc");
     }
 
     @Test

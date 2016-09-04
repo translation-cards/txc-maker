@@ -1,6 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.ChildList;
 import com.google.api.services.drive.model.ChildReference;
@@ -26,7 +27,7 @@ public class DriveService {
 
     private static final Logger log = Logger.getLogger(DriveService.class.getName());
 
-    TxcMakerParser txcMakerParser;
+    private TxcMakerParser txcMakerParser;
     private GcsStreamFactory gcsStreamFactory;
 
     @Autowired
@@ -100,8 +101,8 @@ public class DriveService {
         return downloadUrl;
     }
 
-    public void downloadAudioFilesAndZipTxc(String sessionId, Drive drive, String deckJson, Map<String, String> audioFiles) {
-        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + ".txc");
+    public void zipTxc(String sessionId, String deckJson, Map<String, String> audioFiles) {
+        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + "/deck.txc");
         ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
         Set<String> includedAudioFiles = new HashSet<>();
         try {
@@ -111,8 +112,8 @@ public class DriveService {
                 if (!includedAudioFiles.contains(audioFileName)) {
                     includedAudioFiles.add(audioFileName);
                     zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
-                    String audioFileId = audioFiles.get(audioFileName);
-                    downloadAndWriteFile(drive, zipOutputStream, audioFileId);
+                    InputStream inputStream = gcsStreamFactory.getInputStream(sessionId + "/" + audioFileName);
+                    IOUtils.copy(inputStream, zipOutputStream);
                 }
             }
             zipOutputStream.close();

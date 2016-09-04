@@ -49,13 +49,13 @@ public class BuildTxcTask {
 
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(@RequestBody String sessionId) {
-        final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "-metadata.json");
-        final String deckJson = storageService.readFile(sessionId + "-deck.json");
+        final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "/metadata.json");
+        final String deckJson = storageService.readFile(sessionId + "/deck.json");
         final Drive drive = getDrive(sessionId);
         final String directoryId = deckMetadata.directoryId;
         final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
-        driveService.downloadAudioFilesAndZipTxc(sessionId, drive, deckJson, audioFiles);
-        String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + ".txc");
+        driveService.zipTxc(sessionId, deckJson, audioFiles);
+        String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc");
         String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
         BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
                 .setDeck(gsonWrapper.fromJson(deckJson, Deck.class))
