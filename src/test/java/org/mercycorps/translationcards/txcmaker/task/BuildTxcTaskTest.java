@@ -73,7 +73,7 @@ public class BuildTxcTaskTest {
                 .thenReturn(drive);
 
         audioFiles.put("file name", "file id");
-        when(driveService.fetchAllAudioFileMetaData(drive, DIRECTORY_ID))
+        when(driveService.downloadAllAudioFileMetaData(drive, DIRECTORY_ID))
                 .thenReturn(audioFiles);
 
         when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + ".txc"))
@@ -116,7 +116,7 @@ public class BuildTxcTaskTest {
     public void shouldFetchTheAudioFileMetaData() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(driveService).fetchAllAudioFileMetaData(drive, DIRECTORY_ID);
+        verify(driveService).downloadAllAudioFileMetaData(drive, DIRECTORY_ID);
     }
 
     @Test

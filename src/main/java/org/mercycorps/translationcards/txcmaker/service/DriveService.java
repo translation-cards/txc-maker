@@ -47,7 +47,7 @@ public class DriveService {
         return parser;
     }
 
-    public Map<String, String> fetchAllAudioFileMetaData(Drive drive, String directoryId) {
+    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId) {
         Map<String, String> audioFileIds = new HashMap<>();
         final ChildList childList = fetchAudioFileReferences(drive, directoryId);
         for (ChildReference audioRef : childList.getItems()) {
@@ -100,15 +100,6 @@ public class DriveService {
         return downloadUrl;
     }
 
-    public void fetchAudioFileAndWriteToZip(Drive drive, ZipOutputStream zipOutputStream, Set<String> includedAudioFiles, String audioFileName, String audioFileId) throws IOException {
-        if (includedAudioFiles.contains(audioFileName)) {
-            return;
-        }
-        includedAudioFiles.add(audioFileName);
-        zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
-        drive.files().get(audioFileId).executeMediaAndDownloadTo(zipOutputStream);
-    }
-
     public void downloadAudioFilesAndZipTxc(String sessionId, Drive drive, String deckJson, Map<String, String> audioFiles) {
         OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + ".txc");
         ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
@@ -117,12 +108,43 @@ public class DriveService {
             zipOutputStream.putNextEntry(new ZipEntry("card_deck.json"));
             zipOutputStream.write(deckJson.getBytes());
             for (String audioFileName : audioFiles.keySet()) {
-                fetchAudioFileAndWriteToZip(drive, zipOutputStream, includedAudioFiles, audioFileName, audioFiles.get(audioFileName));
+                if (!includedAudioFiles.contains(audioFileName)) {
+                    includedAudioFiles.add(audioFileName);
+                    zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
+                    String audioFileId = audioFiles.get(audioFileName);
+                    downloadAndWriteFile(drive, zipOutputStream, audioFileId);
+                }
             }
             zipOutputStream.close();
             gcsOutput.close();
         } catch(IOException e) {
             //do something
+        }
+    }
+
+    public void downloadAudioFiles(Drive drive, Map<String, String> audioFiles, String folderName) {
+        Set<String> includedAudioFiles = new HashSet<>();
+        for(String audioFileName : audioFiles.keySet()) {
+            if (!includedAudioFiles.contains(audioFileName)) {
+                includedAudioFiles.add(audioFileName);
+                String filePath = folderName + "/" + audioFileName;
+                OutputStream gcsOutput = gcsStreamFactory.getOutputStream(filePath);
+                String audioFileId = audioFiles.get(audioFileName);
+                downloadAndWriteFile(drive, gcsOutput, audioFileId);
+                try {
+                    gcsOutput.close();
+                } catch(IOException e) {
+                    //do something
+                }
+            }
+        }
+    }
+
+    private void downloadAndWriteFile(Drive drive, OutputStream outputStream, String fileId) {
+        try {
+            drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+        } catch(IOException e) {
+            System.err.println("DriveService.downloadAndWriteFile failed.");
         }
     }
 
@@ -132,5 +154,11 @@ public class DriveService {
         txcMakerParser.parseCsvIntoDeck(deck, parser);
         deck.id = sessionId;
         return deck;
+    }
+
+    public void writeFileToStorage(String content, String fileName) throws IOException {
+        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(fileName);
+        gcsOutput.write(content.getBytes());
+        gcsOutput.close();
     }
 }

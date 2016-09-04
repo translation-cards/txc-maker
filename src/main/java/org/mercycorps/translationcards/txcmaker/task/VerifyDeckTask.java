@@ -19,7 +19,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks/txc-verify")
@@ -29,18 +29,14 @@ public class VerifyDeckTask {
     private AuthUtils authUtils;
     private DriveService driveService;
     private ChannelService channelService;
-    private TxcMakerParser txcMakerParser;
-    private GcsStreamFactory gcsStreamFactory;
     private GsonWrapper gsonWrapper;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper) {
+    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, GsonWrapper gsonWrapper) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
         this.channelService = channelService;
-        this.txcMakerParser = txcMakerParser;
-        this.gcsStreamFactory = gcsStreamFactory;
         this.gsonWrapper = gsonWrapper;
     }
 
@@ -55,21 +51,18 @@ public class VerifyDeckTask {
         deck.verify();
 
         final String deckJson = gsonWrapper.toJson(deck);
-        writeFileToStorage(deckJson, sessionId + "-deck.json");
+        driveService.writeFileToStorage(deckJson, sessionId + "/deck.json");
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
         sendDeckToClient(deckJson, sessionId);
+
+        Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
+        driveService.downloadAudioFiles(drive, audioFiles, sessionId);
     }
 
     private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {
         final DeckMetadata deckMetadata = new DeckMetadata(documentId, directoryId);
         final String deckMetadataJson = gsonWrapper.toJson(deckMetadata);
-        writeFileToStorage(deckMetadataJson, sessionId + "-metadata.json");
-    }
-
-    private void writeFileToStorage(String content, String fileName) throws IOException {
-        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(fileName);
-        gcsOutput.write(content.getBytes());
-        gcsOutput.close();
+        driveService.writeFileToStorage(deckMetadataJson, sessionId + "/metadata.json");
     }
 
     private Drive getDrive(String sessionId) {

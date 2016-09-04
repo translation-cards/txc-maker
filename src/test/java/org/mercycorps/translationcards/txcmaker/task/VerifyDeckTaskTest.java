@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -37,7 +39,6 @@ public class VerifyDeckTaskTest {
     private static final String AUDIO_DIR_ID = "audio dir id";
     private static final String DOC_ID = "document id";
     public static final String DECK_AS_JSON = "deck as JSON";
-    private static final String AUDIO_DIR_URL = "audio dir url";
     public static final String DECK_METADATA_AS_JSON = "deck metadata as json";
     @Mock
     private AuthUtils authUtils;
@@ -50,10 +51,6 @@ public class VerifyDeckTaskTest {
     @Mock
     private ChannelService channelService;
     @Mock
-    private TxcMakerParser txcMakerParser;
-    @Mock
-    private GcsStreamFactory gcsStreamFactory;
-    @Mock
     private HttpServletRequest request;
     @Mock
     private Drive drive;
@@ -63,6 +60,7 @@ public class VerifyDeckTaskTest {
     private GsonWrapper gsonWrapper;
 
     private VerifyDeckTask verifyDeckTask;
+    private Map<String, String> audioFileMetaData;
 
 
     @Before
@@ -72,7 +70,7 @@ public class VerifyDeckTaskTest {
         when(request.getParameter("sessionId"))
                 .thenReturn(SESSION_ID);
         when(request.getParameter("audioDirId"))
-                .thenReturn(AUDIO_DIR_URL);
+                .thenReturn(AUDIO_DIR_ID);
         when(request.getParameter("docId"))
                 .thenReturn(DOC_ID);
 
@@ -91,12 +89,11 @@ public class VerifyDeckTaskTest {
                 .thenReturn(DECK_AS_JSON)
                 .thenReturn(DECK_METADATA_AS_JSON);
 
-        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-deck.json"))
-                .thenReturn(outputStream);
-        when(gcsStreamFactory.getOutputStream(SESSION_ID + "-metadata.json"))
-                .thenReturn(outputStream);
+        audioFileMetaData = new HashMap<>();
+        when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID))
+                .thenReturn(audioFileMetaData);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, txcMakerParser, gcsStreamFactory, gsonWrapper);
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper);
     }
 
     @Test
@@ -139,13 +136,27 @@ public class VerifyDeckTaskTest {
     public void shouldWriteDeckToStorage() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(outputStream).write(DECK_AS_JSON.getBytes());
+        verify(driveService).writeFileToStorage(DECK_AS_JSON, SESSION_ID + "/deck.json");
     }
 
     @Test
     public void shouldWriteDeckMetadataToStorage() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(outputStream).write(DECK_METADATA_AS_JSON.getBytes());
+        verify(driveService).writeFileToStorage(DECK_METADATA_AS_JSON, SESSION_ID + "/metadata.json");
+    }
+
+    @Test
+    public void shouldDownloadAllAudioFileMetaData() throws Exception {
+        verifyDeckTask.verifyDeck(request);
+
+        verify(driveService).downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID);
+    }
+
+    @Test
+    public void shouldDownloadAudioFiles() throws Exception {
+        verifyDeckTask.verifyDeck(request);
+
+        verify(driveService).downloadAudioFiles(drive, audioFileMetaData, SESSION_ID);
     }
 }
