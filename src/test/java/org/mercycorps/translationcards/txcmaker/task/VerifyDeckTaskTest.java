@@ -11,8 +11,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
-import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
-import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
+import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -58,6 +57,8 @@ public class VerifyDeckTaskTest {
     private OutputStream outputStream;
     @Mock
     private GsonWrapper gsonWrapper;
+    @Mock
+    private StorageService storageService;
 
     private VerifyDeckTask verifyDeckTask;
     private Map<String, String> audioFileMetaData;
@@ -75,7 +76,7 @@ public class VerifyDeckTaskTest {
                 .thenReturn(DOC_ID);
 
         CSVParser parser = new CSVParser(new StringReader("Sure wish I could mock this"), CSVFormat.DEFAULT);
-        when(driveService.fetchParsableCsv(drive, DOC_ID))
+        when(driveService.downloadParsableCsv(drive, DOC_ID))
                 .thenReturn(parser);
 
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
@@ -93,7 +94,7 @@ public class VerifyDeckTaskTest {
         when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID))
                 .thenReturn(audioFileMetaData);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper);
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper, storageService);
     }
 
     @Test
@@ -136,14 +137,14 @@ public class VerifyDeckTaskTest {
     public void shouldWriteDeckToStorage() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(driveService).writeFileToStorage(DECK_AS_JSON, SESSION_ID + "/deck.json");
+        verify(storageService).writeFileToStorage(DECK_AS_JSON, SESSION_ID + "/deck.json");
     }
 
     @Test
     public void shouldWriteDeckMetadataToStorage() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(driveService).writeFileToStorage(DECK_METADATA_AS_JSON, SESSION_ID + "/metadata.json");
+        verify(storageService).writeFileToStorage(DECK_METADATA_AS_JSON, SESSION_ID + "/metadata.json");
     }
 
     @Test

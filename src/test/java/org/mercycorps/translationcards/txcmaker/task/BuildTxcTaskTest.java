@@ -19,6 +19,7 @@ import org.mockito.Mock;
 
 import javax.servlet.ServletContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public class BuildTxcTaskTest {
     public void shouldZipTheTxc() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(driveService).zipTxc(SESSION_ID, DECK_AS_JSON, audioFiles);
+        verify(storageService).zipTxc(SESSION_ID, DECK_AS_JSON, new ArrayList<>(audioFiles.keySet()));
     }
 
     @Test

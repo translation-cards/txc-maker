@@ -7,8 +7,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
-import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
-import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
+import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +29,16 @@ public class VerifyDeckTask {
     private DriveService driveService;
     private ChannelService channelService;
     private GsonWrapper gsonWrapper;
+    private StorageService storageService;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, GsonWrapper gsonWrapper) {
+    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, GsonWrapper gsonWrapper, StorageService storageService) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
         this.channelService = channelService;
         this.gsonWrapper = gsonWrapper;
+        this.storageService = storageService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -51,7 +52,7 @@ public class VerifyDeckTask {
         deck.verify();
 
         final String deckJson = gsonWrapper.toJson(deck);
-        driveService.writeFileToStorage(deckJson, sessionId + "/deck.json");
+        storageService.writeFileToStorage(deckJson, sessionId + "/deck.json");
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
         sendDeckToClient(deckJson, sessionId);
 
@@ -62,7 +63,7 @@ public class VerifyDeckTask {
     private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {
         final DeckMetadata deckMetadata = new DeckMetadata(documentId, directoryId);
         final String deckMetadataJson = gsonWrapper.toJson(deckMetadata);
-        driveService.writeFileToStorage(deckMetadataJson, sessionId + "/metadata.json");
+        storageService.writeFileToStorage(deckMetadataJson, sessionId + "/metadata.json");
     }
 
     private Drive getDrive(String sessionId) {

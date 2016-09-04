@@ -1,7 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.client.http.InputStreamContent;
-import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.ChildList;
 import com.google.api.services.drive.model.ChildReference;
@@ -17,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.ValidDocumentId.CSV_EXPORT_TYPE;
 
@@ -36,7 +33,7 @@ public class DriveService {
         this.gcsStreamFactory = gcsStreamFactory;
     }
 
-    public CSVParser fetchParsableCsv(Drive drive, String documentId) {
+    public CSVParser downloadParsableCsv(Drive drive, String documentId) {
         CSVParser parser = null;
         try {
             Drive.Files.Export sheetExport = drive.files().export(documentId, CSV_EXPORT_TYPE);
@@ -50,9 +47,9 @@ public class DriveService {
 
     public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId) {
         Map<String, String> audioFileIds = new HashMap<>();
-        final ChildList childList = fetchAudioFileReferences(drive, directoryId);
+        final ChildList childList = downloadAudioFileReferences(drive, directoryId);
         for (ChildReference audioRef : childList.getItems()) {
-            File audioFile = fetchAudioFileMetadata(drive, audioRef);
+            File audioFile = downloadAudioFileMetadata(drive, audioRef);
             if(audioFile != null) {
                 audioFileIds.put(audioFile.getOriginalFilename(), audioRef.getId());
             }
@@ -60,7 +57,7 @@ public class DriveService {
         return audioFileIds;
     }
 
-    private ChildList fetchAudioFileReferences(Drive drive, String directoryId) {
+    private ChildList downloadAudioFileReferences(Drive drive, String directoryId) {
         ChildList childList = new ChildList();
         try {
             childList = drive
@@ -75,7 +72,7 @@ public class DriveService {
         return childList;
     }
 
-    private File fetchAudioFileMetadata(Drive drive, ChildReference audioRef) {
+    private File downloadAudioFileMetadata(Drive drive, ChildReference audioRef) {
         File audioFile = null;
         try {
             audioFile = drive.files().get(audioRef.getId()).execute();
@@ -99,28 +96,6 @@ public class DriveService {
         }
 
         return downloadUrl;
-    }
-
-    public void zipTxc(String sessionId, String deckJson, Map<String, String> audioFiles) {
-        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + "/deck.txc");
-        ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
-        Set<String> includedAudioFiles = new HashSet<>();
-        try {
-            zipOutputStream.putNextEntry(new ZipEntry("card_deck.json"));
-            zipOutputStream.write(deckJson.getBytes());
-            for (String audioFileName : audioFiles.keySet()) {
-                if (!includedAudioFiles.contains(audioFileName)) {
-                    includedAudioFiles.add(audioFileName);
-                    zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
-                    InputStream inputStream = gcsStreamFactory.getInputStream(sessionId + "/" + audioFileName);
-                    IOUtils.copy(inputStream, zipOutputStream);
-                }
-            }
-            zipOutputStream.close();
-            gcsOutput.close();
-        } catch(IOException e) {
-            //do something
-        }
     }
 
     public void downloadAudioFiles(Drive drive, Map<String, String> audioFiles, String folderName) {
@@ -151,15 +126,9 @@ public class DriveService {
 
     public Deck assembleDeck(HttpServletRequest request, String sessionId, String documentId, Drive drive) {
         final Deck deck = Deck.initializeDeckWithFormData(request);
-        CSVParser parser = fetchParsableCsv(drive, documentId);
+        CSVParser parser = downloadParsableCsv(drive, documentId);
         txcMakerParser.parseCsvIntoDeck(deck, parser);
         deck.id = sessionId;
         return deck;
-    }
-
-    public void writeFileToStorage(String content, String fileName) throws IOException {
-        OutputStream gcsOutput = gcsStreamFactory.getOutputStream(fileName);
-        gcsOutput.write(content.getBytes());
-        gcsOutput.close();
     }
 }

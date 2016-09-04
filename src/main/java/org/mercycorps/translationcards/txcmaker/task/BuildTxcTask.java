@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
-import java.io.*;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 @RestController
@@ -54,7 +55,7 @@ public class BuildTxcTask {
         final Drive drive = getDrive(sessionId);
         final String directoryId = deckMetadata.directoryId;
         final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
-        driveService.zipTxc(sessionId, deckJson, audioFiles);
+        storageService.zipTxc(sessionId, deckJson, new ArrayList<>(audioFiles.keySet()));
         String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc");
         String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
         BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
