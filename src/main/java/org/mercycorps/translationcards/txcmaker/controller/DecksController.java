@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.controller;
 
+import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.Error;
@@ -7,7 +8,7 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
-import org.mercycorps.translationcards.txcmaker.service.DriveService;
+import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -29,14 +32,16 @@ public class DecksController {
     private ServletContext servletContext;
     private ResponseFactory responseFactory;
     private TaskService taskService;
+    private GcsStreamFactory gcsStreamFactory;
 
     @Autowired
-    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService) {
+    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService, GcsStreamFactory gcsStreamFactory) {
         this.importDeckService = importDeckService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
         this.responseFactory = responseFactory;
         this.taskService = taskService;
+        this.gcsStreamFactory = gcsStreamFactory;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -56,6 +61,19 @@ public class DecksController {
     @RequestMapping(path = "/{id}", method = RequestMethod.POST)
     public void assembleDeck(@PathVariable String id) {
         taskService.kickoffBuildDeckTask(id);
+    }
+
+    @RequestMapping(path = "/{id}/{fileName:.+}", method = RequestMethod.GET)
+    public void getAudioFile(@PathVariable String id, @PathVariable String fileName, HttpServletResponse response) {
+        String filePath = id + "/" + fileName;
+        InputStream inputStream = gcsStreamFactory.getInputStream(filePath);
+        response.setContentType("audio/mpeg3");
+        try {
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } catch(IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     private Drive getDrive(HttpServletRequest request, ImportDeckResponse importDeckResponse) {

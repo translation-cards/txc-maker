@@ -4,12 +4,11 @@ import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
-import org.mercycorps.translationcards.txcmaker.service.DriveService;
+import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.mockito.Answers;
@@ -49,6 +48,8 @@ public class DecksControllerTest {
     private ImportDeckResponse importDeckResponse;
     @Mock
     private TaskService taskService;
+    @Mock
+    private GcsStreamFactory gcsStreamFactory;
     private List<Constraint> constraints;
     private DecksController decksController;
 
@@ -66,7 +67,7 @@ public class DecksControllerTest {
         constraints = Arrays.asList(constraint);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(constraints);
 
-        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService);
+        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService, gcsStreamFactory);
     }
 
     @Test
