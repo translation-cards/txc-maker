@@ -52,9 +52,10 @@ public class BuildTxcTask {
     public void buildTxc(@RequestBody String sessionId) {
         final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "/metadata.json");
         final String deckJson = storageService.readFile(sessionId + "/deck.json");
+        final Deck deck = gsonWrapper.fromJson(deckJson, Deck.class);
         final Drive drive = getDrive(sessionId);
         final String directoryId = deckMetadata.directoryId;
-        final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
+        final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         storageService.zipTxc(sessionId, deckJson, new ArrayList<>(audioFiles.keySet()));
         String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc");
         String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);

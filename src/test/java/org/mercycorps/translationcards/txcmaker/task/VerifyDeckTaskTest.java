@@ -62,6 +62,7 @@ public class VerifyDeckTaskTest {
 
     private VerifyDeckTask verifyDeckTask;
     private Map<String, String> audioFileMetaData;
+    private Deck deck;
 
 
     @Before
@@ -82,7 +83,7 @@ public class VerifyDeckTaskTest {
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
                 .thenReturn(drive);
 
-        final Deck deck = new Deck();
+        deck = new Deck();
         when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
                 .thenReturn(deck);
 
@@ -91,7 +92,7 @@ public class VerifyDeckTaskTest {
                 .thenReturn(DECK_METADATA_AS_JSON);
 
         audioFileMetaData = new HashMap<>();
-        when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID))
+        when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck))
                 .thenReturn(audioFileMetaData);
 
         verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper, storageService);
@@ -151,7 +152,7 @@ public class VerifyDeckTaskTest {
     public void shouldDownloadAllAudioFileMetaData() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
-        verify(driveService).downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID);
+        verify(driveService).downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck);
     }
 
     @Test

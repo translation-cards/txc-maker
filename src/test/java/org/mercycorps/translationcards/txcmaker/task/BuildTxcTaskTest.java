@@ -58,6 +58,7 @@ public class BuildTxcTaskTest {
     private BuildTxcTask buildTxcTask;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;
+    private Deck deck = new Deck();
 
     @Before
     public void setUp() throws Exception {
@@ -70,11 +71,14 @@ public class BuildTxcTaskTest {
         when(storageService.readFile(SESSION_ID + "/deck.json"))
                 .thenReturn(DECK_AS_JSON);
 
+        when(gsonWrapper.fromJson(DECK_AS_JSON, Deck.class))
+                .thenReturn(deck);
+
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
                 .thenReturn(drive);
 
         audioFiles.put("file name", "file id");
-        when(driveService.downloadAllAudioFileMetaData(drive, DIRECTORY_ID))
+        when(driveService.downloadAllAudioFileMetaData(drive, DIRECTORY_ID, deck))
                 .thenReturn(audioFiles);
 
         when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc"))
@@ -117,7 +121,7 @@ public class BuildTxcTaskTest {
     public void shouldFetchTheAudioFileMetaData() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(driveService).downloadAllAudioFileMetaData(drive, DIRECTORY_ID);
+        verify(driveService).downloadAllAudioFileMetaData(drive, DIRECTORY_ID, deck);
     }
 
     @Test

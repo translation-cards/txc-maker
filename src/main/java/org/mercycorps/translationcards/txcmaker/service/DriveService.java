@@ -8,6 +8,8 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.mercycorps.translationcards.txcmaker.model.Card;
+import org.mercycorps.translationcards.txcmaker.model.Language;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,17 +47,29 @@ public class DriveService {
         return parser;
     }
 
-    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId) {
+    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId, Deck deck) {
         Map<String, String> audioFileIds = new HashMap<>();
+        Set<String> audioFilesInDeck = getAudioFilesInDeck(deck);
         final ChildList childList = downloadAudioFileReferences(drive, directoryId);
         for (ChildReference audioRef : childList.getItems()) {
             File audioFile = downloadAudioFileMetadata(drive, audioRef);
-            if(audioFile != null) {
+            if(audioFile != null && audioFilesInDeck.contains(audioFile.getOriginalFilename())) {
                 audioFileIds.put(audioFile.getOriginalFilename(), audioRef.getId());
             }
         }
         return audioFileIds;
     }
+
+    private Set<String> getAudioFilesInDeck(Deck deck) {
+        Set<String> audioFilesInDeck = new HashSet<>();
+        for(Language language : deck.languages) {
+            for(Card card : language.cards) {
+                audioFilesInDeck.add(card.dest_audio);
+            }
+        }
+        return audioFilesInDeck;
+    }
+
 
     private ChildList downloadAudioFileReferences(Drive drive, String directoryId) {
         ChildList childList = new ChildList();

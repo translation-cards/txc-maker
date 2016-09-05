@@ -51,7 +51,7 @@ public class VerifyDeckTask {
         final Deck deck = driveService.assembleDeck(request, sessionId, documentId, drive);
         deck.verify();
 
-        Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId);
+        Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         driveService.downloadAudioFiles(drive, audioFiles, sessionId);
 
         final String deckJson = gsonWrapper.toJson(deck);
