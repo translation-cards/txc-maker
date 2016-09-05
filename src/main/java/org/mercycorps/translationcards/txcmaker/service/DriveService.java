@@ -136,13 +136,19 @@ public class DriveService {
 
     private void downloadAndWriteFile(Drive drive, OutputStream outputStream, String audioFileId, String audioFileName) {
         try {
-//            drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
-            InputStream inputStream = drive.files().get(audioFileId).executeMediaAsInputStream();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            IOUtils.copy(inputStream, byteArrayOutputStream);
-            byte[] file = byteArrayOutputStream.toByteArray();
-            cache.put(audioFileName, file);
-            outputStream.write(file);
+            InputStream inputStream;
+            if(cache.containsKey(audioFileName)) {
+                byte[] file = (byte[]) cache.get(audioFileName);
+                inputStream = new ByteArrayInputStream(file);
+                IOUtils.copy(inputStream, outputStream);
+            } else {
+                inputStream = drive.files().get(audioFileId).executeMediaAsInputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                IOUtils.copy(inputStream, byteArrayOutputStream);
+                byte[] file = byteArrayOutputStream.toByteArray();
+                cache.put(audioFileName, file);
+                outputStream.write(file);
+            }
         } catch(IOException e) {
             System.err.println(e.getStackTrace().toString());
         }
