@@ -25,12 +25,17 @@ angular.module('txcmaker')
   };
 
   service.channelToken = "";
+  service.socket = null;
 
   service.openChannel = function(messageHandler) {
     var channel = new goog.appengine.Channel(service.channelToken);
     service.socket = channel.open();
     service.socket.onmessage = messageHandler;
   };
+
+  service.closeChannel = function() {
+    service.socket.close();
+  }
 
   service.updateHandler = function(messageHandler) {
     service.socket.onmessage = messageHandler;

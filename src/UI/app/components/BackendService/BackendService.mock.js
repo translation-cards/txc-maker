@@ -51,7 +51,27 @@ angular.module('mock.BackendService', [])
           }
         });
       },
-      openChannelCalled: false
+      openChannelCalled: false,
+
+      updateHandler: function(messageHandler) {
+        messageHandler({
+          data: {
+            downloadUrl: "http://downloadUrl.com",
+            deck: {
+              language_label: "stubbed deck.language_label",
+              languages: [
+                {language_label: "translated language 1"},
+                {language_label: "translated language 2"}
+              ]
+            }
+          }
+        });
+      },
+
+      closeChannel: function() {
+        this.closeChannelCalled = true;
+      },
+      closeChannelCalled: false
     };
 
 

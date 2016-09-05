@@ -14,6 +14,7 @@ function DeckPublishController($scope, BackendService) {
       $scope.destinationLanguages.push(language.language_label);
     });
     $scope.$apply();
+    BackendService.closeChannel();
   };
 
   (function fetchDeck() {
