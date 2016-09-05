@@ -28,7 +28,7 @@ public class StorageServiceTest {
     public void setUp() throws Exception {
         initMocks(this);
 
-        InputStream inputStream = new ByteArrayInputStream(JSON_FILE_STRING.getBytes());
+        InputStream inputStream = new ByteArrayInputStream(JSON_FILE_STRING.getBytes("UTF8"));
         when(gcsStreamFactory.getInputStream(FILE_NAME))
                 .thenReturn(inputStream);
 

@@ -117,7 +117,7 @@ public class TaskServiceTest {
         TaskOptions taskOptions = taskOptionsArgumentCaptor.getValue();
         assertThat(taskOptions.getUrl(), is("/tasks/txc-build"));
         assertThat(taskOptions.getHeaders().get("Content-Type").get(0), is("text/plain"));
-        assertThat(taskOptions.getPayload(), is(sessionId.getBytes()));
+        assertThat(taskOptions.getPayload(), is(sessionId.getBytes("UTF8")));
     }
 
 }

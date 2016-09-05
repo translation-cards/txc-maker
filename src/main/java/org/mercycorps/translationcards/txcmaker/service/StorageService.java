@@ -50,7 +50,7 @@ public class StorageService {
         ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
         try {
             zipOutputStream.putNextEntry(new ZipEntry("card_deck.json"));
-            zipOutputStream.write(deckJson.getBytes());
+            zipOutputStream.write(deckJson.getBytes("UTF8"));
             for (String audioFileName : audioFiles) {
                 zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
                 InputStream inputStream = gcsStreamFactory.getInputStream(sessionId + "/" + audioFileName);
@@ -65,7 +65,7 @@ public class StorageService {
 
     public void writeFileToStorage(String content, String fileName) throws IOException {
         OutputStream gcsOutput = gcsStreamFactory.getOutputStream(fileName);
-        gcsOutput.write(content.getBytes());
+        gcsOutput.write(content.getBytes("UTF8"));
         gcsOutput.close();
     }
 }

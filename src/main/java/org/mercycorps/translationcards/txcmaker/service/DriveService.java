@@ -39,7 +39,7 @@ public class DriveService {
         CSVParser parser = null;
         try {
             Drive.Files.Export sheetExport = drive.files().export(documentId, CSV_EXPORT_TYPE);
-            Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream());
+            Reader reader = new InputStreamReader(sheetExport.executeMediaAsInputStream(), "UTF8");
             parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
         } catch(IOException e) {
             log.info("Fetching CSV file with id '" + documentId + "' failed.");
