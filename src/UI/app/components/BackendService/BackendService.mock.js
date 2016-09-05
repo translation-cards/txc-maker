@@ -43,12 +43,14 @@ angular.module('mock.BackendService', [])
         }
       },
 
+      deckStub: {
+        deck_label: "stubbed label",
+        numberOfErrors: 0
+      },
       openChannel: function(messageHandler) {
         this.openChannelCalled = true;
         messageHandler({
-          data: {
-            deck_label: "stubbed label"
-          }
+          data: this.deckStub
         });
       },
       openChannelCalled: false,
@@ -73,8 +75,6 @@ angular.module('mock.BackendService', [])
       },
       closeChannelCalled: false
     };
-
-
 
     return service;
   });

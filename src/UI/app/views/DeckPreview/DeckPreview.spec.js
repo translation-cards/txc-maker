@@ -5,23 +5,48 @@ describe('DeckPreviewController', function() {
   beforeEach(module('txcmaker'));
   beforeEach(module('mock.BackendService'));
 
-  beforeEach(inject(function(_$controller_, _$timeout_, $rootScope, _BackendService_) {
-    this.$timeout = _$timeout_;
+  var initializeController = function($controller, $scope, backendService) {
+    return $controller('DeckPreviewCtrl', {
+      $scope: $scope,
+      BackendService: backendService,
+      $routeParams: {id: 10}
+    });
+  }
+
+  beforeEach(inject(function(_$controller_, $rootScope, _BackendService_) {
     this.backendService = _BackendService_;
     this.$scope = $rootScope;
     this.$controller = _$controller_;
 
-    this.deckPreviewController = this.$controller('DeckPreviewCtrl', {
-      $scope: $rootScope,
-      BackendService: this.backendService,
-      $timeout: this.$timeout,
-      $routeParams: {id: 10}
-    });
+    this.deckPreviewController = initializeController(
+      this.$controller,
+      this.$scope,
+      this.backendService
+    );
   }));
 
   it('should open a channel with the server', function() {
     expect(this.backendService.openChannelCalled).toBe(true);
-  })
+  });
+
+  it('should leave the channel open if there are no errors', function() {
+    expect(this.backendService.closeChannelCalled).toBe(false);
+  });
+
+  it('should close the channel if there are errors that prevent publishing', function() {
+    this.backendService.deckStub = {
+      deck_label: 'deck with errors',
+      numberOfErrors: 2
+    };
+
+    this.deckPreviewController = initializeController(
+      this.$controller,
+      this.$scope,
+      this.backendService
+    );
+
+    expect(this.backendService.closeChannelCalled).toBe(true);
+  });
 
   it('should get a deck from the channel', function() {
     expect(this.$scope.deck).toBeDefined();
