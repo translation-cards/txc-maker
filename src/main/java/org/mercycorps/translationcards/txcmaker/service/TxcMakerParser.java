@@ -33,6 +33,9 @@ public class TxcMakerParser {
     }
 
     public String parseDocId(String documentIdString) {
+        if(documentIdString == null) {
+            return "";
+        }
         Matcher spreadsheetIdMatcher = FILE_URL_MATCHER.matcher(documentIdString);
         if (spreadsheetIdMatcher.matches()) {
             documentIdString = spreadsheetIdMatcher.group(1);
@@ -41,6 +44,9 @@ public class TxcMakerParser {
     }
 
     public String parseAudioDirId(String audioDirectoryString) {
+        if(audioDirectoryString == null) {
+            return "";
+        }
         Matcher audioDirectoryIdMatcher = DIR_URL_MATCHER.matcher(audioDirectoryString);
         if (audioDirectoryIdMatcher.matches()) {
             audioDirectoryString = audioDirectoryIdMatcher.group(2);

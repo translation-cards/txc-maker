@@ -67,6 +67,15 @@ public class TxcMakerParserTest {
     }
 
     @Test
+    public void shouldNotAttemptToParseNullAudioDirectoryString() throws Exception {
+        String audioDirectoryString = null;
+
+        String audioDirectoryId = txcMakerParser.parseAudioDirId(audioDirectoryString);
+
+        assertThat(audioDirectoryId, is(""));
+    }
+
+    @Test
     public void shouldParseSpreadsheetIdFromUrl() throws Exception {
         String spreadsheetUrl = "https://docs.google.com/spreadsheets/d/1GKHlnVLIc_GrBra5wCAk1BCxgXIAJZLAu7tcLCLPAAw/edit#gid=0";
 
@@ -82,6 +91,15 @@ public class TxcMakerParserTest {
         String spreadsheetId = txcMakerParser.parseDocId(spreadsheetUrl);
 
         assertThat(spreadsheetId, is("1GKHlnVLIc_GrBra5wCAk1BCxgXIAJZLAu7tcLCLPAAw"));
+    }
+
+    @Test
+    public void shouldNotAttemptToParseNullSpreadsheetString() throws Exception {
+        String spreadsheetString = null;
+
+        String spreadsheetId = txcMakerParser.parseAudioDirId(spreadsheetString);
+
+        assertThat(spreadsheetId, is(""));
     }
 
     @Test
