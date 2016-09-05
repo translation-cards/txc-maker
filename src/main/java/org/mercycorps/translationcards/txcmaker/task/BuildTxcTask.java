@@ -57,7 +57,7 @@ public class BuildTxcTask {
         final String directoryId = deckMetadata.directoryId;
         final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         storageService.zipTxc(sessionId, deckJson, new ArrayList<>(audioFiles.keySet()));
-        String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc");
+        String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc", deck.deck_label);
         String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
         BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
                 .setDeck(gsonWrapper.fromJson(deckJson, Deck.class))

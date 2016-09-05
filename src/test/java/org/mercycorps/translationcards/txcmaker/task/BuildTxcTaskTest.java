@@ -58,7 +58,7 @@ public class BuildTxcTaskTest {
     private BuildTxcTask buildTxcTask;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;
-    private Deck deck = new Deck();
+    private Deck deck = new Deck().setDeckLabel("label");
 
     @Before
     public void setUp() throws Exception {
@@ -81,7 +81,7 @@ public class BuildTxcTaskTest {
         when(driveService.downloadAllAudioFileMetaData(drive, DIRECTORY_ID, deck))
                 .thenReturn(audioFiles);
 
-        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc"))
+        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", deck.deck_label))
                 .thenReturn(DOWNLOAD_URL);
 
         when(urlShortenerWrapper.getShortUrl(DOWNLOAD_URL))
@@ -135,7 +135,7 @@ public class BuildTxcTaskTest {
     public void shouldPushTxcToDrive() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc");
+        verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", deck.deck_label);
     }
 
     @Test
@@ -147,10 +147,6 @@ public class BuildTxcTaskTest {
 
     @Test
     public void shouldInitializeTheResponse() throws Exception {
-        Deck deck = new Deck();
-        when(gsonWrapper.fromJson(DECK_AS_JSON, Deck.class))
-                .thenReturn(deck);
-
         buildTxcTask.buildTxc(SESSION_ID);
 
         ArgumentCaptor<BuildTxcTaskResponse> argumentCaptor = ArgumentCaptor.forClass(BuildTxcTaskResponse.class);
