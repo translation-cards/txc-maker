@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.cache.Cache;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -33,15 +35,17 @@ public class DecksController {
     private ResponseFactory responseFactory;
     private TaskService taskService;
     private GcsStreamFactory gcsStreamFactory;
+    private Cache cache;
 
     @Autowired
-    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService, GcsStreamFactory gcsStreamFactory) {
+    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService, GcsStreamFactory gcsStreamFactory, Cache cache) {
         this.importDeckService = importDeckService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
         this.responseFactory = responseFactory;
         this.taskService = taskService;
         this.gcsStreamFactory = gcsStreamFactory;
+        this.cache = cache;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -65,8 +69,15 @@ public class DecksController {
 
     @RequestMapping(path = "/{id}/{fileName:.+}", method = RequestMethod.GET)
     public void getAudioFile(@PathVariable String id, @PathVariable String fileName, HttpServletResponse response) {
-        String filePath = id + "/" + fileName;
-        InputStream inputStream = gcsStreamFactory.getInputStream(filePath);
+        InputStream inputStream;
+        if(cache.containsKey(fileName)) {
+            byte[] file = (byte[]) cache.get(fileName);
+            inputStream = new ByteArrayInputStream(file);
+        } else {
+            String filePath = id + "/" + fileName;
+            inputStream = gcsStreamFactory.getInputStream(filePath);
+        }
+
         response.setContentType("audio/mpeg3");
         try {
             IOUtils.copy(inputStream, response.getOutputStream());

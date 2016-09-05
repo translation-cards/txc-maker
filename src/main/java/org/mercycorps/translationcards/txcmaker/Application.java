@@ -14,9 +14,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheFactory;
+import javax.cache.CacheManager;
 import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
@@ -48,6 +53,18 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     public GcsService gcsService() {
         return GcsServiceFactory.createGcsService();
+    }
+
+    @Bean
+    public Cache cache() {
+        Cache cache = null;
+        try {
+            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+            cache = cacheFactory.createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            // ...
+        }
+        return cache;
     }
 
     @Override

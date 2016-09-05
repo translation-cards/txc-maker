@@ -15,6 +15,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 
+import javax.cache.Cache;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -50,6 +51,8 @@ public class DecksControllerTest {
     private TaskService taskService;
     @Mock
     private GcsStreamFactory gcsStreamFactory;
+    @Mock
+    private Cache cache;
     private List<Constraint> constraints;
     private DecksController decksController;
 
@@ -67,7 +70,7 @@ public class DecksControllerTest {
         constraints = Arrays.asList(constraint);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(constraints);
 
-        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService, gcsStreamFactory);
+        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService, gcsStreamFactory, cache);
     }
 
     @Test

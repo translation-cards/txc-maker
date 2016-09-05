@@ -1,6 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.ChildList;
 import com.google.api.services.drive.model.ChildReference;
@@ -14,6 +15,7 @@ import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.cache.Cache;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.*;
@@ -28,11 +30,13 @@ public class DriveService {
 
     private TxcMakerParser txcMakerParser;
     private GcsStreamFactory gcsStreamFactory;
+    private Cache cache;
 
     @Autowired
-    public DriveService(TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory) {
+    public DriveService(TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory, Cache cache) {
         this.txcMakerParser = txcMakerParser;
         this.gcsStreamFactory = gcsStreamFactory;
+        this.cache = cache;
     }
 
     public CSVParser downloadParsableCsv(Drive drive, String documentId) {
@@ -120,7 +124,7 @@ public class DriveService {
                 String filePath = folderName + "/" + audioFileName;
                 OutputStream gcsOutput = gcsStreamFactory.getOutputStream(filePath);
                 String audioFileId = audioFiles.get(audioFileName);
-                downloadAndWriteFile(drive, gcsOutput, audioFileId);
+                downloadAndWriteFile(drive, gcsOutput, audioFileId, audioFileName);
                 try {
                     gcsOutput.close();
                 } catch(IOException e) {
@@ -130,11 +134,17 @@ public class DriveService {
         }
     }
 
-    private void downloadAndWriteFile(Drive drive, OutputStream outputStream, String fileId) {
+    private void downloadAndWriteFile(Drive drive, OutputStream outputStream, String audioFileId, String audioFileName) {
         try {
-            drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+//            drive.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+            InputStream inputStream = drive.files().get(audioFileId).executeMediaAsInputStream();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            IOUtils.copy(inputStream, byteArrayOutputStream);
+            byte[] file = byteArrayOutputStream.toByteArray();
+            cache.put(audioFileName, file);
+            outputStream.write(file);
         } catch(IOException e) {
-            System.err.println("DriveService.downloadAndWriteFile failed.");
+            System.err.println(e.getStackTrace().toString());
         }
     }
 

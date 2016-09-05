@@ -6,6 +6,7 @@ import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.cache.Cache;
 import java.io.*;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -16,11 +17,13 @@ public class StorageService {
 
     private GcsStreamFactory gcsStreamFactory;
     private GsonWrapper gsonWrapper;
+    private Cache cache;
 
     @Autowired
-    public StorageService(GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper) {
+    public StorageService(GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper, Cache cache) {
         this.gcsStreamFactory = gcsStreamFactory;
         this.gsonWrapper = gsonWrapper;
+        this.cache = cache;
     }
 
     public DeckMetadata readDeckMetaData(String fileName) {
@@ -53,7 +56,13 @@ public class StorageService {
             zipOutputStream.write(deckJson.getBytes("UTF8"));
             for (String audioFileName : audioFiles) {
                 zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
-                InputStream inputStream = gcsStreamFactory.getInputStream(sessionId + "/" + audioFileName);
+                InputStream inputStream;
+                if(cache.containsKey(audioFileName)) {
+                    byte[] file = (byte[]) cache.get(audioFileName);
+                    inputStream = new ByteArrayInputStream(file);
+                } else {
+                    inputStream = gcsStreamFactory.getInputStream(sessionId + "/" + audioFileName);
+                }
                 IOUtils.copy(inputStream, zipOutputStream);
             }
             zipOutputStream.close();
