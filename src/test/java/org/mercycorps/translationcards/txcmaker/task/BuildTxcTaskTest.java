@@ -6,11 +6,13 @@ import com.google.appengine.api.channel.ChannelService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
+import org.mercycorps.translationcards.txcmaker.service.FinalizedDeckFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
@@ -18,15 +20,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import javax.servlet.ServletContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class BuildTxcTaskTest {
@@ -37,6 +37,7 @@ public class BuildTxcTaskTest {
     public static final String DOCUMENT = "document id";
     public static final String DOWNLOAD_URL = "download url";
     public static final String SHORT_URL = "short url";
+    private static final String FINALIZED_DECK_JSON = "finalized deck as json";
     @Mock
     private ServletContext servletContext;
     @Mock
@@ -55,10 +56,13 @@ public class BuildTxcTaskTest {
     private GsonWrapper gsonWrapper;
     @Mock
     private UrlShortenerWrapper urlShortenerWrapper;
+    @Mock
+    private FinalizedDeckFactory finalizedDeckFactory;
     private BuildTxcTask buildTxcTask;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;
     private Deck deck = new Deck().setDeckLabel("label");
+    private FinalizedDeck finalizedDeck = new FinalizedDeck().setDeck_label("label");
 
     @Before
     public void setUp() throws Exception {
@@ -68,11 +72,14 @@ public class BuildTxcTaskTest {
         when(storageService.readDeckMetaData(SESSION_ID + "/metadata.json"))
                 .thenReturn(deckMetadata);
 
-        when(storageService.readUnicodeFile(SESSION_ID + "/deck.json"))
-                .thenReturn(DECK_AS_JSON);
-
-        when(gsonWrapper.fromJson(DECK_AS_JSON, Deck.class))
+        when(storageService.readDeck(SESSION_ID + "/deck.json"))
                 .thenReturn(deck);
+
+        when(finalizedDeckFactory.finalize(deck))
+                .thenReturn(finalizedDeck);
+
+        when(gsonWrapper.toJson(finalizedDeck))
+                .thenReturn(FINALIZED_DECK_JSON);
 
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
                 .thenReturn(drive);
@@ -81,7 +88,7 @@ public class BuildTxcTaskTest {
         when(driveService.downloadAllAudioFileMetaData(drive, DIRECTORY_ID, deck))
                 .thenReturn(audioFiles);
 
-        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", deck.deck_label))
+        when(driveService.pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", finalizedDeck.deck_label))
                 .thenReturn(DOWNLOAD_URL);
 
         when(urlShortenerWrapper.getShortUrl(DOWNLOAD_URL))
@@ -92,7 +99,7 @@ public class BuildTxcTaskTest {
                 .thenReturn(response);
 
         buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService,
-                responseFactory, gsonWrapper, urlShortenerWrapper);
+                responseFactory, gsonWrapper, urlShortenerWrapper, finalizedDeckFactory);
 
     }
 
@@ -107,7 +114,7 @@ public class BuildTxcTaskTest {
     public void shouldReadDeckJsonFromStorage() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(storageService).readUnicodeFile(SESSION_ID + "/deck.json");
+        verify(storageService).readDeck(SESSION_ID + "/deck.json");
     }
 
     @Test
@@ -128,7 +135,7 @@ public class BuildTxcTaskTest {
     public void shouldZipTheTxc() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(storageService).zipTxc(SESSION_ID, DECK_AS_JSON, new ArrayList<>(audioFiles.keySet()));
+        verify(storageService).zipTxc(SESSION_ID, FINALIZED_DECK_JSON, new ArrayList<>(audioFiles.keySet()));
     }
 
     @Test
@@ -150,9 +157,9 @@ public class BuildTxcTaskTest {
         buildTxcTask.buildTxc(SESSION_ID);
 
         ArgumentCaptor<BuildTxcTaskResponse> argumentCaptor = ArgumentCaptor.forClass(BuildTxcTaskResponse.class);
-        verify(gsonWrapper).toJson(argumentCaptor.capture());
+        verify(gsonWrapper, times(2)).toJson(argumentCaptor.capture());
 
-        BuildTxcTaskResponse response = argumentCaptor.getValue();
+        BuildTxcTaskResponse response = argumentCaptor.getAllValues().get(1);
         assertThat(response.getDeck(), is(deck));
         assertThat(response.getDownloadUrl(), is(SHORT_URL));
     }

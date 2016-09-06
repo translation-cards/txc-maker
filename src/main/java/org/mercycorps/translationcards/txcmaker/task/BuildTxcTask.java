@@ -4,11 +4,13 @@ import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.model.*;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
+import org.mercycorps.translationcards.txcmaker.service.FinalizedDeckFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
@@ -35,9 +37,10 @@ public class BuildTxcTask {
     private ResponseFactory responseFactory;
     private GsonWrapper gsonWrapper;
     private UrlShortenerWrapper urlShortenerWrapper;
+    private FinalizedDeckFactory finalizedDeckFactory;
 
     @Autowired
-    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper) {
+    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper, FinalizedDeckFactory finalizedDeckFactory) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
@@ -46,21 +49,23 @@ public class BuildTxcTask {
         this.responseFactory = responseFactory;
         this.gsonWrapper = gsonWrapper;
         this.urlShortenerWrapper = urlShortenerWrapper;
+        this.finalizedDeckFactory = finalizedDeckFactory;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(@RequestBody String sessionId) {
         final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "/metadata.json");
-        final String deckJson = storageService.readUnicodeFile(sessionId + "/deck.json");
-        final Deck deck = gsonWrapper.fromJson(deckJson, Deck.class);
+        final Deck deck = storageService.readDeck(sessionId + "/deck.json");
+        final FinalizedDeck finalizedDeck = finalizedDeckFactory.finalize(deck);
+        final String finalizedDeckJson = gsonWrapper.toJson(finalizedDeck);
         final Drive drive = getDrive(sessionId);
         final String directoryId = deckMetadata.directoryId;
         final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
-        storageService.zipTxc(sessionId, deckJson, new ArrayList<>(audioFiles.keySet()));
-        String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc", deck.deck_label);
-        String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
-        BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
-                .setDeck(gsonWrapper.fromJson(deckJson, Deck.class))
+        storageService.zipTxc(sessionId, finalizedDeckJson, new ArrayList<>(audioFiles.keySet()));
+        final String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc", finalizedDeck.deck_label);
+        final String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
+        final BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
+                .setDeck(deck)
                 .setDownloadUrl(shortUrl);
         channelService.sendMessage(new ChannelMessage(sessionId, gsonWrapper.toJson(response)));
     }
