@@ -27,17 +27,17 @@ public class StorageService {
     }
 
     public DeckMetadata readDeckMetaData(String fileName) {
-        String deckMetadataJson = readFile(fileName);
+        String deckMetadataJson = readUnicodeFile(fileName);
 
         return gsonWrapper.fromJson(deckMetadataJson, DeckMetadata.class);
     }
 
-    public String readFile(String fileName) {
+    public String readUnicodeFile(String fileName) {
         InputStream inputStream = gcsStreamFactory.getInputStream(fileName);
         StringBuilder stringBuilder = new StringBuilder();
         BufferedReader bufferedReader;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF8"));
             String line;
             while(((line = bufferedReader.readLine())) != null) {
                 stringBuilder.append(line);

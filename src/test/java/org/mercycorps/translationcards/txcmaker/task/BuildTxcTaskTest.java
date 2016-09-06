@@ -68,7 +68,7 @@ public class BuildTxcTaskTest {
         when(storageService.readDeckMetaData(SESSION_ID + "/metadata.json"))
                 .thenReturn(deckMetadata);
 
-        when(storageService.readFile(SESSION_ID + "/deck.json"))
+        when(storageService.readUnicodeFile(SESSION_ID + "/deck.json"))
                 .thenReturn(DECK_AS_JSON);
 
         when(gsonWrapper.fromJson(DECK_AS_JSON, Deck.class))
@@ -107,7 +107,7 @@ public class BuildTxcTaskTest {
     public void shouldReadDeckJsonFromStorage() throws Exception {
         buildTxcTask.buildTxc(SESSION_ID);
 
-        verify(storageService).readFile(SESSION_ID + "/deck.json");
+        verify(storageService).readUnicodeFile(SESSION_ID + "/deck.json");
     }
 
     @Test

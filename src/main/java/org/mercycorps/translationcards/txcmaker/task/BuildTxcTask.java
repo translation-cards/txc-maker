@@ -51,7 +51,7 @@ public class BuildTxcTask {
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(@RequestBody String sessionId) {
         final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "/metadata.json");
-        final String deckJson = storageService.readFile(sessionId + "/deck.json");
+        final String deckJson = storageService.readUnicodeFile(sessionId + "/deck.json");
         final Deck deck = gsonWrapper.fromJson(deckJson, Deck.class);
         final Drive drive = getDrive(sessionId);
         final String directoryId = deckMetadata.directoryId;

@@ -17,7 +17,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class StorageServiceTest {
 
-    public static final String JSON_FILE_STRING = "{\"documentId\":\"document id\",\"directoryId\":\"directory id\"}";
+    public static final String JSON_FILE_STRING = "{\"documentId\":\"document id\",\"directoryId\":\"directory id\",\"someUnicode\":\"ما اسمك؟\"}";
     public static final String FILE_NAME = "file name";
     private StorageService storageService;
     @Mock
@@ -40,7 +40,7 @@ public class StorageServiceTest {
 
     @Test
     public void shouldReadAFileFromGcsStorage() throws Exception {
-        String fileString = storageService.readFile(FILE_NAME);
+        String fileString = storageService.readUnicodeFile(FILE_NAME);
 
         assertThat(fileString, is(JSON_FILE_STRING));
     }
