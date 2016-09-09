@@ -51,7 +51,7 @@ public class AuthUtils {
       throws IOException {
     AuthorizationCodeFlow flow = newFlow(context);
     Credential credential = flow.loadCredential(sessionId);
-    if (credential == null) {
+    if (credential == null || credential.getExpiresInSeconds() < 0) {
       if (orOAuth) {
         String url = flow.newAuthorizationUrl()
             .setRedirectUri(getRedirectUri(req))
