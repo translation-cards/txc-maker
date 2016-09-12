@@ -100,9 +100,9 @@ public class DriveService {
         return audioFile;
     }
 
-    public String pushTxcToDrive(Drive drive, String parentDirectory, String txcPath, String txcName) {
+    public String pushTxcToDrive(Drive drive, String parentDirectory, String txcPath, String txcFilename) {
         File targetFileInfo = new File();
-        targetFileInfo.setTitle(txcName);
+        targetFileInfo.setTitle(txcFilename);
         targetFileInfo.setParents(Collections.singletonList(new ParentReference().setId(parentDirectory)));
         InputStream txcContentStream = gcsStreamFactory.getInputStream(txcPath);
         String downloadUrl = "";
