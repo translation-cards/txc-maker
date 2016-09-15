@@ -9,6 +9,7 @@ The frontend is being written in AngularJS. The Angular app lives in the folder 
 1. Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 2. Fork and clone the [txc-maker repo](https://github.com/translation-cards/txc-maker.git)
 3. Get the `client_secrets.json` file from a Translation Cards team member and copy it into the directory `src/main/webapp/WEB-INF/`
+4. Get the `application.properties` file from a Translation Cards team member and copy it into the directory `src/main/resources/`
  * For the Women Hack Syria hackathon, this file will be distributed at the event.
 
 ## 2. Local setup
