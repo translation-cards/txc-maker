@@ -10,3 +10,4 @@ npm-debug.log
 capture.js
 error.txt
 src/main/resources/application.properties
+client_secrets.json
