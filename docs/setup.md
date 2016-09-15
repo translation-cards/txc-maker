@@ -24,9 +24,10 @@ You should install the following dependencies on your machine. Alternatively, fo
 
 The webapp is built and deployed with Maven, NPM, and Google AppEngine.
 
-1. from the project root, run `mvn appengine:devserver`
+1. Install npm packages: from src/UI/ run `npm install`
+2. From the project root, run `mvn appengine:devserver`
   * This runs the server at http://localhost:8080/get-txc
-2. from `src/UI`, run `npm run test`
+3. From `src/UI`, run `npm run test`
   * This runs the JS tests. It will watch for changes to the JS files and automatically rerun the tests.
 
 In order for your changes to the Angular app to show up while you're running the server, you will have to copy the contents of `src/UI/app/` into `target/txcmaker-1.0-SNAPSHOT/`. Otherwise, you will have to restart the server to see the changes.
