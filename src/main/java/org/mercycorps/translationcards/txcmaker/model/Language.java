@@ -26,12 +26,4 @@ public class Language {
         cards.add(card);
         return this;
     }
-
-    public List<Error> verify() {
-        List<Error> errors = new ArrayList<>();
-        for(Card card : cards) {
-            errors.addAll(card.verify());
-        }
-        return errors;
-    }
 }
