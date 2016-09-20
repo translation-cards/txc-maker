@@ -74,14 +74,4 @@ public class VerifyCardServiceTest {
         Error error = vcs.verifyAudioFilename(card, audioFilenames);
         assertThat(error, nullValue());
     }
-
-    @Test
-    public void testWhenAudioFileIsADuplicate() {
-        Card card = new Card();
-        card.dest_audio = "sameFile.mp3";
-
-        List<String> existingCardFiles = newArrayList("sameFile.mp3","differentFile.mp3" );
-
-        assertThat(vcs.verifyDuplicateAudioFile(card, existingCardFiles).message, is(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.dest_audio)));
-    }
 }

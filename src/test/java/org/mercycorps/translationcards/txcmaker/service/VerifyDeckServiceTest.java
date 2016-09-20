@@ -41,33 +41,11 @@ public class VerifyDeckServiceTest {
         audioDirectoryId = "doesNotMatterWhatThisValueIs";
     }
 
-
-    @Test
-    public void testFailedVerifications() {
-
-        when(mockVerifyCardService.verifyRequiredValues(any(Card.class))).thenReturn(newArrayList(new Error("requiredValuesError", true)));
-        when(mockVerifyCardService.verifyAudioFilename(any(Card.class), any(List.class))).thenReturn(new Error("audioFilenameError", true));
-        when(mockVerifyCardService.verifyDuplicateAudioFile(any(Card.class), any(List.class))).thenReturn(new Error("duplicateFilenameError", true));
-
-        VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
-        Deck deck = new Deck();
-        Language language = new Language();
-
-        Card card1 = new Card();
-        language.addCard(card1);
-
-        deck.languages = newArrayList(language);
-        List<Error> actualErrors = verifyDeckService.verify(mockDrive, deck, audioDirectoryId);
-
-        assertThat(actualErrors.size(), is(3));
-    }
-
     @Test
     public void testPassingVerifications() {
 
         when(mockVerifyCardService.verifyRequiredValues(any(Card.class))).thenReturn(new ArrayList<Error>());
         when(mockVerifyCardService.verifyAudioFilename(any(Card.class), any(List.class))).thenReturn(null);
-        when(mockVerifyCardService.verifyDuplicateAudioFile(any(Card.class), any(List.class))).thenReturn(null);
 
         VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
         Deck deck = new Deck();
@@ -83,34 +61,68 @@ public class VerifyDeckServiceTest {
     }
 
     @Test
-    public void testErrorsAreAddedToCards() {
+    public void testRequiredValuesErrorsAddedToCard() {
         Card requiredValueErrorCard = new Card();
-        Card audioFileErrorCard = new Card();
-        Card dupeFileErrorCard = new Card();
-
-        when(mockVerifyCardService.verifyRequiredValues(requiredValueErrorCard)).thenReturn(newArrayList(new Error("requiredValuesError", true)));
-        when(mockVerifyCardService.verifyAudioFilename(eq(audioFileErrorCard), any(List.class))).thenReturn(new Error("audioFilenameError", true));
-        when(mockVerifyCardService.verifyDuplicateAudioFile(eq(dupeFileErrorCard), any(List.class))).thenReturn(new Error("duplicateFilenameError", true));
-
-        VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
-
         Language language = new Language();
         language.addCard(requiredValueErrorCard);
+        Deck deck = new Deck();
+        deck.languages = newArrayList(language);
+
+        when(mockVerifyCardService.verifyRequiredValues(requiredValueErrorCard)).thenReturn(newArrayList(new Error("requiredValuesError", true)));
+
+        VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
+        List<Error> actualErrors = verifyDeckService.verify(mockDrive, deck, audioDirectoryId);
+
+        assertThat(actualErrors.size(), is(1));
+        assertThat(requiredValueErrorCard.errors.size(), is(1));
+        assertThat(requiredValueErrorCard.errors.get(0).message, is("requiredValuesError"));
+    }
+
+    @Test
+    public void testMissingAudioFileErrorAddedToCard() {
+        Card audioFileErrorCard = new Card();
+        when(mockVerifyCardService.verifyAudioFilename(eq(audioFileErrorCard), any(List.class))).thenReturn(new Error("audioFilenameError", true));
+
+        Language language = new Language();
         language.addCard(audioFileErrorCard);
-        language.addCard(dupeFileErrorCard);
 
         Deck deck = new Deck();
         deck.languages = newArrayList(language);
 
-        verifyDeckService.verify(mockDrive, deck, audioDirectoryId);
+        VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
+        List<Error> actualErrors = verifyDeckService.verify(mockDrive, deck, audioDirectoryId);
 
-        assertThat(requiredValueErrorCard.errors.size(), is(1));
-        assertThat(requiredValueErrorCard.errors.get(0).message, is("requiredValuesError"));
+        assertThat(actualErrors.size(), is(1));
 
         assertThat(audioFileErrorCard.errors.size(), is(1));
         assertThat(audioFileErrorCard.errors.get(0).message, is("audioFilenameError"));
+    }
 
-        assertThat(dupeFileErrorCard.errors.size(), is(1));
-        assertThat(dupeFileErrorCard.errors.get(0).message, is("duplicateFilenameError"));
+    @Test
+    public void testDuplicateFileErrorsAreAddedToCards() {
+        String sameFilename = "sameFilename.mp3";
+        Card duplicateCard1 = new Card();
+        duplicateCard1.dest_audio = sameFilename;
+        Card duplicateCard2 = new Card();
+        duplicateCard2.dest_audio = sameFilename;
+
+        VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
+
+        Language language = new Language();
+        language.addCard(duplicateCard1);
+        language.addCard(duplicateCard2);
+
+        Deck deck = new Deck();
+        deck.languages = newArrayList(language);
+
+        List<Error> actualErrors = verifyDeckService.verify(mockDrive, deck, audioDirectoryId);
+
+        assertThat(actualErrors.size(), is(2));
+
+        assertThat(duplicateCard1.errors.size(), is(1));
+        assertThat(duplicateCard1.errors.get(0).message, is(String.format(VerifyDeckService.DUPLICATE_FILE_ERROR_FORMAT, sameFilename)));
+
+        assertThat(duplicateCard2.errors.size(), is(1));
+        assertThat(duplicateCard2.errors.get(0).message, is(String.format(VerifyDeckService.DUPLICATE_FILE_ERROR_FORMAT, sameFilename)));
     }
 }

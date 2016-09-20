@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -18,7 +19,6 @@ public class VerifyCardService {
     public final static Error NO_AUDIO = new Error("This card has no audio recording", true);
     public final static Error NO_TEXT = new Error("This card has no text translation", false);
     public final static String FILE_NOT_FOUND_ERROR_FORMAT = "There is no file named '%s' in the Google Drive folder.";
-    public final static String DUPLICATE_FILE_ERROR_FORMAT = "Audio file '%s' is associated with more than one card.";
 
 
     public List<Error> verifyRequiredValues(Card card) {
@@ -44,12 +44,5 @@ public class VerifyCardService {
         }
         return null;
     }
-
-    public Error verifyDuplicateAudioFile(Card card, List<String> filesFromCards) {
-        if (filesFromCards.contains(card.dest_audio)) {
-            Error cardError = new Error(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.dest_audio), false);
-            return cardError;
-        }
-        return null;
-    }
 }
+

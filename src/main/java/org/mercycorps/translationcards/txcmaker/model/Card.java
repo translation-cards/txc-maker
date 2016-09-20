@@ -9,7 +9,11 @@ public class Card {
     public String card_label;
     public String dest_audio;
     public String dest_txt;
-    public List<Error> errors = newArrayList();
+    public List<Error> errors;
+
+    public Card() {
+        errors = newArrayList();
+    }
 
     public Card setLabel(String label) {
         this.card_label = label;
