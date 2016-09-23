@@ -10,4 +10,5 @@ npm-debug.log
 capture.js
 error.txt
 src/main/resources/application.properties
+.java-version
 client_secrets.json
