@@ -23,14 +23,12 @@ public class Deck {
     public List<Language> languages;
     public List<Error> errors;
     public transient List<Error> parseErrors;
-    public int numberOfErrors;
     private transient Map<String, Language> languageLookup;
 
     public Deck() {
         languages = new ArrayList<>();
         errors = new ArrayList<>();
         parseErrors = new ArrayList<>();
-        numberOfErrors = 0;
         languageLookup = new HashMap<>();
     }
 
@@ -95,11 +93,9 @@ public class Deck {
                 .setLanguageLabel("English");
     }
 
-    public void verify() {
-        for(Language language : languages) {
-            errors.addAll(language.verify());
-        }
-        numberOfErrors = errors.size();
+
+    public int getNumberOfErrors() {
+        return errors.size();
     }
 
 }

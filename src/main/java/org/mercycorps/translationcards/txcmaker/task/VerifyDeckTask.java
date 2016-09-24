@@ -8,6 +8,7 @@ import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
+import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,15 +31,18 @@ public class VerifyDeckTask {
     private ChannelService channelService;
     private GsonWrapper gsonWrapper;
     private StorageService storageService;
+    private VerifyDeckService verifyDeckService;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, GsonWrapper gsonWrapper, StorageService storageService) {
+    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService,
+                          GsonWrapper gsonWrapper, StorageService storageService, VerifyDeckService verifyDeckService) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
         this.channelService = channelService;
         this.gsonWrapper = gsonWrapper;
         this.storageService = storageService;
+        this.verifyDeckService = verifyDeckService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -49,7 +53,7 @@ public class VerifyDeckTask {
         final Drive drive = getDrive(sessionId);
 
         final Deck deck = driveService.assembleDeck(request, sessionId, documentId, drive);
-        deck.verify();
+        deck.errors = verifyDeckService.verify(drive, deck, directoryId);
 
         Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         driveService.downloadAudioFiles(drive, audioFiles, sessionId);

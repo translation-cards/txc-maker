@@ -3,7 +3,9 @@ package org.mercycorps.translationcards.txcmaker.model.deck;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Card;
+import org.mercycorps.translationcards.txcmaker.model.Error;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -51,6 +53,12 @@ public class DeckTest {
         assertThat(deck.languages.get(0).iso_code, is("ar"));
         assertThat(deck.languages.get(0).cards.get(0), is(card1));
         assertThat(deck.languages.get(0).cards.get(1), is(card2));
+    }
+
+    @Test
+    public void shouldReturnNumberOfErrors() {
+        deck.errors = newArrayList(new Error("error message 1", true), new Error("error message 2", true));
+        assertThat(deck.getNumberOfErrors(), is(2));
     }
 
 

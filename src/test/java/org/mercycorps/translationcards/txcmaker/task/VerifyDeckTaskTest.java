@@ -10,8 +10,10 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
+import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -25,6 +27,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
@@ -59,6 +62,8 @@ public class VerifyDeckTaskTest {
     private GsonWrapper gsonWrapper;
     @Mock
     private StorageService storageService;
+    @Mock
+    private VerifyDeckService verifyDeckService;
 
     private VerifyDeckTask verifyDeckTask;
     private Map<String, String> audioFileMetaData;
@@ -95,7 +100,7 @@ public class VerifyDeckTaskTest {
         when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck))
                 .thenReturn(audioFileMetaData);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper, storageService);
+        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper, storageService, verifyDeckService);
     }
 
     @Test
@@ -160,5 +165,21 @@ public class VerifyDeckTaskTest {
         verifyDeckTask.verifyDeck(request);
 
         verify(driveService).downloadAudioFiles(drive, audioFileMetaData, SESSION_ID);
+    }
+
+    @Test
+    public void shouldVerifyUsingService() throws Exception {
+        verifyDeckTask.verifyDeck(request);
+
+        verify(verifyDeckService).verify(drive, deck, AUDIO_DIR_ID);
+    }
+
+    @Test
+    public void shouldAddErrorsToDeck() throws Exception {
+        when(verifyDeckService.verify(drive, deck, AUDIO_DIR_ID)).thenReturn(newArrayList(new Error("a deck error", false)));
+        verifyDeckTask.verifyDeck(request);
+        assertThat(deck.errors.size(), is(1));
+
+        assertThat(deck.errors.get(0).message, is("a deck error"));
     }
 }
