@@ -8,18 +8,16 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
-import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
+import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.cache.Cache;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -30,28 +28,31 @@ import java.util.List;
 public class DecksController {
 
     private ImportDeckService importDeckService;
+    private DriveService driveService;
     private AuthUtils authUtils;
     private ServletContext servletContext;
     private ResponseFactory responseFactory;
     private TaskService taskService;
-    private GcsStreamFactory gcsStreamFactory;
-    private Cache cache;
 
     @Autowired
-    public DecksController(ImportDeckService importDeckService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService, GcsStreamFactory gcsStreamFactory, Cache cache) {
+    public DecksController(ImportDeckService importDeckService, DriveService driveService, AuthUtils authUtils, ServletContext servletContext, ResponseFactory responseFactory, TaskService taskService) {
         this.importDeckService = importDeckService;
+        this.driveService = driveService;
         this.authUtils = authUtils;
         this.servletContext = servletContext;
         this.responseFactory = responseFactory;
         this.taskService = taskService;
-        this.gcsStreamFactory = gcsStreamFactory;
-        this.cache = cache;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity importDeck(@RequestBody ImportDeckForm importDeckForm, HttpServletRequest request) throws URISyntaxException {
+        Drive drive = null;
         ImportDeckResponse importDeckResponse = responseFactory.newImportDeckResponse();
-        Drive drive = getDrive(request, importDeckResponse);
+        try {
+            drive = getDrive(request);
+        } catch (IOException ioe) {
+            importDeckResponse.addError(new Error("Authorization failed", true));
+        }
         if(drive != null) {
             importDeckService.preProcessForm(importDeckForm);
             final String sessionId = request.getSession().getId();
@@ -67,19 +68,11 @@ public class DecksController {
         taskService.kickoffBuildDeckTask(id);
     }
 
-    @RequestMapping(path = "/{id}/{fileName:.+}", method = RequestMethod.GET)
-    public void getAudioFile(@PathVariable String id, @PathVariable String fileName, HttpServletResponse response) {
-        InputStream inputStream;
-        if(cache.containsKey(fileName)) {
-            byte[] file = (byte[]) cache.get(fileName);
-            inputStream = new ByteArrayInputStream(file);
-        } else {
-            String filePath = id + "/" + fileName;
-            inputStream = gcsStreamFactory.getInputStream(filePath);
-        }
-
-        response.setContentType("audio/mpeg3");
+    @RequestMapping(path = "/{id}/{fileId:.+}", method = RequestMethod.GET)
+    public void getAudioFile(@PathVariable String id, @PathVariable String fileId, HttpServletRequest request, HttpServletResponse response) {
         try {
+            InputStream inputStream = driveService.getFileInputStream(getDrive(request), fileId);
+
             IOUtils.copy(inputStream, response.getOutputStream());
             response.flushBuffer();
         } catch(IOException e) {
@@ -87,14 +80,8 @@ public class DecksController {
         }
     }
 
-    private Drive getDrive(HttpServletRequest request, ImportDeckResponse importDeckResponse) {
-        Drive drive = null;
-        try {
-            drive = authUtils.getDriveOrOAuth(servletContext, request, null, false, request.getSession().getId());
-        } catch(IOException e) {
-            importDeckResponse.addError(new Error("Authorization failed", true));
-        }
-        return drive;
+    private Drive getDrive(HttpServletRequest request) throws IOException {
+        return authUtils.getDriveOrOAuth(servletContext, request, null, false, request.getSession().getId());
     }
 
 

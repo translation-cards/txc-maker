@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
+import com.google.api.services.drive.model.File;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
@@ -8,10 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
 public class VerifyCardService {
@@ -37,10 +36,21 @@ public class VerifyCardService {
         return errors;
     }
 
-    public Error verifyAudioFilename(Card card, List<String> audioFilenames) {
+    public Error verifyAudioFilename(Card card, List<File> audioFiles) {
         String cardAudioFilename = card.dest_audio;
-        if (audioFilenames == null || !isEmpty(cardAudioFilename) && !audioFilenames.contains(cardAudioFilename)) {
+        File audioFile = audioFiles != null ? findFileForFilename(cardAudioFilename, audioFiles) : null;
+        if (audioFile == null) {
             return new Error(String.format(FILE_NOT_FOUND_ERROR_FORMAT, cardAudioFilename), true);
+        }
+        card.setAudioId(audioFile.getId());
+        return null;
+    }
+
+    private File findFileForFilename(String filename, List<File> files) {
+        for (File file : files) {
+            if (file.getTitle().equals(filename)) {
+                return file;
+            }
         }
         return null;
     }

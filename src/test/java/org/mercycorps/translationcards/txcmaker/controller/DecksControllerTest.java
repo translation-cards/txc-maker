@@ -8,6 +8,7 @@ import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.GcsStreamFactory;
 import org.mercycorps.translationcards.txcmaker.service.ImportDeckService;
 import org.mercycorps.translationcards.txcmaker.service.TaskService;
@@ -15,7 +16,6 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 
-import javax.cache.Cache;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -52,9 +52,9 @@ public class DecksControllerTest {
     @Mock
     private GcsStreamFactory gcsStreamFactory;
     @Mock
-    private Cache cache;
     private List<Constraint> constraints;
     private DecksController decksController;
+    private DriveService driveService;
 
     @Before
     public void setUp() throws Exception {
@@ -70,7 +70,7 @@ public class DecksControllerTest {
         constraints = Arrays.asList(constraint);
         when(importDeckForm.getFieldsToVerify(drive)).thenReturn(constraints);
 
-        decksController = new DecksController(importDeckService, authUtils, servletContext, responseFactory, taskService, gcsStreamFactory, cache);
+        decksController = new DecksController(importDeckService, driveService, authUtils, servletContext, responseFactory, taskService);
     }
 
     @Test

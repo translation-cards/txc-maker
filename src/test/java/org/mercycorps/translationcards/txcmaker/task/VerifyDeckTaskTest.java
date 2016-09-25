@@ -154,20 +154,6 @@ public class VerifyDeckTaskTest {
     }
 
     @Test
-    public void shouldDownloadAllAudioFileMetaData() throws Exception {
-        verifyDeckTask.verifyDeck(request);
-
-        verify(driveService).downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck);
-    }
-
-    @Test
-    public void shouldDownloadAudioFiles() throws Exception {
-        verifyDeckTask.verifyDeck(request);
-
-        verify(driveService).downloadAudioFiles(drive, audioFileMetaData, SESSION_ID);
-    }
-
-    @Test
     public void shouldVerifyUsingService() throws Exception {
         verifyDeckTask.verifyDeck(request);
 

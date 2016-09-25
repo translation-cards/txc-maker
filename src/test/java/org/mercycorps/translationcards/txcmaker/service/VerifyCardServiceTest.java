@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
+import com.google.api.services.drive.model.File;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
@@ -33,45 +34,76 @@ public class VerifyCardServiceTest {
     public void testMatchingAudioFile() throws Exception {
         Card card = new Card();
         card.dest_audio = "matchingFilename.mp3";
-        List<String> audioFilenames = newArrayList("matchingFilename.mp3", "nonMatching.mp3");
-        Error error = vcs.verifyAudioFilename(card, audioFilenames);
+
+        File matchingFile = new File();
+        matchingFile.setTitle("matchingFilename.mp3");
+        File notMatchingFile = new File();
+        notMatchingFile.setTitle("nonMatching.mp3");
+
+        List<File> audioFiles = newArrayList(matchingFile, notMatchingFile);
+        Error error = vcs.verifyAudioFilename(card, audioFiles);
         assertThat(error, nullValue());
     }
 
     @Test
     public void testNoMatchingFile() throws Exception {
-        List<String> audioFilenames = newArrayList("audioFile1.mp3", "audioFile2.mp3");
+        File audioFile1 = new File();
+        audioFile1.setTitle("audioFile1.mp3");
+        File audioFile2 = new File();
+        audioFile2.setTitle("audioFile2.mp3");
+        List<File> audioFiles = newArrayList(audioFile1, audioFile2);
+
         Card card = new Card();
         card.dest_audio = "fileNotInDirectory.mp3";
-        Error error = vcs.verifyAudioFilename(card, audioFilenames);
+        Error error = vcs.verifyAudioFilename(card, audioFiles);
         assertThat(error.message, is(String.format(FILE_NOT_FOUND_ERROR_FORMAT, card.dest_audio)));
     }
 
     @Test
     public void testNoFilesInDir() throws Exception {
-        List<String> audioFilenames = newArrayList();
+        List<File> audioFiles = newArrayList();
         Card card = new Card();
         card.dest_audio  = "fileNotInDirectory.mp3";
-        Error error = vcs.verifyAudioFilename(card, audioFilenames);
+        Error error = vcs.verifyAudioFilename(card, audioFiles);
         assertThat(error.message, is(String.format(FILE_NOT_FOUND_ERROR_FORMAT, card.dest_audio)));
     }
 
     @Test
     public void testNullDirFiles() throws Exception {
-        List<String> audioFilenames = null;
+        List<File> audioFiles = null;
         Card card = new Card();
         card.dest_audio  = "fileNotInDirectory.mp3";
-        Error error = vcs.verifyAudioFilename(card, audioFilenames);
+        Error error = vcs.verifyAudioFilename(card, audioFiles);
         assertThat(error.message, is(String.format(FILE_NOT_FOUND_ERROR_FORMAT, card.dest_audio)));
     }
 
     @Test
     public void testNonEnglishChars() throws Exception {
         String funChars = "ñéحيبε好";
-        List<String> audioFilenames = newArrayList(funChars);
+        File funkyAudioFile = new File();
+        funkyAudioFile.setTitle(funChars);
+        List<File> audioFilenames = newArrayList(funkyAudioFile);
         Card card = new Card();
         card.dest_audio  = funChars;
         Error error = vcs.verifyAudioFilename(card, audioFilenames);
         assertThat(error, nullValue());
+    }
+
+    @Test
+    public void testAudioFileIdGetsSet() throws Exception {
+        String fileId = "matchingFileId";
+        Card card = new Card();
+        card.dest_audio = "matchingFilename.mp3";
+
+        File matchingFile = new File();
+        matchingFile.setTitle("matchingFilename.mp3");
+        matchingFile.setId(fileId);
+        List<File> audioFiles = newArrayList(matchingFile);
+
+        assertThat(card.audio_id, nullValue());
+
+        vcs.verifyAudioFilename(card, audioFiles);
+
+        assertThat(card.audio_id, is(fileId));
     }
 }

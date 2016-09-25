@@ -6,12 +6,11 @@ import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mockito.Mock;
 
-import javax.cache.Cache;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -24,8 +23,6 @@ public class StorageServiceTest {
     private GcsStreamFactory gcsStreamFactory;
     @Mock
     private GsonWrapper gsonWrapper;
-    @Mock
-    private Cache cache;
 
     @Before
     public void setUp() throws Exception {
@@ -35,7 +32,7 @@ public class StorageServiceTest {
         when(gcsStreamFactory.getInputStream(FILE_NAME))
                 .thenReturn(inputStream);
 
-        storageService = new StorageService(gcsStreamFactory, gsonWrapper, cache);
+        storageService = new StorageService(gcsStreamFactory, gsonWrapper);
     }
 
     @Test

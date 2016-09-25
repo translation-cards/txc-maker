@@ -9,6 +9,7 @@ public class Card {
     public String card_label;
     public String dest_audio;
     public String dest_txt;
+    public String audio_id;
     public List<Error> errors;
 
     public Card() {
@@ -27,6 +28,11 @@ public class Card {
 
     public Card setTranslationText(String translationText) {
         this.dest_txt = translationText;
+        return this;
+    }
+
+    public Card setAudioId(String audioId) {
+        this.audio_id = audioId;
         return this;
     }
 }

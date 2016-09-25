@@ -1,6 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.Language;
@@ -32,7 +33,7 @@ public class VerifyDeckService {
 
     public List<Error> verify(Drive drive, Deck deck, String audioDirectoryId) {
         List<Error> errors = newArrayList();
-        List<String> filenamesInAudioDirectory = driveService.getFilenamesInAudioDirectory(drive, audioDirectoryId);
+        List<File> filesInAudioDirectory = driveService.getFilesInAudioDirectory(drive, audioDirectoryId);
         Map<String, List<Card>> audioFileToCards = newHashMap();
 
         for (Language language: deck.languages) {
@@ -40,7 +41,7 @@ public class VerifyDeckService {
                 List<Error> cardErrors = newArrayList();
                 cardErrors.addAll(verifyCardService.verifyRequiredValues(card));
 
-                Error verifyAudioError = verifyCardService.verifyAudioFilename(card, filenamesInAudioDirectory);
+                Error verifyAudioError = verifyCardService.verifyAudioFilename(card, filesInAudioDirectory);
                 if (verifyAudioError != null) {
                     cardErrors.add(verifyAudioError);
                 }

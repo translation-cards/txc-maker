@@ -6,7 +6,6 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.gson.Gson;
 import org.mercycorps.translationcards.txcmaker.language.LanguagesImportUtility;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,14 +13,9 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
-import javax.cache.Cache;
-import javax.cache.CacheException;
-import javax.cache.CacheFactory;
-import javax.cache.CacheManager;
 import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
@@ -53,18 +47,6 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     public GcsService gcsService() {
         return GcsServiceFactory.createGcsService();
-    }
-
-    @Bean
-    public Cache cache() {
-        Cache cache = null;
-        try {
-            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
-            cache = cacheFactory.createCache(Collections.emptyMap());
-        } catch (CacheException e) {
-            // ...
-        }
-        return cache;
     }
 
     @Override

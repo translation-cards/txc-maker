@@ -14,6 +14,7 @@ public class CardSerializer implements JsonSerializer<Card> {
         jsonObject.addProperty("card_label", card.card_label);
         jsonObject.addProperty("dest_audio", card.dest_audio);
         jsonObject.addProperty("dest_txt", card.dest_txt);
+        jsonObject.addProperty("audio_id", card.audio_id);
         if(card.errors != null && !card.errors.isEmpty()) {
             jsonObject.add("errors", jsonSerializationContext.serialize(card.errors));
         }
