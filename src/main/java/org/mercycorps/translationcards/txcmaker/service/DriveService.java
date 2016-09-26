@@ -3,10 +3,8 @@ package org.mercycorps.translationcards.txcmaker.service;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.ChildList;
-import com.google.api.services.drive.model.ChildReference;
+import com.google.api.services.drive.model.*;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.ParentReference;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.model.Card;
@@ -21,6 +19,7 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.ValidDocumentId.CSV_EXPORT_TYPE;
 
 @Service
@@ -64,7 +63,7 @@ public class DriveService {
         return audioFileIds;
     }
 
-    private Set<String> getAudioFilesInDeck(Deck deck) {
+    public Set<String> getAudioFilesInDeck(Deck deck) {
         Set<String> audioFilesInDeck = new HashSet<>();
         for(Language language : deck.languages) {
             for(Card card : language.cards) {
@@ -88,6 +87,24 @@ public class DriveService {
 
         }
         return childList;
+    }
+
+    public List<String> getFilenamesInAudioDirectory(Drive drive, String audioDirectoryId) {
+        try {
+            FileList fileList = drive.files().list()
+                    .setQ(String.format("('%s' in parents) and (trashed = false)", audioDirectoryId))
+                    .setFields("items/title")
+                    .execute();
+
+            List<String> filenames = newArrayList();
+            for(File file : fileList.getItems()) {
+                filenames.add(file.getTitle());
+            }
+            return filenames;
+        } catch (Exception e) {
+            log.info("Fetching file names for audio directory " + audioDirectoryId  + " failed.");
+        }
+        return null;
     }
 
     private File downloadAudioFileMetadata(Drive drive, ChildReference audioRef) {
