@@ -11,7 +11,7 @@ function DeckInfoScreenController($scope, $location, BackendService) {
         $scope.destinationLanguages.push(language.language_label);
       });
     }
-  }
+  };
 
   $scope.publish = function() {
     BackendService.buildDeck($scope.deck.id).then(

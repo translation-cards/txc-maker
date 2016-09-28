@@ -4,6 +4,7 @@ import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.model.DeckViewModel;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
@@ -58,10 +59,10 @@ public class VerifyDeckTask {
         Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         driveService.downloadAudioFiles(drive, audioFiles, sessionId);
 
-        final String deckJson = gsonWrapper.toJson(deck);
-        storageService.writeFileToStorage(deckJson, sessionId + "/deck.json");
+        storageService.writeFileToStorage(gsonWrapper.toJson(deck), sessionId + "/deck.json");
         writeDeckMetadataToStorage(sessionId, documentId, directoryId);
-        sendDeckToClient(deckJson, sessionId);
+        DeckViewModel deckViewModel = new DeckViewModel(deck.deck_label, deck.language_label, deck.id, deck.languages, deck.getNumberOfErrors());
+        sendDeckToClient(gsonWrapper.toJson(deckViewModel), sessionId);
     }
 
     private void writeDeckMetadataToStorage(String sessionId, String documentId, String directoryId) throws IOException {

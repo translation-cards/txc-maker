@@ -9,8 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
@@ -42,6 +42,8 @@ public class VerifyDeckTaskTest {
     private static final String DOC_ID = "document id";
     public static final String DECK_AS_JSON = "deck as JSON";
     public static final String DECK_METADATA_AS_JSON = "deck metadata as json";
+    private final String VIEW_MODEL_DECK = "VIEW MODEL DECK";
+
     @Mock
     private AuthUtils authUtils;
     @Mock
@@ -69,7 +71,6 @@ public class VerifyDeckTaskTest {
     private Map<String, String> audioFileMetaData;
     private Deck deck;
 
-
     @Before
     public void setup() throws ServletException, IOException {
         initMocks(this);
@@ -94,7 +95,8 @@ public class VerifyDeckTaskTest {
 
         when(gsonWrapper.toJson(any(Object.class)))
                 .thenReturn(DECK_AS_JSON)
-                .thenReturn(DECK_METADATA_AS_JSON);
+                .thenReturn(DECK_METADATA_AS_JSON)
+                .thenReturn(VIEW_MODEL_DECK);
 
         audioFileMetaData = new HashMap<>();
         when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck))
@@ -129,14 +131,14 @@ public class VerifyDeckTaskTest {
     }
 
     @Test
-    public void shouldRespondWithTheDeckAsJson() throws Exception {
+    public void shouldRespondWithTheDeckViewModelAsJson() throws Exception {
         verifyDeckTask.verifyDeck(request);
 
         ArgumentCaptor<ChannelMessage> channelMessageArgumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
         verify(channelService).sendMessage(channelMessageArgumentCaptor.capture());
 
         ChannelMessage channelMessage = channelMessageArgumentCaptor.getValue();
-        assertThat(channelMessage.getMessage(), is(DECK_AS_JSON));
+        assertThat(channelMessage.getMessage(), is(VIEW_MODEL_DECK));
     }
 
     @Test

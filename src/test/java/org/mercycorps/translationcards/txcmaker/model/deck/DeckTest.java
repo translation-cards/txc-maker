@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class DeckTest {
 
-    Deck deck;
+    private Deck deck;
 
     @Before
     public void setUp() throws Exception {
@@ -60,6 +60,4 @@ public class DeckTest {
         deck.errors = newArrayList(new Error("error message 1", true), new Error("error message 2", true));
         assertThat(deck.getNumberOfErrors(), is(2));
     }
-
-
 }
