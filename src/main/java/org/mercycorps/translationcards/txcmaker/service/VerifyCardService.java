@@ -8,14 +8,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
 public class VerifyCardService {
-    public final static Error NO_LABEL = new Error("This card has no label", true);
+    public final static Error NO_SOURCE_PHRASE = new Error("This card has no source phrase", true);
     public final static Error NO_AUDIO = new Error("This card has no audio recording", true);
     public final static Error NO_TEXT = new Error("This card has no text translation", false);
     public final static String FILE_NOT_FOUND_ERROR_FORMAT = "There is no file named '%s' in the Google Drive folder.";
@@ -23,7 +22,7 @@ public class VerifyCardService {
 
     public List<Error> verifyRequiredValues(Card card) {
         List<Constraint> constraints = Arrays.asList((Constraint)
-                new RequiredString(card.card_label, NO_LABEL),
+                new RequiredString(card.sourcePhrase, NO_SOURCE_PHRASE),
                 new RequiredString(card.dest_audio, NO_AUDIO),
                 new RequiredString(card.dest_txt, NO_TEXT)
         );

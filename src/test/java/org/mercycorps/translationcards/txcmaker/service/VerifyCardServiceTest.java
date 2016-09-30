@@ -24,7 +24,7 @@ public class VerifyCardServiceTest {
         List<Error> actualErrors = vcs.verifyRequiredValues(card);
 
         assertThat(actualErrors.size(), is(3));
-        assertThat(actualErrors.get(0), is(NO_LABEL));
+        assertThat(actualErrors.get(0), is(NO_SOURCE_PHRASE));
         assertThat(actualErrors.get(1), is(NO_AUDIO));
         assertThat(actualErrors.get(2), is(NO_TEXT));
     }

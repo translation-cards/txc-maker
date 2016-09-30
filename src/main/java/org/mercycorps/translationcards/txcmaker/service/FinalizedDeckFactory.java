@@ -45,7 +45,7 @@ public class FinalizedDeckFactory {
 
     private FinalizedCard getFinalizedCard(Card card) {
         return new FinalizedCard()
-                .setCard_label(card.card_label)
+                .setSourcePhrase(card.sourcePhrase)
                 .setDest_audio(card.dest_audio)
                 .setDest_txt(card.dest_txt);
     }

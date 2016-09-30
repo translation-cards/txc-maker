@@ -93,9 +93,7 @@ public class Deck {
                 .setLanguageLabel("English");
     }
 
-
     public int getNumberOfErrors() {
         return errors.size();
     }
-
 }

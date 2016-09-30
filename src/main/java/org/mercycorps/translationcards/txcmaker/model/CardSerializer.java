@@ -11,7 +11,7 @@ public class CardSerializer implements JsonSerializer<Card> {
     @Override
     public JsonElement serialize(Card card, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("card_label", card.card_label);
+        jsonObject.addProperty("source_phrase", card.sourcePhrase);
         jsonObject.addProperty("dest_audio", card.dest_audio);
         jsonObject.addProperty("dest_txt", card.dest_txt);
         if(card.errors != null && !card.errors.isEmpty()) {

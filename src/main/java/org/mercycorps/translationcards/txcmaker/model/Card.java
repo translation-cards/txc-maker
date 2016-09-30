@@ -6,7 +6,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class Card {
 
-    public String card_label;
+    public String sourcePhrase;
     public String dest_audio;
     public String dest_txt;
     public List<Error> errors;
@@ -15,8 +15,8 @@ public class Card {
         errors = newArrayList();
     }
 
-    public Card setLabel(String label) {
-        this.card_label = label;
+    public Card setSourcePhrase(String sourcePhrase) {
+        this.sourcePhrase = sourcePhrase;
         return this;
     }
 

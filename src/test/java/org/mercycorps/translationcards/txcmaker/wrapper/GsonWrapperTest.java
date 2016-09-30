@@ -8,12 +8,12 @@ import static org.hamcrest.core.Is.is;
 
 public class GsonWrapperTest {
     @Test
-    public void shouldProdcuceJson() throws Exception {
+    public void shouldProduceJson() throws Exception {
         GsonWrapper gsonWrapper = new GsonWrapper();
-        Card card = new Card().setLabel("Label");
+        Card card = new Card().setSourcePhrase("Are you hurt?");
 
         String json = gsonWrapper.toJson(card);
 
-        assertThat(json, is("{\"card_label\":\"Label\"}"));
+        assertThat(json, is("{\"source_phrase\":\"Are you hurt?\"}"));
     }
 }

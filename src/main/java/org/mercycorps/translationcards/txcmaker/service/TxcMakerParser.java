@@ -21,7 +21,7 @@ public class TxcMakerParser {
             "https?://drive.google.com/drive/(.*)folders/(.*)$");
 
     private static final String SRC_HEADER_LANGUAGE = "Language";
-    private static final String SRC_HEADER_LABEL = "Label";
+    private static final String SRC_HEADER_PHRASE = "Source Phrase";
     private static final String SRC_HEADER_TRANSLATION_TEXT = "Translation";
     private static final String SRC_HEADER_FILENAME = "Filename";
 
@@ -64,12 +64,11 @@ public class TxcMakerParser {
             }
             String audioFileName = row.get(SRC_HEADER_FILENAME);
             Card card = new Card()
-                    .setLabel(row.get(SRC_HEADER_LABEL))
+                    .setSourcePhrase(row.get(SRC_HEADER_PHRASE))
                     .setFilename(audioFileName)
                     .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
             deck.addCard(languageIso, languageLabel, card);
             lineNumber++;
         }
     }
-
 }

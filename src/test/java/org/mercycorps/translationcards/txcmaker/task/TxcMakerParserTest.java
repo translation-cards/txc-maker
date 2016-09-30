@@ -17,15 +17,16 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TxcMakerParserTest {
-
-    public static final String STUBBED_CSV =
-            "Language,Label,Translation,Filename\n" +
+    private static final String CSV_HEADERS = "Language,Source Phrase,Translation,Filename\n";
+    private static final String STUBBED_CSV =
+            CSV_HEADERS +
             "ar,ar phrase,ar translation,ar.mp3\n" +
             "ps,ps phrase,ps translation,ps.mp3\n" +
             "fa,fa phrase,fa translation,fa.mp3";
-    public static final int ARABIC = 0;
-    public static final int PASHTO = 1;
-    public static final int FARSI = 2;
+    private static final int ARABIC = 0;
+    private static final int PASHTO = 1;
+    private static final int FARSI = 2;
+
     @Mock
     private LanguageService languageService;
     private TxcMakerParser txcMakerParser;
@@ -129,9 +130,9 @@ public class TxcMakerParserTest {
     public void parseCsvIntoDeck_shouldSetLabelsForTranslations() throws Exception {
         txcMakerParser.parseCsvIntoDeck(deck, csvParser);
 
-        assertThat(deck.languages.get(ARABIC).cards.get(0).card_label, is("ar phrase"));
-        assertThat(deck.languages.get(PASHTO).cards.get(0).card_label, is("ps phrase"));
-        assertThat(deck.languages.get(FARSI).cards.get(0).card_label, is("fa phrase"));
+        assertThat(deck.languages.get(ARABIC).cards.get(0).sourcePhrase, is("ar phrase"));
+        assertThat(deck.languages.get(PASHTO).cards.get(0).sourcePhrase, is("ps phrase"));
+        assertThat(deck.languages.get(FARSI).cards.get(0).sourcePhrase, is("fa phrase"));
     }
 
     @Test
@@ -155,7 +156,7 @@ public class TxcMakerParserTest {
     @Test
     public void parseCsvIntoDeck_shouldAddErrorsForInvalidISOCodes() throws Exception {
         String stubbedCsv =
-                "Language,Label,Translation,Filename\n" +
+                CSV_HEADERS +
                 "abc,ar phrase,ar translation,ar.mp3\n" +
                 "abc,ps phrase,ps translation,ps.mp3\n" +
                 "fa,fa phrase,fa translation,fa.mp3";

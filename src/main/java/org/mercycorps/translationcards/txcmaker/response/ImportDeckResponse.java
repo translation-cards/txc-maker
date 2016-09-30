@@ -14,11 +14,7 @@ public class ImportDeckResponse {
     private String channelToken;
 
     public ResponseEntity build() throws URISyntaxException {
-        if(errors.isEmpty()) {
-            return success();
-        } else {
-            return failure();
-        }
+        return errors.isEmpty() ? success() : failure();
     }
 
     private ResponseEntity success() {

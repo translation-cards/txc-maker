@@ -10,7 +10,7 @@ public final class JsonKeys {
     public static final String DICTIONARIES = "languages";
     public static final String DICTIONARY_DEST_ISO_CODE = "iso_code";
     public static final String CARDS = "cards";
-    public static final String CARD_LABEL = "card_label";
+    public static final String SOURCE_PHRASE = "source_phrase";
     public static final String CARD_DEST_AUDIO = "dest_audio";
     public static final String CARD_DEST_TEXT = "dest_txt";
     public static final String EXTERNAL_LANGUAGE_LIST_VERSION_ID = "id";
