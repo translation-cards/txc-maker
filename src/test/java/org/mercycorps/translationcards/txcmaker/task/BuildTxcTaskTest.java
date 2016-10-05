@@ -14,7 +14,7 @@ import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.FinalizedDeckFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;

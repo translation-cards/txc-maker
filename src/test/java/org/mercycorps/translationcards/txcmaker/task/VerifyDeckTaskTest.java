@@ -14,7 +14,7 @@ import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 

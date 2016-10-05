@@ -9,7 +9,7 @@ import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

@@ -1,9 +1,11 @@
-package org.mercycorps.translationcards.txcmaker.model;
+package org.mercycorps.translationcards.txcmaker.serializer;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.junit.Test;
+import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.serializer.DeckSerializer;
 
 import java.lang.reflect.Type;
 

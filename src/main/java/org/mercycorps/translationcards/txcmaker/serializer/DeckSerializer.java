@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.model;
+package org.mercycorps.translationcards.txcmaker.serializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

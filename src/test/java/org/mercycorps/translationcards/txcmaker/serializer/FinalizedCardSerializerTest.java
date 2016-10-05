@@ -1,8 +1,9 @@
-package org.mercycorps.translationcards.txcmaker.model;
+package org.mercycorps.translationcards.txcmaker.serializer;
 
 import com.google.gson.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mercycorps.translationcards.txcmaker.model.FinalizedCard;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
