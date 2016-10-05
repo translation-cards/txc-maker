@@ -2,9 +2,7 @@ package org.mercycorps.translationcards.txcmaker.wrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.mercycorps.translationcards.txcmaker.model.Card;
-import org.mercycorps.translationcards.txcmaker.model.CardSerializer;
-import org.mercycorps.translationcards.txcmaker.model.DeckSerializer;
+import org.mercycorps.translationcards.txcmaker.model.*;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +15,9 @@ public class GsonWrapper {
         gson = new GsonBuilder()
                 .registerTypeAdapter(Card.class, new CardSerializer())
                 .registerTypeAdapter(Deck.class, new DeckSerializer())
+                .registerTypeAdapter(FinalizedCard.class, new FinalizedCardSerializer())
+                .registerTypeAdapter(FinalizedDeck.class, new FinalizedDeckSerializer())
+                .registerTypeAdapter(FinalizedLanguage.class, new FinalizedLanguageSerializer())
                 .create();
     }
 
