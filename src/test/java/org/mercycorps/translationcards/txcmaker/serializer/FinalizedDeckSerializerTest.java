@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedLanguage;
-import org.mercycorps.translationcards.txcmaker.serializer.FinalizedDeckSerializer;
 
 import java.util.ArrayList;
 
@@ -112,10 +111,20 @@ public class FinalizedDeckSerializerTest {
     @Test
     public void shouldSerializeSourceLanguage() {
         final String sourceLanguage = "a source language";
-        finalizedDeck.source_language= sourceLanguage;
+        finalizedDeck.source_language = sourceLanguage;
 
         JsonObject json = (JsonObject) finalizedDeckSerializer.serialize(finalizedDeck, null, context);
 
         assertThat(json.get("source_language").getAsString(), is(sourceLanguage));
+    }
+
+    @Test
+    public void shouldSerializedSourceLanguageName() {
+        final String sourceLanguageName = "a source language";
+//        finalizedDeck.sourceLanguageName = sourceLanguageName;
+
+        JsonObject json = (JsonObject) finalizedDeckSerializer.serialize(finalizedDeck, null, context);
+
+        assertThat(json.get("source_language_name").getAsString(), is(sourceLanguageName));
     }
 }

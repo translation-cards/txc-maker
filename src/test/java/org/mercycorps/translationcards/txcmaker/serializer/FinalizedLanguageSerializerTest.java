@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedCard;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedLanguage;
-import org.mercycorps.translationcards.txcmaker.serializer.FinalizedLanguageSerializer;
 
 import java.util.ArrayList;
 
@@ -47,5 +46,15 @@ public class FinalizedLanguageSerializerTest {
         serializer.serialize(finalizedLanguage, null, context);
 
         verify(context).serialize(cards);
+    }
+
+    @Test
+    public void shouldSerializeDestinationLanguageName() {
+        final String destinationLanguageName = "Arabic";
+//        finalizedLanguage.destinationLanguageName = destinationLanguageName;
+
+        JsonObject json = (JsonObject) serializer.serialize(finalizedLanguage, null, context);
+
+        assertThat(json.get("dest_language_name").getAsString(), is(destinationLanguageName));
     }
 }
