@@ -3,6 +3,7 @@ package org.mercycorps.translationcards.txcmaker.serializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedLanguage;
@@ -119,6 +120,7 @@ public class FinalizedDeckSerializerTest {
     }
 
     @Test
+    @Ignore("is this different than source_language?")
     public void shouldSerializedSourceLanguageName() {
         final String sourceLanguageName = "a source language";
 //        finalizedDeck.sourceLanguageName = sourceLanguageName;
