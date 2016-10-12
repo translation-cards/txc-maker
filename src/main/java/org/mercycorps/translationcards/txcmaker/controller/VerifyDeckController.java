@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.task;
+package org.mercycorps.translationcards.txcmaker.controller;
 
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks/txc-verify")
-public class VerifyDeckTask {
+public class VerifyDeckController {
 
     private ServletContext servletContext;
     private AuthUtils authUtils;
@@ -34,8 +34,8 @@ public class VerifyDeckTask {
     private VerifyDeckService verifyDeckService;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService,
-                          GsonWrapper gsonWrapper, StorageService storageService, VerifyDeckService verifyDeckService) {
+    public VerifyDeckController(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService,
+                                GsonWrapper gsonWrapper, StorageService storageService, VerifyDeckService verifyDeckService) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;

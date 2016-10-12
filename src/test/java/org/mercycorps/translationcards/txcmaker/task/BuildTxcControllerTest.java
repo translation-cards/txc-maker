@@ -6,6 +6,7 @@ import com.google.appengine.api.channel.ChannelService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.controller.BuildTxcController;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
@@ -29,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class BuildTxcTaskTest {
+public class BuildTxcControllerTest {
 
     public static final String SESSION_ID = "session id";
     public static final String DECK_AS_JSON = "deck as json";
@@ -58,7 +59,7 @@ public class BuildTxcTaskTest {
     private UrlShortenerWrapper urlShortenerWrapper;
     @Mock
     private FinalizedDeckFactory finalizedDeckFactory;
-    private BuildTxcTask buildTxcTask;
+    private BuildTxcController buildTxcController;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;
     private Deck deck = new Deck().setDeckLabel("label");
@@ -98,63 +99,63 @@ public class BuildTxcTaskTest {
         when(responseFactory.newBuildTxcTaskResponse())
                 .thenReturn(response);
 
-        buildTxcTask = new BuildTxcTask(servletContext, authUtils, driveService, channelService, storageService,
+        buildTxcController = new BuildTxcController(servletContext, authUtils, driveService, channelService, storageService,
                 responseFactory, gsonWrapper, urlShortenerWrapper, finalizedDeckFactory);
 
     }
 
     @Test
     public void shouldReadDeckMetadataFromStorage() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(storageService).readDeckMetaData(SESSION_ID + "/metadata.json");
     }
 
     @Test
     public void shouldReadDeckJsonFromStorage() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(storageService).readDeck(SESSION_ID + "/deck.json");
     }
 
     @Test
     public void shouldGetTheDriveUsingTheSessionId() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(authUtils).getDriveOrOAuth(servletContext, null, null, false, SESSION_ID);
     }
 
     @Test
     public void shouldFetchTheAudioFileMetaData() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(driveService).downloadAllAudioFileMetaData(drive, DIRECTORY_ID, deck);
     }
 
     @Test
     public void shouldZipTheTxc() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(storageService).zipTxc(SESSION_ID, FINALIZED_DECK_JSON, new ArrayList<>(audioFiles.keySet()));
     }
 
     @Test
     public void shouldPushTxcToDrive() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", deck.deck_label + ".txc");
     }
 
     @Test
     public void shouldGetAShortenedUrl() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         verify(urlShortenerWrapper).getShortUrl(DOWNLOAD_URL);
     }
 
     @Test
     public void shouldInitializeTheResponse() throws Exception {
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         ArgumentCaptor<BuildTxcTaskResponse> argumentCaptor = ArgumentCaptor.forClass(BuildTxcTaskResponse.class);
         verify(gsonWrapper, times(2)).toJson(argumentCaptor.capture());
@@ -169,7 +170,7 @@ public class BuildTxcTaskTest {
         when(gsonWrapper.toJson(response))
                 .thenReturn("response string");
 
-        buildTxcTask.buildTxc(SESSION_ID);
+        buildTxcController.buildTxc(SESSION_ID);
 
         ArgumentCaptor<ChannelMessage> argumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
         verify(channelService).sendMessage(argumentCaptor.capture());

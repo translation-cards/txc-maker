@@ -8,13 +8,14 @@ import org.apache.commons.csv.CSVParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
+import org.mercycorps.translationcards.txcmaker.controller.VerifyDeckController;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
-import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class VerifyDeckTaskTest {
+public class VerifyDeckControllerTest {
 
     private static final String SESSION_ID = "session id";
     private static final String AUDIO_DIR_ID = "audio dir id";
@@ -65,7 +66,7 @@ public class VerifyDeckTaskTest {
     @Mock
     private VerifyDeckService verifyDeckService;
 
-    private VerifyDeckTask verifyDeckTask;
+    private VerifyDeckController verifyDeckController;
     private Map<String, String> audioFileMetaData;
     private Deck deck;
 
@@ -100,26 +101,26 @@ public class VerifyDeckTaskTest {
         when(driveService.downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck))
                 .thenReturn(audioFileMetaData);
 
-        verifyDeckTask = new VerifyDeckTask(servletContext, authUtils, driveService, channelService, gsonWrapper, storageService, verifyDeckService);
+        verifyDeckController = new VerifyDeckController(servletContext, authUtils, driveService, channelService, gsonWrapper, storageService, verifyDeckService);
     }
 
     @Test
     public void shouldGetTheDriveUsingTheSessionId() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(authUtils).getDriveOrOAuth(servletContext, null, null, false, SESSION_ID);
     }
 
     @Test
     public void shouldAssembleTheDeck() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(driveService).assembleDeck(request, SESSION_ID, DOC_ID, drive);
     }
 
     @Test
     public void shouldRespondOverTheCorrectChannel() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         ArgumentCaptor<ChannelMessage> channelMessageArgumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
         verify(channelService).sendMessage(channelMessageArgumentCaptor.capture());
@@ -130,7 +131,7 @@ public class VerifyDeckTaskTest {
 
     @Test
     public void shouldRespondWithTheDeckAsJson() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         ArgumentCaptor<ChannelMessage> channelMessageArgumentCaptor = ArgumentCaptor.forClass(ChannelMessage.class);
         verify(channelService).sendMessage(channelMessageArgumentCaptor.capture());
@@ -141,35 +142,35 @@ public class VerifyDeckTaskTest {
 
     @Test
     public void shouldWriteDeckToStorage() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(storageService).writeFileToStorage(DECK_AS_JSON, SESSION_ID + "/deck.json");
     }
 
     @Test
     public void shouldWriteDeckMetadataToStorage() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(storageService).writeFileToStorage(DECK_METADATA_AS_JSON, SESSION_ID + "/metadata.json");
     }
 
     @Test
     public void shouldDownloadAllAudioFileMetaData() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(driveService).downloadAllAudioFileMetaData(drive, AUDIO_DIR_ID, deck);
     }
 
     @Test
     public void shouldDownloadAudioFiles() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(driveService).downloadAudioFiles(drive, audioFileMetaData, SESSION_ID);
     }
 
     @Test
     public void shouldVerifyUsingService() throws Exception {
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
 
         verify(verifyDeckService).verify(drive, deck, AUDIO_DIR_ID);
     }
@@ -177,7 +178,7 @@ public class VerifyDeckTaskTest {
     @Test
     public void shouldAddErrorsToDeck() throws Exception {
         when(verifyDeckService.verify(drive, deck, AUDIO_DIR_ID)).thenReturn(newArrayList(new Error("a deck error", false)));
-        verifyDeckTask.verifyDeck(request);
+        verifyDeckController.verifyDeck(request);
         assertThat(deck.errors.size(), is(1));
 
         assertThat(deck.errors.get(0).message, is("a deck error"));

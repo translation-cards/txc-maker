@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.task;
+package org.mercycorps.translationcards.txcmaker.controller;
 
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks/txc-build")
-public class BuildTxcTask {
+public class BuildTxcController {
 
     private ServletContext servletContext;
     private AuthUtils authUtils;
@@ -40,7 +40,7 @@ public class BuildTxcTask {
     private FinalizedDeckFactory finalizedDeckFactory;
 
     @Autowired
-    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper, FinalizedDeckFactory finalizedDeckFactory) {
+    public BuildTxcController(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper, FinalizedDeckFactory finalizedDeckFactory) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;

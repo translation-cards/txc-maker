@@ -5,13 +5,12 @@ import com.google.gson.JsonSerializationContext;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
-import org.mercycorps.translationcards.txcmaker.serializer.DeckSerializer;
 
 import java.lang.reflect.Type;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 
