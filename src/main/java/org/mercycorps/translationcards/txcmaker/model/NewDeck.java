@@ -32,4 +32,13 @@ public class NewDeck {
         this.translations = translations;
         this.destinationLanguageNames = destinationLanguageNames;
     }
+
+    public boolean isValid() {
+        for (Translation translation : translations) {
+            if (!translation.isValid()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
