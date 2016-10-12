@@ -4,11 +4,17 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,4 +78,30 @@ public class TxcMakerParser {
         }
     }
 
+    public List<String> buildDestinationLanguageNames(List<NewCard> cards) {
+        Map<String, Object> destinationLanguageNames = new HashMap<>();
+        for (NewCard card : cards) {
+            destinationLanguageNames.put(card.getDestinationLanguageName(), null);
+        }
+        return new ArrayList<>(destinationLanguageNames.keySet());
+    }
+
+    public List<Translation> buildTranslationsFromCards(List<NewCard> cards) {
+        Map<String, Translation> sourcePhraseToTranslation = new HashMap<>();
+        for (NewCard card : cards) {
+            String sourcePhrase = card.getSourcePhrase();
+            if (sourcePhraseToTranslation.containsKey(sourcePhrase)) {
+                sourcePhraseToTranslation.get(sourcePhrase).addCard(card);
+            } else {
+                sourcePhraseToTranslation.put(sourcePhrase, createTranslationFromCard(card));
+            }
+        }
+        return new ArrayList<>(sourcePhraseToTranslation.values());
+    }
+
+    private Translation createTranslationFromCard(NewCard card) {
+        List<NewCard> cardListForTranslation = new ArrayList<>();
+        cardListForTranslation.add(card);
+        return new Translation(cardListForTranslation);
+    }
 }

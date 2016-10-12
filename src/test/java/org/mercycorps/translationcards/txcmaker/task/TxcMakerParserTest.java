@@ -5,11 +5,17 @@ import org.apache.commons.csv.CSVParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
+import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.Language;
+import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
 import org.mockito.Mock;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -31,10 +37,22 @@ public class TxcMakerParserTest {
     private TxcMakerParser txcMakerParser;
     private CSVParser csvParser;
     private Deck deck;
+    private List<NewCard> cards = new ArrayList<>();
+
+    private NewCard helloInSpanish;
+    private NewCard goodbyeInArabic;
+    private NewCard helloInArabic;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+
+        final Language ARABIC_LANGUAGE = new Language("ar", "Arabic");
+        final Language SPANISH_LANGUAGE = new Language("es", "Spanish");
+
+        helloInSpanish = new NewCard("Hello", "helloEs.mp3", "Hola", new ArrayList<Error>(), SPANISH_LANGUAGE);
+        goodbyeInArabic = new NewCard("Goodbye", "goodbyeAr.mp3", "وداع", new ArrayList<Error>(), ARABIC_LANGUAGE);
+        helloInArabic = new NewCard("Hello", "helloAr.mp3", "هتاف للترحيب", new ArrayList<Error>(), ARABIC_LANGUAGE);
 
         when(languageService.getLanguageDisplayName("ar"))
                 .thenReturn("Arabic");
@@ -168,5 +186,68 @@ public class TxcMakerParserTest {
         assertThat(deck.parseErrors.size(), is(2));
         assertThat(deck.parseErrors.get(0).message, is("2"));
         assertThat(deck.parseErrors.get(1).message, is("3"));
+    }
+
+    @Test
+    public void shouldCreateOneTranslationFromOneCard() {
+        cards = new ArrayList<NewCard>() {{
+            add(helloInSpanish);
+        }};
+
+        List<Translation> actual = txcMakerParser.buildTranslationsFromCards(cards);
+
+        assertThat(actual.size(), is(1));
+        assertThat(actual.get(0).getSourcePhrase(), is("Hello"));
+    }
+
+    @Test
+    public void shouldAddTwoSeparateTranslations() {
+        cards = new ArrayList<NewCard>() {{
+            add(helloInSpanish);
+            add(goodbyeInArabic);
+        }};
+
+        List<Translation> actual = txcMakerParser.buildTranslationsFromCards(cards);
+
+        assertThat(actual.size(), is(2));
+    }
+
+    @Test
+    public void shouldGroupTranslationsByTheirSourcePhrase() {
+        cards = new ArrayList<NewCard>() {{
+            add(helloInSpanish);
+            add(helloInArabic);
+        }};
+
+        List<Translation> actual = txcMakerParser.buildTranslationsFromCards(cards);
+
+        assertThat(actual.size(), is(1));
+        assertThat(actual.get(0).getCards().size(), is(2));
+    }
+
+    @Test
+    public void shouldHaveOnlySpanishInDestinationLanguageNames() {
+        cards = new ArrayList<NewCard>() {{
+            add(helloInSpanish);
+        }};
+
+        List<String> actual = txcMakerParser.buildDestinationLanguageNames(cards);
+
+        assertThat(actual.size(), is(1));
+        assertThat(actual.get(0), is("Spanish"));
+    }
+
+    @Test
+    public void shouldHaveBothArabicAndSpanishInDestinationLanguageNames() {
+        cards = new ArrayList<NewCard>() {{
+            add(helloInSpanish);
+            add(helloInArabic);
+        }};
+
+        List<String> actual = txcMakerParser.buildDestinationLanguageNames(cards);
+
+        assertThat(actual.size(), is(2));
+        assertThat(actual.contains("Spanish"), is(true));
+        assertThat(actual.contains("Arabic"), is(true));
     }
 }
