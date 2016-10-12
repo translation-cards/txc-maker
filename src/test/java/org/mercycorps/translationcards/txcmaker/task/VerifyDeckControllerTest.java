@@ -11,7 +11,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.controller.VerifyDeckController;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
@@ -43,6 +43,7 @@ public class VerifyDeckControllerTest {
     private static final String DOC_ID = "document id";
     public static final String DECK_AS_JSON = "deck as JSON";
     public static final String DECK_METADATA_AS_JSON = "deck metadata as json";
+
     @Mock
     private AuthUtils authUtils;
     @Mock
@@ -68,8 +69,7 @@ public class VerifyDeckControllerTest {
 
     private VerifyDeckController verifyDeckController;
     private Map<String, String> audioFileMetaData;
-    private Deck deck;
-
+    private NewDeck deck;
 
     @Before
     public void setup() throws ServletException, IOException {
@@ -89,8 +89,8 @@ public class VerifyDeckControllerTest {
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
                 .thenReturn(drive);
 
-        deck = new Deck();
-        when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
+        deck = new NewDeck(null, null, null, 0L, false, null, null, null, null, null, null);
+        when(driveService.assembleDeck(request, DOC_ID, drive))
                 .thenReturn(deck);
 
         when(gsonWrapper.toJson(any(Object.class)))
@@ -115,7 +115,7 @@ public class VerifyDeckControllerTest {
     public void shouldAssembleTheDeck() throws Exception {
         verifyDeckController.verifyDeck(request);
 
-        verify(driveService).assembleDeck(request, SESSION_ID, DOC_ID, drive);
+        verify(driveService).assembleDeck(request, DOC_ID, drive);
     }
 
     @Test
@@ -178,9 +178,10 @@ public class VerifyDeckControllerTest {
     @Test
     public void shouldAddErrorsToDeck() throws Exception {
         when(verifyDeckService.verify(drive, deck, AUDIO_DIR_ID)).thenReturn(newArrayList(new Error("a deck error", false)));
-        verifyDeckController.verifyDeck(request);
-        assertThat(deck.errors.size(), is(1));
 
-        assertThat(deck.errors.get(0).message, is("a deck error"));
+        verifyDeckController.verifyDeck(request);
+
+        assertThat(deck.getParsingErrors().size(), is(1));
+        assertThat(deck.getParsingErrors().get(0).message, is("a deck error"));
     }
 }

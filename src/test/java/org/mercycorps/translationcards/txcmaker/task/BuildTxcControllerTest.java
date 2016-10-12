@@ -8,14 +8,14 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.controller.BuildTxcController;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.FinalizedDeckFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
-import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -59,10 +59,12 @@ public class BuildTxcControllerTest {
     private UrlShortenerWrapper urlShortenerWrapper;
     @Mock
     private FinalizedDeckFactory finalizedDeckFactory;
+    @Mock
+    private NewDeck deck;
     private BuildTxcController buildTxcController;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;
-    private Deck deck = new Deck().setDeckLabel("label");
+//    private NewDeck deck = new NewDeck().setDeckLabel("label");
     private FinalizedDeck finalizedDeck = new FinalizedDeck().setDeck_label("label");
 
     @Before
@@ -98,6 +100,8 @@ public class BuildTxcControllerTest {
         response = new BuildTxcTaskResponse();
         when(responseFactory.newBuildTxcTaskResponse())
                 .thenReturn(response);
+
+        when(deck.getDeckLabel()).thenReturn("label");
 
         buildTxcController = new BuildTxcController(servletContext, authUtils, driveService, channelService, storageService,
                 responseFactory, gsonWrapper, urlShortenerWrapper, finalizedDeckFactory);
@@ -143,7 +147,7 @@ public class BuildTxcControllerTest {
     public void shouldPushTxcToDrive() throws Exception {
         buildTxcController.buildTxc(SESSION_ID);
 
-        verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", deck.deck_label + ".txc");
+        verify(driveService).pushTxcToDrive(drive, DIRECTORY_ID, SESSION_ID + "/deck.txc", deck.getDeckLabel() + ".txc");
     }
 
     @Test

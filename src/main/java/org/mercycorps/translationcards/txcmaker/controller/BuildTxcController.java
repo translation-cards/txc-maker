@@ -4,15 +4,15 @@ import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.model.*;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.FinalizedDeckFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
-import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +55,7 @@ public class BuildTxcController {
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(@RequestBody String sessionId) {
         final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "/metadata.json");
-        final Deck deck = storageService.readDeck(sessionId + "/deck.json");
+        final NewDeck deck = storageService.readDeck(sessionId + "/deck.json");
         final FinalizedDeck finalizedDeck = finalizedDeckFactory.finalize(deck);
         final String finalizedDeckJson = gsonWrapper.toJson(finalizedDeck);
         final Drive drive = getDrive(sessionId);
@@ -80,5 +80,4 @@ public class BuildTxcController {
         }
         return drive;
     }
-
 }

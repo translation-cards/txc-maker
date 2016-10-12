@@ -4,7 +4,7 @@
     <md-card layout-padding flex="50">
       <md-card-content layout="column">
         <form ng-submit="submitForm()">
-          <md-card ng-repeat="error in errors" class="error">
+          <md-card ng-repeat="error in parsingErrors" class="error">
             <md-card-content>
               <md-icon md-svg-src="resources/ic_announcement_white_24px.svg"></md-icon>
               {{error.message}}

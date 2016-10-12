@@ -38,4 +38,8 @@ public class NewCard {
     public List<Error> getErrors() {
         return errors;
     }
+
+    public Language getDestinationLanguage() {
+        return destinationLanguage;
+    }
 }

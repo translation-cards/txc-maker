@@ -4,12 +4,12 @@ import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
-import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,8 +52,8 @@ public class VerifyDeckController {
         final String directoryId = request.getParameter("audioDirId");
         final Drive drive = getDrive(sessionId);
 
-        final Deck deck = driveService.assembleDeck(request, sessionId, documentId, drive);
-        deck.errors = verifyDeckService.verify(drive, deck, directoryId);
+        final NewDeck deck = driveService.assembleDeck(request, documentId, drive);
+        deck.setParsingErrors(verifyDeckService.verify(drive, deck, directoryId));
 
         Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         driveService.downloadAudioFiles(drive, audioFiles, sessionId);

@@ -3,7 +3,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
@@ -38,12 +38,11 @@ public class ImportDeckService {
         }
     }
 
-
-    private void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
-        if(!deck.parseErrors.isEmpty()) {
+    private void verifyDeck(NewDeck deck, ImportDeckResponse importDeckResponse) {
+        if(!deck.isValid()) {
             String errorMessage = "The ISO Code on rows ";
 
-            for (Error error : deck.parseErrors) {
+            for (Error error : deck.getParsingErrors()) {
                 errorMessage += error.message + ", ";
             }
             errorMessage = errorMessage.substring(0, errorMessage.length() - 2);
@@ -56,7 +55,7 @@ public class ImportDeckService {
     public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
-            final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
+            final NewDeck deck = driveService.assembleDeck(request, importDeckForm.getDocId(), drive);
             verifyDeck(deck, importDeckResponse);
         }
     }

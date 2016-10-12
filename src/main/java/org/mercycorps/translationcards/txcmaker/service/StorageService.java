@@ -1,7 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.client.util.IOUtils;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +33,10 @@ public class StorageService {
         return gsonWrapper.fromJson(deckMetadataJson, DeckMetadata.class);
     }
 
-    public Deck readDeck(String fileName) {
+    public NewDeck readDeck(String fileName) {
         String deckJson = readUnicodeFile(fileName);
 
-        return gsonWrapper.fromJson(deckJson, Deck.class);
+        return gsonWrapper.fromJson(deckJson, NewDeck.class);
     }
 
     public String readUnicodeFile(String fileName) {

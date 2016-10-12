@@ -1,14 +1,13 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
-import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.NewCard;
 import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -21,11 +20,11 @@ public class VerifyCardService {
     public final static String FILE_NOT_FOUND_ERROR_FORMAT = "There is no file named '%s' in the Google Drive folder.";
 
 
-    public List<Error> verifyRequiredValues(Card card) {
+    public List<Error> verifyRequiredValues(NewCard card) {
         List<Constraint> constraints = Arrays.asList((Constraint)
-                new RequiredString(card.card_label, NO_LABEL),
-                new RequiredString(card.dest_audio, NO_AUDIO),
-                new RequiredString(card.dest_txt, NO_TEXT)
+                new RequiredString(card.getSourcePhrase(), NO_LABEL),
+                new RequiredString(card.getAudio(), NO_AUDIO),
+                new RequiredString(card.getDestinationPhrase(), NO_TEXT)
         );
 
         List<Error> errors = newArrayList();
@@ -37,12 +36,11 @@ public class VerifyCardService {
         return errors;
     }
 
-    public Error verifyAudioFilename(Card card, List<String> audioFilenames) {
-        String cardAudioFilename = card.dest_audio;
+    public Error verifyAudioFilename(NewCard card, List<String> audioFilenames) {
+        String cardAudioFilename = card.getAudio();
         if (audioFilenames == null || !isEmpty(cardAudioFilename) && !audioFilenames.contains(cardAudioFilename)) {
             return new Error(String.format(FILE_NOT_FOUND_ERROR_FORMAT, cardAudioFilename), true);
         }
         return null;
     }
 }
-

@@ -7,8 +7,9 @@ import com.google.api.services.drive.model.*;
 import com.google.api.services.drive.model.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.mercycorps.translationcards.txcmaker.model.Card;
-import org.mercycorps.translationcards.txcmaker.model.Language;
+import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class DriveService {
         return parser;
     }
 
-    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId, Deck deck) {
+    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId, NewDeck deck) {
         Map<String, String> audioFileIds = new HashMap<>();
         Set<String> audioFilesInDeck = getAudioFilesInDeck(deck);
         final ChildList childList = downloadAudioFileReferences(drive, directoryId);
@@ -63,11 +64,11 @@ public class DriveService {
         return audioFileIds;
     }
 
-    public Set<String> getAudioFilesInDeck(Deck deck) {
+    public Set<String> getAudioFilesInDeck(NewDeck deck) {
         Set<String> audioFilesInDeck = new HashSet<>();
-        for(Language language : deck.languages) {
-            for(Card card : language.cards) {
-                audioFilesInDeck.add(card.dest_audio);
+        for(Translation translation : deck.getTranslations()) {
+            for(NewCard card : translation.getCards()) {
+                audioFilesInDeck.add(card.getAudio());
             }
         }
         return audioFilesInDeck;
@@ -171,11 +172,9 @@ public class DriveService {
         }
     }
 
-    public Deck assembleDeck(HttpServletRequest request, String sessionId, String documentId, Drive drive) {
+    public NewDeck assembleDeck(HttpServletRequest request, String documentId, Drive drive) {
         final Deck deck = Deck.initializeDeckWithFormData(request);
         CSVParser parser = downloadParsableCsv(drive, documentId);
-        txcMakerParser.parseCsvIntoDeck(deck, parser);
-        deck.id = sessionId;
-        return deck;
+        return txcMakerParser.parseCsvIntoDeck(parser, request);
     }
 }

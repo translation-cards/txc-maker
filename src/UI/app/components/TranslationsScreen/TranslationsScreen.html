@@ -17,7 +17,7 @@
         </div>
         <span flex></span>
         <md-divider></md-divider>
-        <div ng-repeat="error in card.errors">
+        <div ng-repeat="error in card.parsingErrors">
           <div ng-if="error.fatal" class="fatal">
             <md-icon class="fatal" md-svg-src="resources/ic_warning_white_24px.svg"></md-icon>
             {{error.message}}
