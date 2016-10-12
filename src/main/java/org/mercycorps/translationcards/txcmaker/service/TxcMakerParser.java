@@ -2,12 +2,12 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.NewCard;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
-import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -79,11 +79,13 @@ public class TxcMakerParser {
     }
 
     public List<String> buildDestinationLanguageNames(List<NewCard> cards) {
-        Map<String, Object> destinationLanguageNames = new HashMap<>();
+        List<String> destinationLanguageNames = new ArrayList<>();
         for (NewCard card : cards) {
-            destinationLanguageNames.put(card.getDestinationLanguageName(), null);
+            if(!destinationLanguageNames.contains(card.getDestinationLanguageName())) {
+                destinationLanguageNames.add(card.getDestinationLanguageName());
+            }
         }
-        return new ArrayList<>(destinationLanguageNames.keySet());
+        return destinationLanguageNames;
     }
 
     public List<Translation> buildTranslationsFromCards(List<NewCard> cards) {
