@@ -1,7 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Language {
@@ -25,5 +24,21 @@ public class Language {
     public Language addCard(Card card) {
         cards.add(card);
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Language language = (Language) o;
+
+        return language_label != null ? language_label.equals(language.language_label) : language.language_label == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return language_label != null ? language_label.hashCode() : 0;
     }
 }
