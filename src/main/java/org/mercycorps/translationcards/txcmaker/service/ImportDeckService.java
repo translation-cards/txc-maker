@@ -56,8 +56,12 @@ public class ImportDeckService {
     public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
-            final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
-            verifyDeck(deck, importDeckResponse);
+            try {
+                final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
+                verifyDeck(deck, importDeckResponse);
+            } catch(IllegalArgumentException exception) {
+                importDeckResponse.addError(new Error(exception.getMessage(), true));
+            }
         }
     }
 }

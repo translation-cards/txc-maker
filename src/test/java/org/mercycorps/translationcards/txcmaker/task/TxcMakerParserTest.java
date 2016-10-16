@@ -20,9 +20,9 @@ public class TxcMakerParserTest {
 
     public static final String STUBBED_CSV =
             "Language,Label,Translation,Filename\n" +
-            "ar,ar phrase,ar translation,ar.mp3\n" +
-            "ps,ps phrase,ps translation,ps.mp3\n" +
-            "fa,fa phrase,fa translation,fa.mp3";
+                    "ar,ar phrase,ar translation,ar.mp3\n" +
+                    "ps,ps phrase,ps translation,ps.mp3\n" +
+                    "fa,fa phrase,fa translation,fa.mp3";
     public static final int ARABIC = 0;
     public static final int PASHTO = 1;
     public static final int FARSI = 2;
@@ -156,9 +156,9 @@ public class TxcMakerParserTest {
     public void parseCsvIntoDeck_shouldAddErrorsForInvalidISOCodes() throws Exception {
         String stubbedCsv =
                 "Language,Label,Translation,Filename\n" +
-                "abc,ar phrase,ar translation,ar.mp3\n" +
-                "abc,ps phrase,ps translation,ps.mp3\n" +
-                "fa,fa phrase,fa translation,fa.mp3";
+                        "abc,ar phrase,ar translation,ar.mp3\n" +
+                        "abc,ps phrase,ps translation,ps.mp3\n" +
+                        "fa,fa phrase,fa translation,fa.mp3";
         csvParser = new CSVParser(new StringReader(stubbedCsv), CSVFormat.DEFAULT.withHeader());
         when(languageService.getLanguageDisplayName("abc"))
                 .thenReturn("INVALID");
@@ -168,5 +168,17 @@ public class TxcMakerParserTest {
         assertThat(deck.parseErrors.size(), is(2));
         assertThat(deck.parseErrors.get(0).message, is("2"));
         assertThat(deck.parseErrors.get(1).message, is("3"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void parseCsvIntoDeck_shouldThrowExceptionForInvalidCSVHeaders() throws Exception {
+        String stubbedCsv =
+                "Language,Header That's Not Checked For,Translation,Filename\n" +
+                "ar,ar phrase,ar translation,ar.mp3\n" +
+                "ps,ps phrase,ps translation,ps.mp3\n" +
+                "fa,fa phrase,fa translation,fa.mp3";
+        csvParser = new CSVParser(new StringReader(stubbedCsv), CSVFormat.DEFAULT.withHeader());
+
+        txcMakerParser.parseCsvIntoDeck(deck, csvParser);
     }
 }

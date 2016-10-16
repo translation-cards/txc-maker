@@ -132,4 +132,15 @@ public class ImportDeckServiceTest {
 
         assertThat(importDeckResponse.getErrors().size(), is(0));
     }
+
+    @Test
+    public void shouldAddAnErrorForInvalidCSVHeaders() throws Exception {
+        when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
+                .thenThrow(new IllegalArgumentException("message"));
+
+        importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
+
+        assertThat(importDeckResponse.getErrors().size(), is(1));
+        assertThat(importDeckResponse.getErrors().get(0).message, is("message"));
+    }
 }
