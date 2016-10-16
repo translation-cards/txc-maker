@@ -10,7 +10,6 @@ The frontend is being written in AngularJS. The Angular app lives in the folder 
 2. Fork and clone the [txc-maker repo](https://github.com/translation-cards/txc-maker.git)
 3. Get the `client_secrets.json` file from a Translation Cards team member and copy it into the directory `src/main/webapp/WEB-INF/`
 4. Get the `application.properties` file from a Translation Cards team member and copy it into the directory `src/main/resources/`
- * For the Women Hack Syria hackathon, this file will be distributed at the event.
 
 ## 2. Local setup
 
@@ -25,6 +24,8 @@ You should install the following dependencies on your machine. Alternatively, fo
 The webapp is built and deployed with Maven, NPM, and Google AppEngine.
 
 1. Install npm packages: from src/UI/ run `npm install`
+2. Run `export APP_ID=translation-cards-dev`
+  * This will allow you to deploy to the dev instance if needed
 2. From the project root, run `mvn appengine:devserver`
   * This runs the server at http://localhost:8080/get-txc
 3. From `src/UI`, run `npm run test`
