@@ -4,7 +4,7 @@ import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.model.*;
+import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
 @RestController
@@ -60,8 +59,8 @@ public class BuildTxcTask {
         final String finalizedDeckJson = gsonWrapper.toJson(finalizedDeck);
         final Drive drive = getDrive(sessionId);
         final String directoryId = deckMetadata.directoryId;
-        final Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
-        storageService.zipTxc(sessionId, finalizedDeckJson, new ArrayList<>(audioFiles.keySet()));
+        final Map<String, String> audioFileIds = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
+        storageService.zipTxc(drive, sessionId, finalizedDeckJson, audioFileIds);
         String filename = finalizedDeck.deck_label + ".txc";
         final String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc", filename);
         final String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);

@@ -1,6 +1,6 @@
 <div layout="row" layout-align="center" class="card-container">
   <div flex="50" layout="column">
-    <md-card ng-repeat="card in language.cards" ng-click="playAudio(card.dest_audio)" class="translation-card">
+    <md-card ng-repeat="card in language.cards" class="translation-card">
       <md-card-title>
         <md-card-title-text>
           <span class="md-headline">{{card.card_label}}</span>
@@ -9,7 +9,7 @@
       <md-card-content layout="column" layout-padding>
         <md-divider></md-divider>
         <div layout="row">
-          <md-icon md-svg-src="resources/ic_volume_up_black_48px.svg" class="icon"></md-icon>
+          <md-icon ng-if="card.audio_id" ng-click="playAudio(card.audio_id)" md-svg-src="resources/ic_volume_up_black_48px.svg" class="icon audio"></md-icon>
           <span flex></span>
           <div>
             {{card.dest_txt}}

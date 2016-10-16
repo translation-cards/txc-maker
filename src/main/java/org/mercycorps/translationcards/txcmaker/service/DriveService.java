@@ -1,10 +1,8 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.client.http.InputStreamContent;
-import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.*;
-import com.google.api.services.drive.model.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.model.Card;
@@ -13,13 +11,14 @@ import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.cache.Cache;
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.mercycorps.translationcards.txcmaker.model.importDeckForm.ValidDocumentId.CSV_EXPORT_TYPE;
 
 @Service
@@ -29,13 +28,11 @@ public class DriveService {
 
     private TxcMakerParser txcMakerParser;
     private GcsStreamFactory gcsStreamFactory;
-    private Cache cache;
 
     @Autowired
-    public DriveService(TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory, Cache cache) {
+    public DriveService(TxcMakerParser txcMakerParser, GcsStreamFactory gcsStreamFactory) {
         this.txcMakerParser = txcMakerParser;
         this.gcsStreamFactory = gcsStreamFactory;
-        this.cache = cache;
     }
 
     public CSVParser downloadParsableCsv(Drive drive, String documentId) {
@@ -55,7 +52,7 @@ public class DriveService {
         Set<String> audioFilesInDeck = getAudioFilesInDeck(deck);
         final ChildList childList = downloadAudioFileReferences(drive, directoryId);
         for (ChildReference audioRef : childList.getItems()) {
-            File audioFile = downloadAudioFileMetadata(drive, audioRef);
+            File audioFile = getFile(drive, audioRef.getId());
             if(audioFile != null && audioFilesInDeck.contains(audioFile.getOriginalFilename())) {
                 audioFileIds.put(audioFile.getOriginalFilename(), audioRef.getId());
             }
@@ -73,48 +70,28 @@ public class DriveService {
         return audioFilesInDeck;
     }
 
-
-    private ChildList downloadAudioFileReferences(Drive drive, String directoryId) {
-        ChildList childList = new ChildList();
-        try {
-            childList = drive
-                    .children()
-                    .list(directoryId)
-                    .setQ("trashed = false")
-                    .execute();
-        } catch (IOException e) {
-            log.info("Fetching audio files in directory " + directoryId + " failed.");
-
-        }
-        return childList;
-    }
-
-    public List<String> getFilenamesInAudioDirectory(Drive drive, String audioDirectoryId) {
+    public List<File> getFilesInAudioDirectory(Drive drive, String audioDirectoryId) {
         try {
             FileList fileList = drive.files().list()
                     .setQ(String.format("('%s' in parents) and (trashed = false)", audioDirectoryId))
-                    .setFields("items/title")
+                    .setFields("items/title, items/downloadUrl, items/id")
                     .execute();
 
-            List<String> filenames = newArrayList();
-            for(File file : fileList.getItems()) {
-                filenames.add(file.getTitle());
-            }
-            return filenames;
+            return fileList.getItems();
         } catch (Exception e) {
             log.info("Fetching file names for audio directory " + audioDirectoryId  + " failed.");
         }
         return null;
     }
 
-    private File downloadAudioFileMetadata(Drive drive, ChildReference audioRef) {
-        File audioFile = null;
+    public InputStream getFileInputStream(Drive drive, String fileId) {
+        InputStream inputStream = null;
         try {
-            audioFile = drive.files().get(audioRef.getId()).execute();
+            inputStream = drive.files().get(fileId).executeMediaAsInputStream();
         } catch(IOException e) {
-            log.info("Fetching audio file with id '" + audioRef.getId() + "' failed.");
+            log.info("Fetching file with id '" + fileId + "' failed.");
         }
-        return audioFile;
+        return inputStream;
     }
 
     public String pushTxcToDrive(Drive drive, String parentDirectory, String txcPath, String txcFilename) {
@@ -133,49 +110,37 @@ public class DriveService {
         return downloadUrl;
     }
 
-    public void downloadAudioFiles(Drive drive, Map<String, String> audioFiles, String folderName) {
-        Set<String> includedAudioFiles = new HashSet<>();
-        for(String audioFileName : audioFiles.keySet()) {
-            if (!includedAudioFiles.contains(audioFileName)) {
-                includedAudioFiles.add(audioFileName);
-                String filePath = folderName + "/" + audioFileName;
-                OutputStream gcsOutput = gcsStreamFactory.getOutputStream(filePath);
-                String audioFileId = audioFiles.get(audioFileName);
-                downloadAndWriteFile(drive, gcsOutput, audioFileId, audioFileName);
-                try {
-                    gcsOutput.close();
-                } catch(IOException e) {
-                    //do something
-                }
-            }
-        }
-    }
-
-    private void downloadAndWriteFile(Drive drive, OutputStream outputStream, String audioFileId, String audioFileName) {
-        try {
-            InputStream inputStream;
-            if(cache.containsKey(audioFileName)) {
-                byte[] file = (byte[]) cache.get(audioFileName);
-                inputStream = new ByteArrayInputStream(file);
-                IOUtils.copy(inputStream, outputStream);
-            } else {
-                inputStream = drive.files().get(audioFileId).executeMediaAsInputStream();
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                IOUtils.copy(inputStream, byteArrayOutputStream);
-                byte[] file = byteArrayOutputStream.toByteArray();
-                cache.put(audioFileName, file);
-                outputStream.write(file);
-            }
-        } catch(IOException e) {
-            System.err.println(e.getStackTrace().toString());
-        }
-    }
-
     public Deck assembleDeck(HttpServletRequest request, String sessionId, String documentId, Drive drive) {
         final Deck deck = Deck.initializeDeckWithFormData(request);
         CSVParser parser = downloadParsableCsv(drive, documentId);
         txcMakerParser.parseCsvIntoDeck(deck, parser);
+
         deck.id = sessionId;
         return deck;
+    }
+
+    private File getFile(Drive drive, String fileId) {
+        File audioFile = null;
+        try {
+            audioFile = drive.files().get(fileId).execute();
+        } catch(IOException e) {
+            log.info("Fetching file with id '" + fileId + "' failed.");
+        }
+        return audioFile;
+    }
+
+    private ChildList downloadAudioFileReferences(Drive drive, String directoryId) {
+        ChildList childList = new ChildList();
+        try {
+            childList = drive
+                    .children()
+                    .list(directoryId)
+                    .setQ("trashed = false")
+                    .execute();
+        } catch (IOException e) {
+            log.info("Fetching audio files in directory " + directoryId + " failed.");
+
+        }
+        return childList;
     }
 }

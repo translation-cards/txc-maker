@@ -46,5 +46,9 @@ md-card {
 }
 
 .translation-card {
+  cursor: default;
+}
+
+md-icon.audio {
   cursor: pointer;
 }

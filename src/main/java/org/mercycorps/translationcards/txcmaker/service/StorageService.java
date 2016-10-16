@@ -1,15 +1,15 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.client.util.IOUtils;
+import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.cache.Cache;
 import java.io.*;
-import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -18,13 +18,11 @@ public class StorageService {
 
     private GcsStreamFactory gcsStreamFactory;
     private GsonWrapper gsonWrapper;
-    private Cache cache;
 
     @Autowired
-    public StorageService(GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper, Cache cache) {
+    public StorageService(GcsStreamFactory gcsStreamFactory, GsonWrapper gsonWrapper) {
         this.gcsStreamFactory = gcsStreamFactory;
         this.gsonWrapper = gsonWrapper;
-        this.cache = cache;
     }
 
     public DeckMetadata readDeckMetaData(String fileName) {
@@ -55,21 +53,15 @@ public class StorageService {
         return stringBuilder.toString();
     }
 
-    public void zipTxc(String sessionId, String deckJson, List<String> audioFiles) {
+    public void zipTxc(Drive drive, String sessionId, String deckJson, Map<String, String> audioFiles) {
         OutputStream gcsOutput = gcsStreamFactory.getOutputStream(sessionId + "/deck.txc");
         ZipOutputStream zipOutputStream = new ZipOutputStream(gcsOutput);
         try {
             zipOutputStream.putNextEntry(new ZipEntry("card_deck.json"));
             zipOutputStream.write(deckJson.getBytes("UTF8"));
-            for (String audioFileName : audioFiles) {
+            for (String audioFileName : audioFiles.keySet()) {
                 zipOutputStream.putNextEntry(new ZipEntry(audioFileName));
-                InputStream inputStream;
-                if(cache.containsKey(audioFileName)) {
-                    byte[] file = (byte[]) cache.get(audioFileName);
-                    inputStream = new ByteArrayInputStream(file);
-                } else {
-                    inputStream = gcsStreamFactory.getInputStream(sessionId + "/" + audioFileName);
-                }
+                InputStream inputStream = drive.files().get(audioFiles.get(audioFileName)).executeMediaAsInputStream();
                 IOUtils.copy(inputStream, zipOutputStream);
             }
             zipOutputStream.close();
