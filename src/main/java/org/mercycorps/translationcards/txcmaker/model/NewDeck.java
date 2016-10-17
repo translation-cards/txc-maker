@@ -5,7 +5,7 @@ import java.util.List;
 public class NewDeck {
     private String sourceLanguage;
     private String deckLabel;
-    private String author;
+    private String publisher;
     private long timestamp;
     private boolean locked;
     private String licenseUrl;
@@ -17,7 +17,7 @@ public class NewDeck {
 
     public NewDeck(String sourceLanguage,
                    String deckLabel,
-                   String author,
+                   String publisher,
                    long timestamp,
                    boolean locked,
                    String id,
@@ -28,7 +28,7 @@ public class NewDeck {
                    List<String> destinationLanguages) {
         this.sourceLanguage = sourceLanguage;
         this.deckLabel = deckLabel;
-        this.author = author;
+        this.publisher = publisher;
         this.timestamp = timestamp;
         this.locked = locked;
         this.id = id;
@@ -95,7 +95,7 @@ public class NewDeck {
     }
 
     public String getPublisher() {
-        return author;
+        return publisher;
     }
 
     public long getTimestamp() {
@@ -109,5 +109,9 @@ public class NewDeck {
 
     public List<String> getDestinationLanguages() {
         return destinationLanguages;
+    }
+
+    public int getNumberOfErrors() {
+        return parsingErrors.size();
     }
 }

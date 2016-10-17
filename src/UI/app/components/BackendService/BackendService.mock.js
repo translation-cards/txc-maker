@@ -60,11 +60,8 @@ angular.module('mock.BackendService', [])
           data: {
             downloadUrl: "http://downloadUrl.com",
             deck: {
-              language_label: "stubbed deck.language_label",
-              languages: [
-                {language_label: "translated language 1"},
-                {language_label: "translated language 2"}
-              ]
+              sourceLanguage: "stubbed deck.language_label",
+              destinationLanguages: ["translated language 1","translated language 2"]
             }
           }
         });

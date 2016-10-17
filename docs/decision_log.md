@@ -67,7 +67,7 @@ of the app. What they landed on looks like this:
 public class Deck {
     private String sourceLanguage;
     private String deckLabel;
-    private String author;
+    private String publisher;
     private long timestamp;
     private boolean locked;
     private String licenseUrl;

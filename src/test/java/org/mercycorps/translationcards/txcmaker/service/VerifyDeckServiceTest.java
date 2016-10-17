@@ -89,7 +89,6 @@ public class VerifyDeckServiceTest {
     }
 
     @Test
-    // TODO: this might need to go in translation?
     public void testDuplicateFileErrorsAreAddedToCards() {
         String sameFilename = "sameFilename.mp3";
         NewCard duplicateCard1 = new NewCard(null, sameFilename, null, new ArrayList<Error>(), null);

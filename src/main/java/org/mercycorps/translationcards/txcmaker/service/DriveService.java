@@ -10,7 +10,6 @@ import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.model.NewCard;
 import org.mercycorps.translationcards.txcmaker.model.NewDeck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -173,7 +172,6 @@ public class DriveService {
     }
 
     public NewDeck assembleDeck(HttpServletRequest request, String documentId, Drive drive) {
-        final Deck deck = Deck.initializeDeckWithFormData(request);
         CSVParser parser = downloadParsableCsv(drive, documentId);
         return txcMakerParser.parseCsvIntoDeck(parser, request);
     }

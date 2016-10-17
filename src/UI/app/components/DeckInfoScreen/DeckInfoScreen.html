@@ -3,7 +3,7 @@
     <md-card>
       <md-card-title>
         <md-card-title-text>
-          <span class="md-headline">{{deck.deck_label}}</span>
+          <span class="md-headline">{{deck.deckLabel}}</span>
           <span class="md-subhead">{{deck.publisher}}</span>
         </md-card-title-text>
       </md-card-title>
@@ -12,12 +12,12 @@
         <div layout="row" layout-align="start center" class="deck-info_languages" >
           <div>
             <div class="chip">
-              {{sourceLanguage}}
+              {{deck.sourceLanguage}}
             </div>
           </div>
           <md-icon class="icon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
           <div flex>
-            <div class="chip" ng-repeat="language in destinationLanguages">
+            <div class="chip" ng-repeat="language in deck.destinationLanguages">
               {{language}}
             </div>
           </div>
