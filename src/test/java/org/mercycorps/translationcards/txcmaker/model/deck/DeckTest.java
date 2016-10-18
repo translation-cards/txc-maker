@@ -25,7 +25,6 @@ public class DeckTest {
 
         assertThat(deck.languages.size(), is(1));
         assertThat(deck.languages.get(0).iso_code, is("ar"));
-        assertThat(deck.languages.get(0).cards.get(0), is(card));
     }
 
     @Test
@@ -37,22 +36,7 @@ public class DeckTest {
 
         assertThat(deck.languages.size(), is(2));
         assertThat(deck.languages.get(0).iso_code, is("ar"));
-        assertThat(deck.languages.get(0).cards.get(0), is(card1));
         assertThat(deck.languages.get(1).iso_code, is("ar"));
-        assertThat(deck.languages.get(1).cards.get(0), is(card2));
-    }
-
-    @Test
-    public void shouldAddACardToAnExistingLanguage() throws Exception {
-        final Card card1 = new Card();
-        final Card card2 = new Card();
-        deck.addCard("ar", "Arabic", card1);
-        deck.addCard("ar", "Arabic", card2);
-
-        assertThat(deck.languages.size(), is(1));
-        assertThat(deck.languages.get(0).iso_code, is("ar"));
-        assertThat(deck.languages.get(0).cards.get(0), is(card1));
-        assertThat(deck.languages.get(0).cards.get(1), is(card2));
     }
 
     @Test
@@ -60,6 +44,4 @@ public class DeckTest {
         deck.errors = newArrayList(new Error("error message 1", true), new Error("error message 2", true));
         assertThat(deck.getNumberOfErrors(), is(2));
     }
-
-
 }

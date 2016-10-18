@@ -72,13 +72,13 @@ public class Deck {
         return this;
     }
 
-    public Deck addCard(String iso_code, String language_label, Card card) {
+    Deck addCard(String iso_code, String language_label, Card card) {
         if (!languageLookup.containsKey(language_label)) {
             Language langSpec = new Language(iso_code, language_label);
             languages.add(langSpec);
             languageLookup.put(language_label, langSpec);
         }
-        languageLookup.get(language_label).addCard(card);
+//        languageLookup.get(language_label).addCard(card);
         return this;
     }
 
