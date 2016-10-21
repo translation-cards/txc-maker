@@ -171,8 +171,8 @@ public class DriveService {
         }
     }
 
-    public NewDeck assembleDeck(HttpServletRequest request, String documentId, Drive drive) {
+    public NewDeck assembleDeck(HttpServletRequest request, String documentId, String sessionId, Drive drive) {
         CSVParser parser = downloadParsableCsv(drive, documentId);
-        return txcMakerParser.parseCsvIntoDeck(parser, request);
+        return txcMakerParser.parseCsvIntoDeck(parser, request, sessionId);
     }
 }

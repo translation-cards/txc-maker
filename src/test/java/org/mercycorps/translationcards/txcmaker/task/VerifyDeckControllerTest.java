@@ -90,7 +90,7 @@ public class VerifyDeckControllerTest {
                 .thenReturn(drive);
 
         deck = new NewDeck(null, null, null, 0L, false, null, null, null, null, null, null);
-        when(driveService.assembleDeck(request, DOC_ID, drive))
+        when(driveService.assembleDeck(request, DOC_ID, SESSION_ID, drive))
                 .thenReturn(deck);
 
         when(gsonWrapper.toJson(any(Object.class)))
@@ -115,7 +115,7 @@ public class VerifyDeckControllerTest {
     public void shouldAssembleTheDeck() throws Exception {
         verifyDeckController.verifyDeck(request);
 
-        verify(driveService).assembleDeck(request, DOC_ID, drive);
+        verify(driveService).assembleDeck(request, DOC_ID, SESSION_ID, drive);
     }
 
     @Test
@@ -181,7 +181,7 @@ public class VerifyDeckControllerTest {
 
         verifyDeckController.verifyDeck(request);
 
-        assertThat(deck.getParsingErrors().size(), is(1));
-        assertThat(deck.getParsingErrors().get(0).message, is("a deck error"));
+        assertThat(deck.getErrors().size(), is(1));
+        assertThat(deck.getErrors().get(0).message, is("a deck error"));
     }
 }

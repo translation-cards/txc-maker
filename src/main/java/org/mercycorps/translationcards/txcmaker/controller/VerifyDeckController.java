@@ -52,8 +52,8 @@ public class VerifyDeckController {
         final String directoryId = request.getParameter("audioDirId");
         final Drive drive = getDrive(sessionId);
 
-        final NewDeck deck = driveService.assembleDeck(request, documentId, drive);
-        deck.setParsingErrors(verifyDeckService.verify(drive, deck, directoryId));
+        final NewDeck deck = driveService.assembleDeck(request, documentId, sessionId, drive);
+        deck.getErrors().addAll(verifyDeckService.verify(drive, deck, directoryId));
 
         Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
         driveService.downloadAudioFiles(drive, audioFiles, sessionId);

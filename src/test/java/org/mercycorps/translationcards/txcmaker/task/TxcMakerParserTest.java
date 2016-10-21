@@ -5,8 +5,10 @@ import org.apache.commons.csv.CSVParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
-import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.*;
+import org.mercycorps.translationcards.txcmaker.model.Language;
+import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
 import org.mockito.Mock;
 
@@ -18,23 +20,21 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TxcMakerParserTest {
 
-    public static final String STUBBED_CSV =
+    private static final String STUBBED_CSV =
             "Language,Label,Translation,Filename\n" +
             "ar,ar phrase,ar translation,ar.mp3\n" +
             "ps,ps phrase,ps translation,ps.mp3\n" +
             "fa,fa phrase,fa translation,fa.mp3";
-    public static final int ARABIC = 0;
-    public static final int PASHTO = 1;
-    public static final int FARSI = 2;
 
     @Mock
     private LanguageService languageService;
-    @Mock
+    @Mock(answer = RETURNS_DEEP_STUBS)
     private HttpServletRequest request;
 
     private TxcMakerParser txcMakerParser;
@@ -52,9 +52,9 @@ public class TxcMakerParserTest {
         final Language ARABIC_LANGUAGE = new Language("ar", "Arabic");
         final Language SPANISH_LANGUAGE = new Language("es", "Spanish");
 
-        helloInSpanish = new NewCard("Hello", "helloEs.mp3", "Hola", new ArrayList<Error>(), SPANISH_LANGUAGE);
-        goodbyeInArabic = new NewCard("Goodbye", "goodbyeAr.mp3", "وداع", new ArrayList<Error>(), ARABIC_LANGUAGE);
-        helloInArabic = new NewCard("Hello", "helloAr.mp3", "هتاف للترحيب", new ArrayList<Error>(), ARABIC_LANGUAGE);
+        helloInSpanish = new NewCard("Hello", "helloEs.mp3", "Hola", SPANISH_LANGUAGE);
+        goodbyeInArabic = new NewCard("Goodbye", "goodbyeAr.mp3", "وداع", ARABIC_LANGUAGE);
+        helloInArabic = new NewCard("Hello", "helloAr.mp3", "هتاف للترحيب", ARABIC_LANGUAGE);
 
         when(languageService.getLanguageDisplayName("ar"))
                 .thenReturn("Arabic");
@@ -123,7 +123,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetIsoCodesForLanguages() throws Exception {
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request);
+        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ar phrase").iso_code, is("ar"));
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ps phrase").iso_code, is("ps"));
@@ -136,7 +136,7 @@ public class TxcMakerParserTest {
         when(languageService.getLanguageDisplayName("ps")).thenReturn("Pashto");
         when(languageService.getLanguageDisplayName("fa")).thenReturn("Farsi");
 
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request);
+        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ar phrase").language_label, is("Arabic"));
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ps phrase").language_label, is("Pashto"));
@@ -145,7 +145,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetLabelsForTranslations() throws Exception {
-        NewDeck actual = txcMakerParser.parseCsvIntoDeck(csvParser, request);
+        NewDeck actual = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(actual.getTranslationForSourcePhrase("ar phrase"), is(notNullValue()));
         assertThat(actual.getTranslationForSourcePhrase("ps phrase"), is(notNullValue()));
@@ -154,7 +154,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetDestinationTextForTranslations() throws Exception {
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request);
+        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getCardForSourcePhrase(deck, "ar phrase").getDestinationPhrase(), is("ar translation"));
         assertThat(getCardForSourcePhrase(deck, "ps phrase").getDestinationPhrase(), is("ps translation"));
@@ -163,7 +163,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetFilenamesForTranslations() throws Exception {
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request);
+        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getCardForSourcePhrase(deck, "ar phrase").getAudio(), is("ar.mp3"));
         assertThat(getCardForSourcePhrase(deck, "ps phrase").getAudio(), is("ps.mp3"));
@@ -181,7 +181,7 @@ public class TxcMakerParserTest {
         when(languageService.getLanguageDisplayName("abc"))
                 .thenReturn("INVALID");
 
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request);
+        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(deck.getParsingErrors().size(), is(2));
         assertThat(deck.getParsingErrors().get(0).message, is("2"));

@@ -11,6 +11,7 @@ import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
+import org.mockito.Answers;
 import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,7 @@ public class ImportDeckServiceTest {
     private DriveService driveService;
     @Mock
     private Drive drive;
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HttpServletRequest request;
 
     private ImportDeckService importDeckService;
@@ -71,8 +72,10 @@ public class ImportDeckServiceTest {
         when(txcMakerParser.parseDocId("doc id string")).thenReturn(DOC_ID);
         when(txcMakerParser.parseAudioDirId("audio dir id string")).thenReturn(AUDIO_DIR_ID);
 
+        when(request.getSession().getId()).thenReturn(SESSION_ID);
+
         deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), new ArrayList<Translation>(), new ArrayList<String>());
-        when(driveService.assembleDeck(request, DOC_ID, drive)).thenReturn(deck);
+        when(driveService.assembleDeck(request, DOC_ID, SESSION_ID, drive)).thenReturn(deck);
 
         importDeckService = new ImportDeckService(txcMakerParser, driveService);
         importDeckService.preProcessForm(importDeckForm);
@@ -103,7 +106,7 @@ public class ImportDeckServiceTest {
     public void shouldAssembleDeckWhenImporting() throws Exception {
         importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
-        verify(driveService).assembleDeck(request, DOC_ID, drive);
+        verify(driveService).assembleDeck(request, DOC_ID, SESSION_ID, drive);
     }
 
     @Test

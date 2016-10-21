@@ -52,10 +52,15 @@ public class ImportDeckService {
         }
     }
 
-    public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
+    public void processForm(ImportDeckForm importDeckForm,
+                            HttpServletRequest request,
+                            ImportDeckResponse importDeckResponse,
+                            Drive drive,
+                            String sessionId,
+                            List<Constraint> fieldsToVerify) {
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
-            final NewDeck deck = driveService.assembleDeck(request, importDeckForm.getDocId(), drive);
+            final NewDeck deck = driveService.assembleDeck(request, importDeckForm.getDocId(), sessionId, drive);
             verifyDeck(deck, importDeckResponse);
         }
     }
