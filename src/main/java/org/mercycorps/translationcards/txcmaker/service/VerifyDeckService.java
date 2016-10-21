@@ -3,6 +3,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.*;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class VerifyDeckService {
     }
 
     // TODO: two separate patterns for adding errors to decks and cards
-    public List<Error> verify(Drive drive, NewDeck deck, String audioDirectoryId) {
+    public List<Error> verify(Drive drive, Deck deck, String audioDirectoryId) {
         List<Error> errors = newArrayList();
         List<String> filenamesInAudioDirectory = driveService.getFilenamesInAudioDirectory(drive, audioDirectoryId);
         Map<String, List<NewCard>> audioFileToCards = newHashMap();

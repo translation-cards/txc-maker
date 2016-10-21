@@ -1,7 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import org.junit.Test;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.transformer.FinalizedLanguageTransformer;
 
 import static org.mockito.Mockito.mock;
@@ -14,7 +14,7 @@ public class FinalizedDeckFactoryTest {
 
     @Test
     public void shouldUseFinalizedDeckTransformerToCreateFinalizedLanguages() {
-        NewDeck deck = mock(NewDeck.class);
+        Deck deck = mock(Deck.class);
         finalizedDeckFactory.finalize(deck);
 
         verify(transformer).transform(deck);

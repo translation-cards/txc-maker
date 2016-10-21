@@ -3,6 +3,7 @@ package org.mercycorps.translationcards.txcmaker.transformer;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.*;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class FinalizedLanguageTransformerTest {
 
     @Test
     public void shouldTransformEmptyDeckToEmptyListOfFinalizedLanguages() {
-        NewDeck emptyDeck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), new ArrayList<Translation>(), new ArrayList<String>());
+        Deck emptyDeck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), new ArrayList<Translation>(), new ArrayList<String>());
 
         List<FinalizedLanguage> finalizedLanguages = transformer.transform(emptyDeck);
 
@@ -44,7 +45,7 @@ public class FinalizedLanguageTransformerTest {
     @Test
     public void aDeckWithOneCardShouldTransformIntoAListOfOneLanguage() {
         Translation translation = new Translation(newArrayList(helloInSpanish));
-        NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), new ArrayList<String>());
+        Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), new ArrayList<String>());
 
         List<FinalizedLanguage> languages = transformer.transform(deck);
 

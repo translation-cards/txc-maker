@@ -3,7 +3,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
@@ -38,7 +38,7 @@ public class ImportDeckService {
         }
     }
 
-    private void verifyDeck(NewDeck deck, ImportDeckResponse importDeckResponse) {
+    private void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
         if(!deck.isValid()) {
             String errorMessage = "The ISO Code on rows ";
 
@@ -60,7 +60,7 @@ public class ImportDeckService {
                             List<Constraint> fieldsToVerify) {
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
-            final NewDeck deck = driveService.assembleDeck(request, importDeckForm.getDocId(), sessionId, drive);
+            final Deck deck = driveService.assembleDeck(request, importDeckForm.getDocId(), sessionId, drive);
             verifyDeck(deck, importDeckResponse);
         }
     }

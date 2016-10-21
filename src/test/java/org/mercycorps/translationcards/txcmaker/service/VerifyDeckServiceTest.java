@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.NewCard;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mockito.Mock;
 
@@ -46,7 +46,7 @@ public class VerifyDeckServiceTest {
 
         NewCard card = new NewCard(null, null, null, null);
         Translation translation = new Translation(newArrayList(card));
-        NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
+        Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
         VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
 
@@ -59,7 +59,7 @@ public class VerifyDeckServiceTest {
     public void testRequiredValuesErrorsAddedToCard() {
         NewCard requiredValueErrorCard = new NewCard(null, null, null, null);
         Translation translation = new Translation(newArrayList(requiredValueErrorCard));
-        NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
+        Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
         when(mockVerifyCardService.verifyRequiredValues(requiredValueErrorCard)).thenReturn(newArrayList(new Error("requiredValuesError", true)));
 
@@ -77,7 +77,7 @@ public class VerifyDeckServiceTest {
         when(mockVerifyCardService.verifyAudioFilename(eq(audioFileErrorCard), any(List.class))).thenReturn(new Error("audioFilenameError", true));
 
         Translation translation = new Translation(newArrayList(audioFileErrorCard));
-        NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
+        Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
         VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
         List<Error> actualErrors = verifyDeckService.verify(mockDrive, deck, audioDirectoryId);
@@ -94,7 +94,7 @@ public class VerifyDeckServiceTest {
         NewCard duplicateCard1 = new NewCard(null, sameFilename, null, null);
         NewCard duplicateCard2 = new NewCard(null, sameFilename, null, null);
         Translation translation = new Translation(newArrayList(duplicateCard1, duplicateCard2));
-        NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
+        Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
         VerifyDeckService verifyDeckService = new VerifyDeckService(mockDriveService, mockVerifyCardService);
 

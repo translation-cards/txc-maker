@@ -5,7 +5,7 @@ import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
@@ -55,7 +55,7 @@ public class BuildTxcController {
     @RequestMapping(method = RequestMethod.POST)
     public void buildTxc(@RequestBody String sessionId) {
         final DeckMetadata deckMetadata = storageService.readDeckMetaData(sessionId + "/metadata.json");
-        final NewDeck deck = storageService.readDeck(sessionId + "/deck.json");
+        final Deck deck = storageService.readDeck(sessionId + "/deck.json");
         final FinalizedDeck finalizedDeck = finalizedDeckFactory.finalize(deck);
         final String finalizedDeckJson = gsonWrapper.toJson(finalizedDeck);
         final Drive drive = getDrive(sessionId);

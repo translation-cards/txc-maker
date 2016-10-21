@@ -11,7 +11,7 @@ import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.controller.VerifyDeckController;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
@@ -69,7 +69,7 @@ public class VerifyDeckControllerTest {
 
     private VerifyDeckController verifyDeckController;
     private Map<String, String> audioFileMetaData;
-    private NewDeck deck;
+    private Deck deck;
 
     @Before
     public void setup() throws ServletException, IOException {
@@ -89,7 +89,7 @@ public class VerifyDeckControllerTest {
         when(authUtils.getDriveOrOAuth(servletContext, null, null, false, SESSION_ID))
                 .thenReturn(drive);
 
-        deck = new NewDeck(null, null, null, 0L, false, null, null, null, null, null, null);
+        deck = new Deck(null, null, null, 0L, false, null, null, null, null, null, null);
         when(driveService.assembleDeck(request, DOC_ID, SESSION_ID, drive))
                 .thenReturn(deck);
 

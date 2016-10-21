@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.controller.BuildTxcController;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
@@ -60,7 +60,7 @@ public class BuildTxcControllerTest {
     @Mock
     private FinalizedDeckFactory finalizedDeckFactory;
     @Mock
-    private NewDeck deck;
+    private Deck deck;
     private BuildTxcController buildTxcController;
     private Map<String, String> audioFiles = new HashMap<>();
     private BuildTxcTaskResponse response;

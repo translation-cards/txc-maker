@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.*;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +59,7 @@ public class TxcMakerParser {
         return audioDirectoryString;
     }
 
-    public NewDeck parseCsvIntoDeck(CSVParser parser, HttpServletRequest req, String sessionId) {
+    public Deck parseCsvIntoDeck(CSVParser parser, HttpServletRequest req, String sessionId) {
         int lineNumber = 1;
         List<Error> parsingErrors = new ArrayList<>();
         List<NewCard> cards = new ArrayList<>();
@@ -80,7 +81,7 @@ public class TxcMakerParser {
             cards.add(card);
         }
 
-        return new NewDeck("English",
+        return new Deck("English",
                 req.getParameter("deckName"),
                 req.getParameter("publisher"),
                 System.currentTimeMillis(),

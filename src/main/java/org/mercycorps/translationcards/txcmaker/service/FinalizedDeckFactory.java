@@ -1,7 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.transformer.FinalizedLanguageTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class FinalizedDeckFactory {
         this.transformer = transformer;
     }
 
-    public FinalizedDeck finalize(NewDeck deck) {
+    public FinalizedDeck finalize(Deck deck) {
         FinalizedDeck finalizedDeck = new FinalizedDeck()
                 .setDeck_label(deck.getDeckLabel())
                 .setId(deck.getId())

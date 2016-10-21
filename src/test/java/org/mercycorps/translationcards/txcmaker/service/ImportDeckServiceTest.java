@@ -6,7 +6,7 @@ import com.google.appengine.api.taskqueue.Queue;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
@@ -50,7 +50,7 @@ public class ImportDeckServiceTest {
     private Error error;
     private ImportDeckResponse importDeckResponse;
     private ImportDeckForm importDeckForm;
-    private NewDeck deck;
+    private Deck deck;
 
     @Before
     public void setup() throws IOException{
@@ -74,7 +74,7 @@ public class ImportDeckServiceTest {
 
         when(request.getSession().getId()).thenReturn(SESSION_ID);
 
-        deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), new ArrayList<Translation>(), new ArrayList<String>());
+        deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), new ArrayList<Translation>(), new ArrayList<String>());
         when(driveService.assembleDeck(request, DOC_ID, SESSION_ID, drive)).thenReturn(deck);
 
         importDeckService = new ImportDeckService(txcMakerParser, driveService);

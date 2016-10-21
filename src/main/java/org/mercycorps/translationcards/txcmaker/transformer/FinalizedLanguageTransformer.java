@@ -1,6 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.transformer;
 
 import org.mercycorps.translationcards.txcmaker.model.*;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * This class has the responsibility of taking in a {@link org.mercycorps.translationcards.txcmaker.model.NewDeck} and
+ * This class has the responsibility of taking in a {@link Deck} and
  * transforming it into a list of {@link org.mercycorps.translationcards.txcmaker.model.FinalizedLanguage}s.
  */
 
@@ -25,7 +26,7 @@ public class FinalizedLanguageTransformer {
         this.cardTransformer = cardTransformer;
     }
 
-    public List<FinalizedLanguage> transform(NewDeck deck) {
+    public List<FinalizedLanguage> transform(Deck deck) {
         Map<Language, List<FinalizedCard>> cardsByLanguage = organizeCardsByLanguage(deck.getTranslations());
         return finalizeLanguages(cardsByLanguage);
     }

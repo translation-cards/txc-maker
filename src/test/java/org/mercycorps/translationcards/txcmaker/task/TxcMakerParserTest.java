@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Language;
 import org.mercycorps.translationcards.txcmaker.model.NewCard;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
 import org.mockito.Mock;
@@ -123,7 +123,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetIsoCodesForLanguages() throws Exception {
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
+        Deck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ar phrase").iso_code, is("ar"));
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ps phrase").iso_code, is("ps"));
@@ -136,7 +136,7 @@ public class TxcMakerParserTest {
         when(languageService.getLanguageDisplayName("ps")).thenReturn("Pashto");
         when(languageService.getLanguageDisplayName("fa")).thenReturn("Farsi");
 
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
+        Deck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ar phrase").language_label, is("Arabic"));
         assertThat(getDestinationLanguageForFirstCardWithPhrase(deck, "ps phrase").language_label, is("Pashto"));
@@ -145,7 +145,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetLabelsForTranslations() throws Exception {
-        NewDeck actual = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
+        Deck actual = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(actual.getTranslationForSourcePhrase("ar phrase"), is(notNullValue()));
         assertThat(actual.getTranslationForSourcePhrase("ps phrase"), is(notNullValue()));
@@ -154,7 +154,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetDestinationTextForTranslations() throws Exception {
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
+        Deck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getCardForSourcePhrase(deck, "ar phrase").getDestinationPhrase(), is("ar translation"));
         assertThat(getCardForSourcePhrase(deck, "ps phrase").getDestinationPhrase(), is("ps translation"));
@@ -163,7 +163,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void parseCsvIntoDeck_shouldSetFilenamesForTranslations() throws Exception {
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
+        Deck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(getCardForSourcePhrase(deck, "ar phrase").getAudio(), is("ar.mp3"));
         assertThat(getCardForSourcePhrase(deck, "ps phrase").getAudio(), is("ps.mp3"));
@@ -181,7 +181,7 @@ public class TxcMakerParserTest {
         when(languageService.getLanguageDisplayName("abc"))
                 .thenReturn("INVALID");
 
-        NewDeck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
+        Deck deck = txcMakerParser.parseCsvIntoDeck(csvParser, request, null);
 
         assertThat(deck.getParsingErrors().size(), is(2));
         assertThat(deck.getParsingErrors().get(0).message, is("2"));
@@ -251,11 +251,11 @@ public class TxcMakerParserTest {
         assertThat(actual.contains("Arabic"), is(true));
     }
 
-    private Language getDestinationLanguageForFirstCardWithPhrase(NewDeck deck, String sourcePhrase) {
+    private Language getDestinationLanguageForFirstCardWithPhrase(Deck deck, String sourcePhrase) {
         return getCardForSourcePhrase(deck, sourcePhrase).getDestinationLanguage();
     }
 
-    private NewCard getCardForSourcePhrase(NewDeck deck, String sourcePhrase) {
+    private NewCard getCardForSourcePhrase(Deck deck, String sourcePhrase) {
         return deck.getTranslationForSourcePhrase(sourcePhrase).getCards().get(0);
     }
 }

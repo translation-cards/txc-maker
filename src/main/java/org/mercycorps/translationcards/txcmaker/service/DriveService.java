@@ -8,7 +8,7 @@ import com.google.api.services.drive.model.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.mercycorps.translationcards.txcmaker.model.NewCard;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class DriveService {
         return parser;
     }
 
-    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId, NewDeck deck) {
+    public Map<String, String> downloadAllAudioFileMetaData(Drive drive, String directoryId, Deck deck) {
         Map<String, String> audioFileIds = new HashMap<>();
         Set<String> audioFilesInDeck = getAudioFilesInDeck(deck);
         final ChildList childList = downloadAudioFileReferences(drive, directoryId);
@@ -63,7 +63,7 @@ public class DriveService {
         return audioFileIds;
     }
 
-    public Set<String> getAudioFilesInDeck(NewDeck deck) {
+    public Set<String> getAudioFilesInDeck(Deck deck) {
         Set<String> audioFilesInDeck = new HashSet<>();
         for(Translation translation : deck.getTranslations()) {
             for(NewCard card : translation.getCards()) {
@@ -171,7 +171,7 @@ public class DriveService {
         }
     }
 
-    public NewDeck assembleDeck(HttpServletRequest request, String documentId, String sessionId, Drive drive) {
+    public Deck assembleDeck(HttpServletRequest request, String documentId, String sessionId, Drive drive) {
         CSVParser parser = downloadParsableCsv(drive, documentId);
         return txcMakerParser.parseCsvIntoDeck(parser, request, sessionId);
     }

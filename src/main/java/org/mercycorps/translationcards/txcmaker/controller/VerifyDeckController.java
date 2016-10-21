@@ -4,7 +4,7 @@ import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
-import org.mercycorps.translationcards.txcmaker.model.NewDeck;
+import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
@@ -52,7 +52,7 @@ public class VerifyDeckController {
         final String directoryId = request.getParameter("audioDirId");
         final Drive drive = getDrive(sessionId);
 
-        final NewDeck deck = driveService.assembleDeck(request, documentId, sessionId, drive);
+        final Deck deck = driveService.assembleDeck(request, documentId, sessionId, drive);
         deck.getErrors().addAll(verifyDeckService.verify(drive, deck, directoryId));
 
         Map<String, String> audioFiles = driveService.downloadAllAudioFileMetaData(drive, directoryId, deck);
