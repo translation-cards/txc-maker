@@ -3,6 +3,8 @@ function extractCardsForLanguage(translations, language) {
     return translation.cards.find(function(card) {
       return card.destinationLanguage.language_label === language;
     });
+  }).filter(function removeUndefinedCards(card) {
+    return !(card === undefined);
   });
 }
 
@@ -17,7 +19,7 @@ function TranslationsScreenController($scope, $sce) {
       $scope.cards_for_language = extractCardsForLanguage(data.deck.translations, data.language);
       $scope.deckId = data.deckId;
     }
-  }
+  };
 
   $scope.playAudio = function(fileName) {
     var found = false;

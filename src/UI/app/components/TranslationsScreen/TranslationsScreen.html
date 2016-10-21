@@ -1,6 +1,6 @@
 <div layout="row" layout-align="center" class="card-container">
   <div flex="50" layout="column">
-    <md-card ng-repeat="card in cards_for_language" ng-click="playAudio(card.destinationAudioFilename)" class="translation-card">
+    <md-card ng-repeat="card in cards_for_language track by $index" ng-click="playAudio(card.destinationAudioFilename)" class="translation-card">
       <md-card-title>
         <md-card-title-text>
           <span class="md-headline">{{card.sourcePhrase}}</span>
@@ -17,7 +17,7 @@
         </div>
         <span flex></span>
         <md-divider></md-divider>
-        <div ng-repeat="error in card.parsingErrors">
+        <div ng-repeat="error in card.errors">
           <div ng-if="error.fatal" class="fatal">
             <md-icon class="fatal" md-svg-src="resources/ic_warning_white_24px.svg"></md-icon>
             {{error.message}}
