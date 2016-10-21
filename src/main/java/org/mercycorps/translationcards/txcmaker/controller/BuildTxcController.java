@@ -66,7 +66,7 @@ public class BuildTxcController {
         final String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc", filename);
         final String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
         final BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
-                .setDeck(deck)
+                .setDeck(finalizedDeck)
                 .setDownloadUrl(shortUrl);
         channelService.sendMessage(new ChannelMessage(sessionId, gsonWrapper.toJson(response)));
     }

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FinalizedLanguage {
-    
+
+    private String languageLabel;
     public String iso_code;
     public List<FinalizedCard> cards;
     
@@ -20,5 +21,14 @@ public class FinalizedLanguage {
     public FinalizedLanguage setCards(List<FinalizedCard> cards) {
         this.cards = cards;
         return this;
+    }
+
+    public FinalizedLanguage setLanguageLabel(String languageLabel) {
+        this.languageLabel = languageLabel;
+        return this;
+    }
+
+    public String getLanguageLabel() {
+        return languageLabel;
     }
 }

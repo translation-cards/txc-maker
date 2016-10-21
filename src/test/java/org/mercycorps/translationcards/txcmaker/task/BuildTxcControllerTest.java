@@ -165,7 +165,7 @@ public class BuildTxcControllerTest {
         verify(gsonWrapper, times(2)).toJson(argumentCaptor.capture());
 
         BuildTxcTaskResponse response = argumentCaptor.getAllValues().get(1);
-        assertThat(response.getDeck(), is(deck));
+        assertThat(response.getDeck(), is(finalizedDeck));
         assertThat(response.getDownloadUrl(), is(SHORT_URL));
     }
 
