@@ -30,7 +30,7 @@ public class FinalizedLanguageTransformerTest {
     private final Language SPANISH = new Language("es", "Spanish");
     private final Language FRENCH = new Language("fr", "French");
 
-    private final NewCard helloInSpanish = new NewCard("Hello", "hola.wav", "Hola", new ArrayList<Error>(), SPANISH);
+    private final NewCard helloInSpanish = new NewCard("Hello", "hola.wav", "Hola", SPANISH);
 
     @Test
     public void shouldTransformEmptyDeckToEmptyListOfFinalizedLanguages() {

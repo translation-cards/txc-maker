@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewCard {
@@ -13,12 +14,12 @@ public class NewCard {
     // Required by gson
     private NewCard() {}
 
-    public NewCard(String sourcePhrase, String destinationAudioFilename, String destinationPhrase, List<Error> errors, Language destinationLanguage) {
+    public NewCard(String sourcePhrase, String destinationAudioFilename, String destinationPhrase, Language destinationLanguage) {
         this.sourcePhrase = sourcePhrase;
         this.destinationAudioFilename = destinationAudioFilename;
         this.destinationPhrase = destinationPhrase;
         this.destinationLanguage = destinationLanguage;
-        this.errors = errors;
+        this.errors = new ArrayList<>();
     }
 
     public String getDestinationLanguageName() {

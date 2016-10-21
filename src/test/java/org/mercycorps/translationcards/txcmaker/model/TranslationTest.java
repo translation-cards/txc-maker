@@ -24,8 +24,8 @@ public class TranslationTest {
 
     @Before
     public void setUp() {
-        helloInSpanish = new NewCard("Hello", "helloEs.wav", "Hola", new ArrayList<Error>(), SPANISH);
-        helloInArabic  = new NewCard("Hello", "helloAr.wav", "هتاف للترحيب", new ArrayList<Error>(), ARABIC);
+        helloInSpanish = new NewCard("Hello", "helloEs.wav", "Hola", SPANISH);
+        helloInArabic  = new NewCard("Hello", "helloAr.wav", "هتاف للترحيب", ARABIC);
         List<NewCard> cards = new ArrayList<NewCard>();
         cards.add(helloInSpanish);
         cards.add(helloInArabic);
@@ -73,8 +73,8 @@ public class TranslationTest {
 
     @Test
     public void shouldBeValidWhenAtLeastOneCardHasAudio() {
-        NewCard cardWithAudio = new NewCard("Hello", "hola.wav", "Hola", new ArrayList<Error>(), SPANISH);
-        NewCard cardWithoutAudio = new NewCard("Hello", null, "هتاف للترحيب", new ArrayList<Error>(), ARABIC);
+        NewCard cardWithAudio = new NewCard("Hello", "hola.wav", "Hola", SPANISH);
+        NewCard cardWithoutAudio = new NewCard("Hello", null, "هتاف للترحيب", ARABIC);
         List<NewCard> cards = new ArrayList<>();
         cards.add(cardWithAudio);
         cards.add(cardWithoutAudio);

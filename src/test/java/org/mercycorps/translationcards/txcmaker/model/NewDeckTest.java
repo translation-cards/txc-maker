@@ -56,8 +56,8 @@ public class NewDeckTest {
     
     @Test
     public void shouldGetTranslationBasedOnSourcePhrase() {
-        NewCard hello = new NewCard("Hello", null, null, null, null);
-        NewCard goodbye = new NewCard("Goodbye", null, null, null, null);
+        NewCard hello = new NewCard("Hello", null, null, null);
+        NewCard goodbye = new NewCard("Goodbye", null, null, null);
 
         Translation helloTranslation = new Translation(newArrayList(hello));
         Translation goodbyeTranslation = new Translation(newArrayList(goodbye));

@@ -44,7 +44,7 @@ public class VerifyDeckServiceTest {
         when(mockVerifyCardService.verifyRequiredValues(any(NewCard.class))).thenReturn(new ArrayList<Error>());
         when(mockVerifyCardService.verifyAudioFilename(any(NewCard.class), any(List.class))).thenReturn(null);
 
-        NewCard card = new NewCard(null, null, null, new ArrayList<Error>(), null);
+        NewCard card = new NewCard(null, null, null, null);
         Translation translation = new Translation(newArrayList(card));
         NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
@@ -57,7 +57,7 @@ public class VerifyDeckServiceTest {
 
     @Test
     public void testRequiredValuesErrorsAddedToCard() {
-        NewCard requiredValueErrorCard = new NewCard(null, null, null, new ArrayList<Error>(), null);
+        NewCard requiredValueErrorCard = new NewCard(null, null, null, null);
         Translation translation = new Translation(newArrayList(requiredValueErrorCard));
         NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
@@ -73,7 +73,7 @@ public class VerifyDeckServiceTest {
 
     @Test
     public void testMissingAudioFileErrorAddedToCard() {
-        NewCard audioFileErrorCard = new NewCard(null, null, null, new ArrayList<Error>(), null);
+        NewCard audioFileErrorCard = new NewCard(null, null, null, null);
         when(mockVerifyCardService.verifyAudioFilename(eq(audioFileErrorCard), any(List.class))).thenReturn(new Error("audioFilenameError", true));
 
         Translation translation = new Translation(newArrayList(audioFileErrorCard));
@@ -91,8 +91,8 @@ public class VerifyDeckServiceTest {
     @Test
     public void testDuplicateFileErrorsAreAddedToCards() {
         String sameFilename = "sameFilename.mp3";
-        NewCard duplicateCard1 = new NewCard(null, sameFilename, null, new ArrayList<Error>(), null);
-        NewCard duplicateCard2 = new NewCard(null, sameFilename, null, new ArrayList<Error>(), null);
+        NewCard duplicateCard1 = new NewCard(null, sameFilename, null, null);
+        NewCard duplicateCard2 = new NewCard(null, sameFilename, null, null);
         Translation translation = new Translation(newArrayList(duplicateCard1, duplicateCard2));
         NewDeck deck = new NewDeck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
