@@ -6,6 +6,9 @@ public class Translation {
     private List<NewCard> cards;
     private String sourcePhrase;
 
+    // Required by gson
+    private Translation() {}
+
     public Translation(List<NewCard> cards) {
         this.cards = cards;
         sourcePhrase = cards.isEmpty() ? "" : cards.get(0).getSourcePhrase();

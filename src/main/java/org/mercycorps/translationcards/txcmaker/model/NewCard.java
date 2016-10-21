@@ -10,13 +10,15 @@ public class NewCard {
     private List<Error> errors;
     private Language destinationLanguage;
 
+    // Required by gson
+    private NewCard() {}
+
     public NewCard(String sourcePhrase, String destinationAudioFilename, String destinationPhrase, List<Error> errors, Language destinationLanguage) {
         this.sourcePhrase = sourcePhrase;
         this.destinationAudioFilename = destinationAudioFilename;
         this.destinationPhrase = destinationPhrase;
-        // TODO: we might need to set errors programmatically, rather than inject it
-        this.errors = errors;
         this.destinationLanguage = destinationLanguage;
+        this.errors = errors;
     }
 
     public String getDestinationLanguageName() {

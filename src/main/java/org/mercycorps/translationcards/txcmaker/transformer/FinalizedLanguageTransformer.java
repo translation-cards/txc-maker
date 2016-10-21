@@ -48,6 +48,7 @@ public class FinalizedLanguageTransformer {
         ArrayList<FinalizedLanguage> finalizedLanguages = new ArrayList<>();
         for (Entry<Language, List<FinalizedCard>> cardsByLanguageEntry : cardsByLanguage.entrySet()) {
             FinalizedLanguage finalizedLanguage = new FinalizedLanguage()
+                    .setLanguageLabel(cardsByLanguageEntry.getKey().language_label)
                     .setIso_code(cardsByLanguageEntry.getKey().iso_code)
                     .setCards(cardsByLanguageEntry.getValue());
             finalizedLanguages.add(finalizedLanguage);

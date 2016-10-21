@@ -12,6 +12,7 @@ public class FinalizedLanguageSerializer implements JsonSerializer<FinalizedLang
     @Override
     public JsonElement serialize(FinalizedLanguage finalizedLanguage, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject json = new JsonObject();
+        json.addProperty("languageLabel", finalizedLanguage.getLanguageLabel());
         json.addProperty("iso_code", finalizedLanguage.iso_code);
         json.add("cards", context.serialize(finalizedLanguage.cards));
         return json;

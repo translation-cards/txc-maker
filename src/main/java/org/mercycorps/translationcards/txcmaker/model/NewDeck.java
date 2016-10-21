@@ -1,5 +1,6 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewDeck {
@@ -10,10 +11,14 @@ public class NewDeck {
     private boolean locked;
     private String licenseUrl;
     private String readme;
-    private List<Error> parsingErrors;
+    private transient List<Error> parsingErrors;
+    private List<Error> errors;
     private List<Translation> translations;
     private List<String> destinationLanguages;
     private String id;
+
+    // Required by gson
+    private NewDeck() {}
 
     public NewDeck(String sourceLanguage,
                    String deckLabel,
@@ -37,6 +42,7 @@ public class NewDeck {
         this.parsingErrors = parsingErrors;
         this.translations = translations;
         this.destinationLanguages = destinationLanguages;
+        errors = new ArrayList<>();
     }
 
     public boolean isValid() {
@@ -112,6 +118,10 @@ public class NewDeck {
     }
 
     public int getNumberOfErrors() {
-        return parsingErrors.size();
+        return errors.size();
+    }
+
+    public List<Error> getErrors() {
+        return errors;
     }
 }

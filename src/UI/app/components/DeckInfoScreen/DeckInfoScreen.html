@@ -24,7 +24,7 @@
         </div>
       </md-card-content>
     </md-card>
-    <div layout="row" ng-show="deck.numberOfErrors == 0">
+    <div layout="row" ng-show="numberOfErrors == 0">
       <md-card flex="70">
         <md-card-content layout="row" layout-align="space-between center" class="notification-card">
           <img src="resources/check_mark.png" class="notification-card_image"/>
@@ -43,14 +43,14 @@
         </md-card-content>
       </md-card>
     </div>
-    <div layout="row" ng-show="deck.numberOfErrors > 0">
+    <div layout="row" ng-show="numberOfErrors > 0">
       <md-card flex="70">
         <md-card-content layout="row" layout-align="start center" class="notification-card">
           <div class="notification-card_error" layout="row" layout-align="center center">
-            {{deck.numberOfErrors}}
+            {{numberOfErrors}}
           </div>
           <div layout-padding layout-fill>
-            There are {{deck.numberOfErrors}} parsingErrors across your deck. Review the cards and resolve the parsingErrors before publishing.
+            There are {{numberOfErrors}} parsingErrors across your deck. Review the cards and resolve the parsingErrors before publishing.
           </div>
         </md-card-content>
       </md-card>

@@ -3,7 +3,7 @@ function DeckPublishController($scope, BackendService) {
     var data = angular.fromJson(response.data);
     $scope.downloadUrl = data.downloadUrl;
     $scope.deck = data.deck;
-    $scope.sourceLanguage = $scope.deck.language_label;
+    $scope.sourceLanguage = $scope.deck.source_language;
 
     $scope.destinationLanguages = $scope.deck.languages.map(function(language) {
       return language.languageLabel;
