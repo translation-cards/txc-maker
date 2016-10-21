@@ -3,22 +3,22 @@ package org.mercycorps.translationcards.txcmaker.model;
 import java.util.List;
 
 public class Translation {
-    private List<NewCard> cards;
+    private List<Card> cards;
     private String sourcePhrase;
 
     // Required by gson
     private Translation() {}
 
-    public Translation(List<NewCard> cards) {
+    public Translation(List<Card> cards) {
         this.cards = cards;
         sourcePhrase = cards.isEmpty() ? "" : cards.get(0).getSourcePhrase();
     }
 
-    public List<NewCard> getCards() {
+    public List<Card> getCards() {
         return cards;
     }
 
-    public void addCard(NewCard card) {
+    public void addCard(Card card) {
         cards.add(card);
     }
 
@@ -31,7 +31,7 @@ public class Translation {
     }
 
     private boolean atLeastOneCardHasAudio() {
-        for (NewCard card : cards) {
+        for (Card card : cards) {
             // TODO: this will NPE if empty CSV fields are parsed into null strings
             if(!card.getDestinationLanguageName().isEmpty()) {
                 return true;
@@ -41,8 +41,8 @@ public class Translation {
     }
 
     // TODO: this logic is repeated bewteen these two methods, perhaps replace arraylist with hashmap for O(1) lookup?
-    public NewCard getCardForLanguage(String languageName) {
-        for (NewCard card : cards) {
+    public Card getCardForLanguage(String languageName) {
+        for (Card card : cards) {
             if (card.getDestinationLanguageName().equals(languageName)) {
                 return card;
             }
@@ -52,7 +52,7 @@ public class Translation {
     }
 
     public boolean containsCardForLanguage(String language) {
-        for (NewCard card : cards) {
+        for (Card card : cards) {
             if(card.getDestinationLanguageName().equals(language)) {
                 return true;
             }

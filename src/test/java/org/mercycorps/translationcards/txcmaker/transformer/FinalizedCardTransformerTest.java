@@ -2,7 +2,7 @@ package org.mercycorps.translationcards.txcmaker.transformer;
 
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.FinalizedCard;
-import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -13,7 +13,7 @@ public class FinalizedCardTransformerTest {
 
     @Test
     public void shouldTransformNewCardsToFinalizedCards() {
-        NewCard helloInSpanish = new NewCard("Hello", "hola.wav", "Hola", null);
+        Card helloInSpanish = new Card("Hello", "hola.wav", "Hola", null);
 
         FinalizedCard actual = transformer.transform(helloInSpanish);
 

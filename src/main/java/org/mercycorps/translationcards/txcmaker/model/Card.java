@@ -1,32 +1,48 @@
 package org.mercycorps.translationcards.txcmaker.model;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class Card {
 
-    public String card_label;
-    public String dest_audio;
-    public String dest_txt;
-    public List<Error> errors;
+    private String sourcePhrase;
+    private String destinationAudioFilename;
+    private String destinationPhrase;
+    private List<Error> errors;
+    private Language destinationLanguage;
 
-    public Card() {
-        errors = newArrayList();
+    // Required by gson
+    private Card() {}
+
+    public Card(String sourcePhrase, String destinationAudioFilename, String destinationPhrase, Language destinationLanguage) {
+        this.sourcePhrase = sourcePhrase;
+        this.destinationAudioFilename = destinationAudioFilename;
+        this.destinationPhrase = destinationPhrase;
+        this.destinationLanguage = destinationLanguage;
+        this.errors = new ArrayList<>();
     }
 
-    public Card setLabel(String label) {
-        this.card_label = label;
-        return this;
+    public String getDestinationLanguageName() {
+        return destinationLanguage.language_label;
     }
 
-    public Card setFilename(String filename) {
-        this.dest_audio = filename;
-        return this;
+    public String getSourcePhrase() {
+        return sourcePhrase;
     }
 
-    public Card setTranslationText(String translationText) {
-        this.dest_txt = translationText;
-        return this;
+    public String getAudio() {
+        return destinationAudioFilename;
+    }
+
+    public String getDestinationPhrase() {
+        return destinationPhrase;
+    }
+
+    public List<Error> getErrors() {
+        return errors;
+    }
+
+    public Language getDestinationLanguage() {
+        return destinationLanguage;
     }
 }

@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Language;
-import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.service.TxcMakerParser;
@@ -39,11 +39,11 @@ public class TxcMakerParserTest {
 
     private TxcMakerParser txcMakerParser;
     private CSVParser csvParser;
-    private List<NewCard> cards = new ArrayList<>();
+    private List<Card> cards = new ArrayList<>();
 
-    private NewCard helloInSpanish;
-    private NewCard goodbyeInArabic;
-    private NewCard helloInArabic;
+    private Card helloInSpanish;
+    private Card goodbyeInArabic;
+    private Card helloInArabic;
 
     @Before
     public void setUp() throws Exception {
@@ -52,9 +52,9 @@ public class TxcMakerParserTest {
         final Language ARABIC_LANGUAGE = new Language("ar", "Arabic");
         final Language SPANISH_LANGUAGE = new Language("es", "Spanish");
 
-        helloInSpanish = new NewCard("Hello", "helloEs.mp3", "Hola", SPANISH_LANGUAGE);
-        goodbyeInArabic = new NewCard("Goodbye", "goodbyeAr.mp3", "وداع", ARABIC_LANGUAGE);
-        helloInArabic = new NewCard("Hello", "helloAr.mp3", "هتاف للترحيب", ARABIC_LANGUAGE);
+        helloInSpanish = new Card("Hello", "helloEs.mp3", "Hola", SPANISH_LANGUAGE);
+        goodbyeInArabic = new Card("Goodbye", "goodbyeAr.mp3", "وداع", ARABIC_LANGUAGE);
+        helloInArabic = new Card("Hello", "helloAr.mp3", "هتاف للترحيب", ARABIC_LANGUAGE);
 
         when(languageService.getLanguageDisplayName("ar"))
                 .thenReturn("Arabic");
@@ -190,7 +190,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void shouldCreateOneTranslationFromOneCard() {
-        cards = new ArrayList<NewCard>() {{
+        cards = new ArrayList<Card>() {{
             add(helloInSpanish);
         }};
 
@@ -202,7 +202,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void shouldAddTwoSeparateTranslations() {
-        cards = new ArrayList<NewCard>() {{
+        cards = new ArrayList<Card>() {{
             add(helloInSpanish);
             add(goodbyeInArabic);
         }};
@@ -214,7 +214,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void shouldGroupTranslationsByTheirSourcePhrase() {
-        cards = new ArrayList<NewCard>() {{
+        cards = new ArrayList<Card>() {{
             add(helloInSpanish);
             add(helloInArabic);
         }};
@@ -227,7 +227,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void shouldHaveOnlySpanishInDestinationLanguageNames() {
-        cards = new ArrayList<NewCard>() {{
+        cards = new ArrayList<Card>() {{
             add(helloInSpanish);
         }};
 
@@ -239,7 +239,7 @@ public class TxcMakerParserTest {
 
     @Test
     public void shouldHaveBothArabicAndSpanishInDestinationLanguageNames() {
-        cards = new ArrayList<NewCard>() {{
+        cards = new ArrayList<Card>() {{
             add(helloInSpanish);
             add(helloInArabic);
         }};
@@ -255,7 +255,7 @@ public class TxcMakerParserTest {
         return getCardForSourcePhrase(deck, sourcePhrase).getDestinationLanguage();
     }
 
-    private NewCard getCardForSourcePhrase(Deck deck, String sourcePhrase) {
+    private Card getCardForSourcePhrase(Deck deck, String sourcePhrase) {
         return deck.getTranslationForSourcePhrase(sourcePhrase).getCards().get(0);
     }
 }

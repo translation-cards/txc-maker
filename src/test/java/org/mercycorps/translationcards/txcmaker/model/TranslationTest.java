@@ -15,8 +15,8 @@ public class TranslationTest {
 
     private final Language SPANISH = new Language("es", "Spanish");
     private final Language ARABIC = new Language("ar", "Arabic");
-    private NewCard helloInSpanish;
-    private NewCard helloInArabic;
+    private Card helloInSpanish;
+    private Card helloInArabic;
     private Translation translation;
 
     @Rule
@@ -24,9 +24,9 @@ public class TranslationTest {
 
     @Before
     public void setUp() {
-        helloInSpanish = new NewCard("Hello", "helloEs.wav", "Hola", SPANISH);
-        helloInArabic  = new NewCard("Hello", "helloAr.wav", "هتاف للترحيب", ARABIC);
-        List<NewCard> cards = new ArrayList<NewCard>();
+        helloInSpanish = new Card("Hello", "helloEs.wav", "Hola", SPANISH);
+        helloInArabic  = new Card("Hello", "helloAr.wav", "هتاف للترحيب", ARABIC);
+        List<Card> cards = new ArrayList<Card>();
         cards.add(helloInSpanish);
         cards.add(helloInArabic);
 
@@ -67,15 +67,15 @@ public class TranslationTest {
 
     @Test
     public void sourcePhraseShouldBeEmptyWhenCardsAreEmpty() {
-        Translation emptyTranslation = new Translation(new ArrayList<NewCard>());
+        Translation emptyTranslation = new Translation(new ArrayList<Card>());
         assertThat(emptyTranslation.getSourcePhrase(), is(""));
     }
 
     @Test
     public void shouldBeValidWhenAtLeastOneCardHasAudio() {
-        NewCard cardWithAudio = new NewCard("Hello", "hola.wav", "Hola", SPANISH);
-        NewCard cardWithoutAudio = new NewCard("Hello", null, "هتاف للترحيب", ARABIC);
-        List<NewCard> cards = new ArrayList<>();
+        Card cardWithAudio = new Card("Hello", "hola.wav", "Hola", SPANISH);
+        Card cardWithoutAudio = new Card("Hello", null, "هتاف للترحيب", ARABIC);
+        List<Card> cards = new ArrayList<>();
         cards.add(cardWithAudio);
         cards.add(cardWithoutAudio);
         translation = new Translation(cards);
@@ -85,7 +85,7 @@ public class TranslationTest {
 
     @Test
     public void shouldBeInvalidIfNoCardsHaveAudioFile() {
-        Translation invalidTranslation = new Translation(new ArrayList<NewCard>());
+        Translation invalidTranslation = new Translation(new ArrayList<Card>());
 
         assertThat(invalidTranslation.isValid(), is(false));
     }

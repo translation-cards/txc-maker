@@ -33,10 +33,10 @@ public class VerifyDeckService {
     public List<Error> verify(Drive drive, Deck deck, String audioDirectoryId) {
         List<Error> errors = newArrayList();
         List<String> filenamesInAudioDirectory = driveService.getFilenamesInAudioDirectory(drive, audioDirectoryId);
-        Map<String, List<NewCard>> audioFileToCards = newHashMap();
+        Map<String, List<Card>> audioFileToCards = newHashMap();
 
         for (Translation language: deck.getTranslations()) {
-            for (NewCard card : language.getCards()) {
+            for (Card card : language.getCards()) {
                 List<Error> cardErrors = newArrayList();
                 cardErrors.addAll(verifyCardService.verifyRequiredValues(card));
 
@@ -57,12 +57,12 @@ public class VerifyDeckService {
         return errors;
     }
 
-    private List<Error> verifyDuplicateAudioFile(Map<String, List<NewCard>> audioFileMap) {
+    private List<Error> verifyDuplicateAudioFile(Map<String, List<Card>> audioFileMap) {
         List<Error> duplicateAudioErrors = newArrayList();
 
-        for (List<NewCard> cardsForFile : audioFileMap.values()) {
+        for (List<Card> cardsForFile : audioFileMap.values()) {
             if (cardsForFile.size() > 1) {
-                for(NewCard card : cardsForFile) {
+                for(Card card : cardsForFile) {
                     Error error = new Error(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.getAudio()), true);
                     card.getErrors().add(error);
                     duplicateAudioErrors.add(error);
@@ -72,8 +72,8 @@ public class VerifyDeckService {
         return duplicateAudioErrors;
     }
 
-    private void addToAudioFileMap(NewCard card, Map<String, List<NewCard>> audioFileMap) {
-        List<NewCard> cardList = audioFileMap.get(card.getAudio());
+    private void addToAudioFileMap(Card card, Map<String, List<Card>> audioFileMap) {
+        List<Card> cardList = audioFileMap.get(card.getAudio());
         if (cardList == null) {
             cardList = newArrayList();
             audioFileMap.put(card.getAudio(), cardList);

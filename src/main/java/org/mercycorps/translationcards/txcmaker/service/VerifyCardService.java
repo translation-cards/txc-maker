@@ -1,7 +1,7 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.deck.RequiredString;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class VerifyCardService {
     public final static String FILE_NOT_FOUND_ERROR_FORMAT = "There is no file named '%s' in the Google Drive folder.";
 
 
-    public List<Error> verifyRequiredValues(NewCard card) {
+    public List<Error> verifyRequiredValues(Card card) {
         List<Constraint> constraints = Arrays.asList((Constraint)
                 new RequiredString(card.getSourcePhrase(), NO_LABEL),
                 new RequiredString(card.getAudio(), NO_AUDIO),
@@ -36,7 +36,7 @@ public class VerifyCardService {
         return errors;
     }
 
-    public Error verifyAudioFilename(NewCard card, List<String> audioFilenames) {
+    public Error verifyAudioFilename(Card card, List<String> audioFilenames) {
         String cardAudioFilename = card.getAudio();
         if (audioFilenames == null || !isEmpty(cardAudioFilename) && !audioFilenames.contains(cardAudioFilename)) {
             return new Error(String.format(FILE_NOT_FOUND_ERROR_FORMAT, cardAudioFilename), true);

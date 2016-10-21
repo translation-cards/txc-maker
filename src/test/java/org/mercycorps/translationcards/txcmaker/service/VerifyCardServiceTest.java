@@ -2,7 +2,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ public class VerifyCardServiceTest {
     private final String ARABIC_CHARACTERS = "ñéحيبε好";
 
     private VerifyCardService vcs = new VerifyCardService();
-    private NewCard emptyCard = new NewCard(null, null, null, null);
-    private NewCard cardWithMatchingAudioFile = new NewCard(null, "matchingFilename.mp3", null, null);
-    private NewCard cardWithoutMatchingFileName = new NewCard(null, "fileNotInDirectory.mp3", null, null);
-    private NewCard cardWithArabicInAudioFile = new NewCard(null, ARABIC_CHARACTERS, null, null);
+    private Card emptyCard = new Card(null, null, null, null);
+    private Card cardWithMatchingAudioFile = new Card(null, "matchingFilename.mp3", null, null);
+    private Card cardWithoutMatchingFileName = new Card(null, "fileNotInDirectory.mp3", null, null);
+    private Card cardWithArabicInAudioFile = new Card(null, ARABIC_CHARACTERS, null, null);
 
     @Test
     public void testWhenNoRequiredValuesPopulated() {

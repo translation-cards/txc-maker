@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Something to note: since the {@link org.mercycorps.translationcards.txcmaker.transformer.FinalizedLanguageTransformer}
- * needs to reach into each of the {@link org.mercycorps.translationcards.txcmaker.model.NewCard},
+ * needs to reach into each of the {@link Card},
  * {@link org.mercycorps.translationcards.txcmaker.model.Translation}, and
  * {@link org.mercycorps.translationcards.txcmaker.model.Language} class this test is closer to an integration test
  * than a true unit test
@@ -31,7 +31,7 @@ public class FinalizedLanguageTransformerTest {
     private final Language SPANISH = new Language("es", "Spanish");
     private final Language FRENCH = new Language("fr", "French");
 
-    private final NewCard helloInSpanish = new NewCard("Hello", "hola.wav", "Hola", SPANISH);
+    private final Card helloInSpanish = new Card("Hello", "hola.wav", "Hola", SPANISH);
 
     @Test
     public void shouldTransformEmptyDeckToEmptyListOfFinalizedLanguages() {

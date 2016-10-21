@@ -34,7 +34,7 @@ public class FinalizedLanguageTransformer {
     Map<Language, List<FinalizedCard>> organizeCardsByLanguage(List<Translation> translations) {
         Map<Language, List<FinalizedCard>> cardsByLanguage = new HashMap<>();
         for (Translation translation : translations) {
-            for (NewCard card : translation.getCards()) {
+            for (Card card : translation.getCards()) {
                 if (!cardsByLanguage.containsKey(card.getDestinationLanguage())) {
                     cardsByLanguage.put(card.getDestinationLanguage(), new ArrayList<FinalizedCard>());
                 }

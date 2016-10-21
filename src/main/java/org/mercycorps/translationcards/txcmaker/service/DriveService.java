@@ -7,7 +7,7 @@ import com.google.api.services.drive.model.*;
 import com.google.api.services.drive.model.File;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class DriveService {
     public Set<String> getAudioFilesInDeck(Deck deck) {
         Set<String> audioFilesInDeck = new HashSet<>();
         for(Translation translation : deck.getTranslations()) {
-            for(NewCard card : translation.getCards()) {
+            for(Card card : translation.getCards()) {
                 audioFilesInDeck.add(card.getAudio());
             }
         }

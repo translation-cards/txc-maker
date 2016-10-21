@@ -4,7 +4,7 @@ import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.NewCard;
+import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mockito.Mock;
@@ -41,10 +41,10 @@ public class VerifyDeckServiceTest {
 
     @Test
     public void testPassingVerifications() {
-        when(mockVerifyCardService.verifyRequiredValues(any(NewCard.class))).thenReturn(new ArrayList<Error>());
-        when(mockVerifyCardService.verifyAudioFilename(any(NewCard.class), any(List.class))).thenReturn(null);
+        when(mockVerifyCardService.verifyRequiredValues(any(Card.class))).thenReturn(new ArrayList<Error>());
+        when(mockVerifyCardService.verifyAudioFilename(any(Card.class), any(List.class))).thenReturn(null);
 
-        NewCard card = new NewCard(null, null, null, null);
+        Card card = new Card(null, null, null, null);
         Translation translation = new Translation(newArrayList(card));
         Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
@@ -57,7 +57,7 @@ public class VerifyDeckServiceTest {
 
     @Test
     public void testRequiredValuesErrorsAddedToCard() {
-        NewCard requiredValueErrorCard = new NewCard(null, null, null, null);
+        Card requiredValueErrorCard = new Card(null, null, null, null);
         Translation translation = new Translation(newArrayList(requiredValueErrorCard));
         Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 
@@ -73,7 +73,7 @@ public class VerifyDeckServiceTest {
 
     @Test
     public void testMissingAudioFileErrorAddedToCard() {
-        NewCard audioFileErrorCard = new NewCard(null, null, null, null);
+        Card audioFileErrorCard = new Card(null, null, null, null);
         when(mockVerifyCardService.verifyAudioFilename(eq(audioFileErrorCard), any(List.class))).thenReturn(new Error("audioFilenameError", true));
 
         Translation translation = new Translation(newArrayList(audioFileErrorCard));
@@ -91,8 +91,8 @@ public class VerifyDeckServiceTest {
     @Test
     public void testDuplicateFileErrorsAreAddedToCards() {
         String sameFilename = "sameFilename.mp3";
-        NewCard duplicateCard1 = new NewCard(null, sameFilename, null, null);
-        NewCard duplicateCard2 = new NewCard(null, sameFilename, null, null);
+        Card duplicateCard1 = new Card(null, sameFilename, null, null);
+        Card duplicateCard2 = new Card(null, sameFilename, null, null);
         Translation translation = new Translation(newArrayList(duplicateCard1, duplicateCard2));
         Deck deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), newArrayList(translation), null);
 

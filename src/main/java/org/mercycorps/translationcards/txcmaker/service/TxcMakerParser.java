@@ -62,7 +62,7 @@ public class TxcMakerParser {
     public Deck parseCsvIntoDeck(CSVParser parser, HttpServletRequest req, String sessionId) {
         int lineNumber = 1;
         List<Error> parsingErrors = new ArrayList<>();
-        List<NewCard> cards = new ArrayList<>();
+        List<Card> cards = new ArrayList<>();
         for (CSVRecord row : parser) {
             lineNumber++;
 
@@ -76,7 +76,7 @@ public class TxcMakerParser {
             String sourcePhrase = row.get(SOURCE_PHRASE_HEADER);
             String destinationPhrase = row.get(DESTINATION_PHRASE_HEADER);
             Language language = new Language(languageIso, languageLabel);
-            NewCard card = new NewCard(sourcePhrase, audioFileName, destinationPhrase, language);
+            Card card = new Card(sourcePhrase, audioFileName, destinationPhrase, language);
 
             cards.add(card);
         }
@@ -94,9 +94,9 @@ public class TxcMakerParser {
                 buildDestinationLanguageNames(cards));
     }
 
-    public List<String> buildDestinationLanguageNames(List<NewCard> cards) {
+    public List<String> buildDestinationLanguageNames(List<Card> cards) {
         List<String> destinationLanguageNames = new ArrayList<>();
-        for (NewCard card : cards) {
+        for (Card card : cards) {
             if(!destinationLanguageNames.contains(card.getDestinationLanguageName())) {
                 destinationLanguageNames.add(card.getDestinationLanguageName());
             }
@@ -104,9 +104,9 @@ public class TxcMakerParser {
         return destinationLanguageNames;
     }
 
-    public List<Translation> buildTranslationsFromCards(List<NewCard> cards) {
+    public List<Translation> buildTranslationsFromCards(List<Card> cards) {
         Map<String, Translation> sourcePhraseToTranslation = new HashMap<>();
-        for (NewCard card : cards) {
+        for (Card card : cards) {
             String sourcePhrase = card.getSourcePhrase();
             if (sourcePhraseToTranslation.containsKey(sourcePhrase)) {
                 sourcePhraseToTranslation.get(sourcePhrase).addCard(card);
@@ -117,8 +117,8 @@ public class TxcMakerParser {
         return new ArrayList<>(sourcePhraseToTranslation.values());
     }
 
-    private Translation createTranslationFromCard(NewCard card) {
-        List<NewCard> cardListForTranslation = new ArrayList<>();
+    private Translation createTranslationFromCard(Card card) {
+        List<Card> cardListForTranslation = new ArrayList<>();
         cardListForTranslation.add(card);
         return new Translation(cardListForTranslation);
     }
