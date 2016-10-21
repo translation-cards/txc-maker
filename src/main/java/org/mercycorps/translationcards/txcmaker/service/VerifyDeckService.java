@@ -28,6 +28,7 @@ public class VerifyDeckService {
         this.verifyCardService = verifyCardService;
     }
 
+    // TODO: two separate patterns for adding errors to decks and cards
     public List<Error> verify(Drive drive, NewDeck deck, String audioDirectoryId) {
         List<Error> errors = newArrayList();
         List<String> filenamesInAudioDirectory = driveService.getFilenamesInAudioDirectory(drive, audioDirectoryId);
@@ -56,13 +57,12 @@ public class VerifyDeckService {
     }
 
     private List<Error> verifyDuplicateAudioFile(Map<String, List<NewCard>> audioFileMap) {
-        Error error;
         List<Error> duplicateAudioErrors = newArrayList();
 
         for (List<NewCard> cardsForFile : audioFileMap.values()) {
             if (cardsForFile.size() > 1) {
                 for(NewCard card : cardsForFile) {
-                    error = new Error(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.getAudio()), true);
+                    Error error = new Error(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.getAudio()), true);
                     card.getErrors().add(error);
                     duplicateAudioErrors.add(error);
                 }
