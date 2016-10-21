@@ -7,9 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
+import org.mockito.Answers;
 import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,21 +23,15 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ImportDeckServiceTest {
 
     private static final String SESSION_ID = "session id";
-    public static final String DOC_ID = "doc id";
-    public static final String AUDIO_DIR_ID = "audio dir id";
-    ImportDeckService importDeckService;
+    private static final String DOC_ID = "doc id";
+    private static final String AUDIO_DIR_ID = "audio dir id";
 
-    List<Constraint> constraints;
-
-    Error error;
     @Mock
     private ChannelService channelService;
     @Mock
@@ -46,8 +42,12 @@ public class ImportDeckServiceTest {
     private DriveService driveService;
     @Mock
     private Drive drive;
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HttpServletRequest request;
+
+    private ImportDeckService importDeckService;
+    private List<Constraint> constraints;
+    private Error error;
     private ImportDeckResponse importDeckResponse;
     private ImportDeckForm importDeckForm;
     private Deck deck;
@@ -69,14 +69,13 @@ public class ImportDeckServiceTest {
                 .setDocId("doc id string")
                 .setPublisher("publisher");
 
-        when(txcMakerParser.parseDocId("doc id string"))
-                .thenReturn(DOC_ID);
-        when(txcMakerParser.parseAudioDirId("audio dir id string"))
-                .thenReturn(AUDIO_DIR_ID);
+        when(txcMakerParser.parseDocId("doc id string")).thenReturn(DOC_ID);
+        when(txcMakerParser.parseAudioDirId("audio dir id string")).thenReturn(AUDIO_DIR_ID);
 
-        deck = new Deck();
-        when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
-                .thenReturn(deck);
+        when(request.getSession().getId()).thenReturn(SESSION_ID);
+
+        deck = new Deck(null, null, null, 0L, false, null, null, null, new ArrayList<Error>(), new ArrayList<Translation>(), new ArrayList<String>());
+        when(driveService.assembleDeck(request, DOC_ID, SESSION_ID, drive)).thenReturn(deck);
 
         importDeckService = new ImportDeckService(txcMakerParser, driveService);
         importDeckService.preProcessForm(importDeckForm);
@@ -107,13 +106,12 @@ public class ImportDeckServiceTest {
     public void shouldAssembleDeckWhenImporting() throws Exception {
         importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);
 
-        verify(driveService).assembleDeck(request, SESSION_ID, DOC_ID, drive);
-
+        verify(driveService).assembleDeck(request, DOC_ID, SESSION_ID, drive);
     }
 
     @Test
     public void shouldAddAnErrorForInvalidIsoCodes() throws Exception {
-        deck.parseErrors.addAll(
+        deck.getParsingErrors().addAll(
                 Arrays.asList(
                         new Error("1", true),
                         new Error("4", true),
@@ -135,7 +133,7 @@ public class ImportDeckServiceTest {
 
     @Test
     public void shouldAddAnErrorForInvalidCSVHeaders() throws Exception {
-        when(driveService.assembleDeck(request, SESSION_ID, DOC_ID, drive))
+        when(driveService.assembleDeck(request, DOC_ID, SESSION_ID, drive))
                 .thenThrow(new IllegalArgumentException("message"));
 
         importDeckService.processForm(importDeckForm, request, importDeckResponse, drive, SESSION_ID, constraints);

@@ -22,9 +22,9 @@ public class VerifyCardService {
 
     public List<Error> verifyRequiredValues(Card card) {
         List<Constraint> constraints = Arrays.asList((Constraint)
-                new RequiredString(card.card_label, NO_LABEL),
-                new RequiredString(card.dest_audio, NO_AUDIO),
-                new RequiredString(card.dest_txt, NO_TEXT)
+                new RequiredString(card.getSourcePhrase(), NO_LABEL),
+                new RequiredString(card.getAudio(), NO_AUDIO),
+                new RequiredString(card.getDestinationPhrase(), NO_TEXT)
         );
 
         List<Error> errors = newArrayList();
@@ -37,7 +37,7 @@ public class VerifyCardService {
     }
 
     public Error verifyAudioFilename(Card card, List<File> audioFiles) {
-        String cardAudioFilename = card.dest_audio;
+        String cardAudioFilename = card.getAudio();
         File audioFile = audioFiles != null ? findFileForFilename(cardAudioFilename, audioFiles) : null;
         if (audioFile == null) {
             return new Error(String.format(FILE_NOT_FOUND_ERROR_FORMAT, cardAudioFilename), true);
@@ -55,4 +55,3 @@ public class VerifyCardService {
         return null;
     }
 }
-

@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.task;
+package org.mercycorps.translationcards.txcmaker.controller;
 
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
@@ -9,10 +9,10 @@ import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
 import org.mercycorps.translationcards.txcmaker.response.BuildTxcTaskResponse;
 import org.mercycorps.translationcards.txcmaker.response.ResponseFactory;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.FinalizedDeckFactory;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.wrapper.UrlShortenerWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks/txc-build")
-public class BuildTxcTask {
+public class BuildTxcController {
 
     private ServletContext servletContext;
     private AuthUtils authUtils;
@@ -39,7 +39,7 @@ public class BuildTxcTask {
     private FinalizedDeckFactory finalizedDeckFactory;
 
     @Autowired
-    public BuildTxcTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper, FinalizedDeckFactory finalizedDeckFactory) {
+    public BuildTxcController(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService, StorageService storageService, ResponseFactory responseFactory, GsonWrapper gsonWrapper, UrlShortenerWrapper urlShortenerWrapper, FinalizedDeckFactory finalizedDeckFactory) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
@@ -65,7 +65,7 @@ public class BuildTxcTask {
         final String downloadUrl = driveService.pushTxcToDrive(drive, directoryId, sessionId + "/deck.txc", filename);
         final String shortUrl = urlShortenerWrapper.getShortUrl(downloadUrl);
         final BuildTxcTaskResponse response = responseFactory.newBuildTxcTaskResponse()
-                .setDeck(deck)
+                .setDeck(finalizedDeck)
                 .setDownloadUrl(shortUrl);
         channelService.sendMessage(new ChannelMessage(sessionId, gsonWrapper.toJson(response)));
     }
@@ -79,5 +79,4 @@ public class BuildTxcTask {
         }
         return drive;
     }
-
 }

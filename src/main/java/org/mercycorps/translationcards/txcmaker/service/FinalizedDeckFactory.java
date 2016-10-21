@@ -1,52 +1,34 @@
 package org.mercycorps.translationcards.txcmaker.service;
 
-import org.mercycorps.translationcards.txcmaker.model.*;
+import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.transformer.FinalizedLanguageTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class FinalizedDeckFactory {
 
+    private final FinalizedLanguageTransformer transformer;
+
+    @Autowired
+    public FinalizedDeckFactory(FinalizedLanguageTransformer transformer) {
+        this.transformer = transformer;
+    }
+
     public FinalizedDeck finalize(Deck deck) {
         FinalizedDeck finalizedDeck = new FinalizedDeck()
-                .setDeck_label(deck.deck_label)
-                .setId(deck.id)
-                .setLicense_url(deck.license_url)
-                .setLocked(deck.locked)
-                .setPublisher(deck.publisher)
+                .setDeck_label(deck.getDeckLabel())
+                .setId(deck.getId())
+                .setLicense_url(deck.getLicense())
+                .setLocked(deck.getLocked())
+                .setPublisher(deck.getPublisher())
                 .setReadme("This deck was created with the TXC Maker tool. See https://github.com/translation-cards/txc-maker for more information.")
-                .setTimestamp(deck.timestamp)
-                .setSource_language(deck.iso_code);
+                .setTimestamp(deck.getTimestamp())
+                .setSource_language(deck.getIsoCode());
 
-        List<FinalizedLanguage> finalizedLanguages = new ArrayList<>();
-        for(Language language : deck.languages) {
-            finalizedLanguages.add(getFinalizedLanguage(language));
-        }
-        finalizedDeck.setLanguages(finalizedLanguages);
+        finalizedDeck.setLanguages(transformer.transform(deck));
 
         return finalizedDeck;
-    }
-
-    private FinalizedLanguage getFinalizedLanguage(Language language) {
-        final FinalizedLanguage finalizedLanguage = new FinalizedLanguage()
-                .setIso_code(language.iso_code);
-
-        List<FinalizedCard> finalizedCards = new ArrayList<>();
-        for(Card card : language.cards) {
-            finalizedCards.add(getFinalizedCard(card));
-        }
-        finalizedLanguage.setCards(finalizedCards);
-
-        return finalizedLanguage;
-    }
-
-    private FinalizedCard getFinalizedCard(Card card) {
-        return new FinalizedCard()
-                .setCard_label(card.card_label)
-                .setDest_audio(card.dest_audio)
-                .setDest_txt(card.dest_txt);
     }
 }

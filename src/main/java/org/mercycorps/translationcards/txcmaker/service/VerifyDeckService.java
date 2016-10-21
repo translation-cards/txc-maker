@@ -3,8 +3,8 @@ package org.mercycorps.translationcards.txcmaker.service;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import org.mercycorps.translationcards.txcmaker.model.Card;
+import org.mercycorps.translationcards.txcmaker.model.*;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.Language;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,13 +31,14 @@ public class VerifyDeckService {
         this.verifyCardService = verifyCardService;
     }
 
+    // TODO: two separate patterns for adding errors to decks and cards
     public List<Error> verify(Drive drive, Deck deck, String audioDirectoryId) {
         List<Error> errors = newArrayList();
         List<File> filesInAudioDirectory = driveService.getFilesInAudioDirectory(drive, audioDirectoryId);
         Map<String, List<Card>> audioFileToCards = newHashMap();
 
-        for (Language language: deck.languages) {
-            for (Card card : language.cards) {
+        for (Translation language: deck.getTranslations()) {
+            for (Card card : language.getCards()) {
                 List<Error> cardErrors = newArrayList();
                 cardErrors.addAll(verifyCardService.verifyRequiredValues(card));
 
@@ -48,7 +49,7 @@ public class VerifyDeckService {
 
                 addToAudioFileMap(card, audioFileToCards);
 
-                card.errors.addAll(cardErrors);
+                card.getErrors().addAll(cardErrors);
                 errors.addAll(cardErrors);
             }
         }
@@ -59,14 +60,13 @@ public class VerifyDeckService {
     }
 
     private List<Error> verifyDuplicateAudioFile(Map<String, List<Card>> audioFileMap) {
-        Error error;
         List<Error> duplicateAudioErrors = newArrayList();
 
         for (List<Card> cardsForFile : audioFileMap.values()) {
             if (cardsForFile.size() > 1) {
                 for(Card card : cardsForFile) {
-                    error = new Error(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.dest_audio), true);
-                    card.errors.add(error);
+                    Error error = new Error(String.format(DUPLICATE_FILE_ERROR_FORMAT, card.getAudio()), true);
+                    card.getErrors().add(error);
                     duplicateAudioErrors.add(error);
                 }
             }
@@ -75,10 +75,10 @@ public class VerifyDeckService {
     }
 
     private void addToAudioFileMap(Card card, Map<String, List<Card>> audioFileMap) {
-        List<Card> cardList = audioFileMap.get(card.dest_audio);
+        List<Card> cardList = audioFileMap.get(card.getAudio());
         if (cardList == null) {
             cardList = newArrayList();
-            audioFileMap.put(card.dest_audio, cardList);
+            audioFileMap.put(card.getAudio(), cardList);
         }
         cardList.add(card);
     }

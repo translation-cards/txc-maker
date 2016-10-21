@@ -4,9 +4,9 @@ package org.mercycorps.translationcards.txcmaker.service;
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.Error;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
-import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.Constraint;
 import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
+import org.mercycorps.translationcards.txcmaker.response.ImportDeckResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,12 +38,11 @@ public class ImportDeckService {
         }
     }
 
-
     private void verifyDeck(Deck deck, ImportDeckResponse importDeckResponse) {
-        if(!deck.parseErrors.isEmpty()) {
+        if(!deck.isValid()) {
             String errorMessage = "The ISO Code on rows ";
 
-            for (Error error : deck.parseErrors) {
+            for (Error error : deck.getParsingErrors()) {
                 errorMessage += error.message + ", ";
             }
             errorMessage = errorMessage.substring(0, errorMessage.length() - 2);
@@ -53,11 +52,16 @@ public class ImportDeckService {
         }
     }
 
-    public void processForm(ImportDeckForm importDeckForm, HttpServletRequest request, ImportDeckResponse importDeckResponse, Drive drive, String sessionId, List<Constraint> fieldsToVerify) {
+    public void processForm(ImportDeckForm importDeckForm,
+                            HttpServletRequest request,
+                            ImportDeckResponse importDeckResponse,
+                            Drive drive,
+                            String sessionId,
+                            List<Constraint> fieldsToVerify) {
         verifyFormData(importDeckResponse, fieldsToVerify);
         if(!importDeckResponse.hasErrors()) {
             try {
-                final Deck deck = driveService.assembleDeck(request, sessionId, importDeckForm.getDocId(), drive);
+                final Deck deck = driveService.assembleDeck(request, importDeckForm.getDocId(), sessionId, drive);
                 verifyDeck(deck, importDeckResponse);
             } catch(IllegalArgumentException exception) {
                 importDeckResponse.addError(new Error(exception.getMessage(), true));

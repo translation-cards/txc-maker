@@ -1,3 +1,12 @@
+function extractCardsForLanguage(translations, language) {
+  return translations.map(function(translation) {
+    return translation.cards.find(function(card) {
+      return card.destinationLanguage.language_label === language;
+    });
+  }).filter(function removeUndefinedCards(card) {
+    return !(card === undefined);
+  });
+}
 
 function TranslationsScreenController($scope, $sce) {
   $scope.audioFiles = [];
@@ -6,9 +15,11 @@ function TranslationsScreenController($scope, $sce) {
     if(changesObj.data && changesObj.data.currentValue) {
       var data = changesObj.data.currentValue;
       $scope.language = data.language;
+      $scope.translations = data.deck.translations;
+      $scope.cards_for_language = extractCardsForLanguage(data.deck.translations, data.language);
       $scope.deckId = data.deckId;
     }
-  }
+  };
 
   $scope.playAudio = function(fileName) {
     var found = false;

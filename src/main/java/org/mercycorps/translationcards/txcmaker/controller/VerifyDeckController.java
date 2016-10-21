@@ -1,4 +1,4 @@
-package org.mercycorps.translationcards.txcmaker.task;
+package org.mercycorps.translationcards.txcmaker.controller;
 
 import com.google.api.services.drive.Drive;
 import com.google.appengine.api.channel.ChannelMessage;
@@ -6,10 +6,10 @@ import com.google.appengine.api.channel.ChannelService;
 import org.mercycorps.translationcards.txcmaker.auth.AuthUtils;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mercycorps.translationcards.txcmaker.service.DriveService;
 import org.mercycorps.translationcards.txcmaker.service.StorageService;
 import org.mercycorps.translationcards.txcmaker.service.VerifyDeckService;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,11 +19,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/tasks/txc-verify")
-public class VerifyDeckTask {
+public class VerifyDeckController {
 
     private ServletContext servletContext;
     private AuthUtils authUtils;
@@ -34,8 +33,8 @@ public class VerifyDeckTask {
     private VerifyDeckService verifyDeckService;
 
     @Autowired
-    public VerifyDeckTask(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService,
-                          GsonWrapper gsonWrapper, StorageService storageService, VerifyDeckService verifyDeckService) {
+    public VerifyDeckController(ServletContext servletContext, AuthUtils authUtils, DriveService driveService, ChannelService channelService,
+                                GsonWrapper gsonWrapper, StorageService storageService, VerifyDeckService verifyDeckService) {
         this.servletContext = servletContext;
         this.authUtils = authUtils;
         this.driveService = driveService;
@@ -52,8 +51,8 @@ public class VerifyDeckTask {
         final String directoryId = request.getParameter("audioDirId");
         final Drive drive = getDrive(sessionId);
 
-        final Deck deck = driveService.assembleDeck(request, sessionId, documentId, drive);
-        deck.errors = verifyDeckService.verify(drive, deck, directoryId);
+        final Deck deck = driveService.assembleDeck(request, documentId, sessionId, drive);
+        deck.getErrors().addAll(verifyDeckService.verify(drive, deck, directoryId));
 
         final String deckJson = gsonWrapper.toJson(deck);
         storageService.writeFileToStorage(deckJson, sessionId + "/deck.json");
