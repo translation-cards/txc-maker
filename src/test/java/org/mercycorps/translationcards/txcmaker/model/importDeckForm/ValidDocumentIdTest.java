@@ -1,11 +1,10 @@
-package org.mercycorps.translationcards.txcmaker.verifier;
+package org.mercycorps.translationcards.txcmaker.model.importDeckForm;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.drive.Drive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ValidDocumentId;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import static org.mockito.Mockito.*;
 public class ValidDocumentIdTest {
 
 
-    ValidDocumentId validDocumentId;
+    private ValidDocumentId validDocumentId;
     private Drive drive;
     private String documentIdString;
     private List<Error> errors;
@@ -58,5 +57,29 @@ public class ValidDocumentIdTest {
 
         assertThat(errors.size(), is(1));
         assertThat(errors.get(0), is(ValidDocumentId.FATAL_DRIVE_ERROR));
+    }
+
+    @Test
+    public void verifyFormData_shouldAddAnErrorWhenThereIsAnEmptyID() throws Exception {
+        String emptyDocID = "";
+        when(drive.files().export(emptyDocID, ValidDocumentId.CSV_EXPORT_TYPE).executeMediaAsInputStream())
+                .thenThrow(mock(GoogleJsonResponseException.class));
+        validDocumentId = new ValidDocumentId(drive, emptyDocID);
+        errors.addAll(validDocumentId.verify());
+
+        assertThat(errors.size(), is(1));
+        assertThat(errors.get(0), is(ValidDocumentId.NO_DOC_ID));
+    }
+
+    @Test
+    public void verifyFormData_shouldAddAnErrorWhenThereIsANullID() throws Exception {
+        String nullDocID = null;
+        when(drive.files().export(nullDocID, ValidDocumentId.CSV_EXPORT_TYPE).executeMediaAsInputStream())
+                .thenThrow(mock(GoogleJsonResponseException.class));
+        validDocumentId = new ValidDocumentId(drive, nullDocID);
+        errors.addAll(validDocumentId.verify());
+
+        assertThat(errors.size(), is(1));
+        assertThat(errors.get(0), is(ValidDocumentId.NO_DOC_ID));
     }
 }

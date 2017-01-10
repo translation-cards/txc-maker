@@ -10,10 +10,8 @@ import java.util.List;
 
 public class ImportDeckForm {
 
-    public static final Error NO_DECK_NAME = new Error("Deck name is a required field", true);
-    public static final Error NO_PUBLISHER = new Error("Publisher is a required field", true);
-    public static final Error NO_DOC_ID = new Error("Document ID is a required field", true);
-    public static final Error NO_AUDIO_DIR_ID = new Error("Audio Directory ID is a required field", true);
+    private static final Error NO_DECK_NAME = new Error("Deck name is a required field", true);
+    private static final Error NO_PUBLISHER = new Error("Publisher is a required field", true);
 
     private String docId;
     private String audioDirId;
@@ -88,12 +86,10 @@ public class ImportDeckForm {
 
     public List<Constraint> getFieldsToVerify(Drive drive) {
         List<Constraint> constraints = new ArrayList<>();
-        constraints.add(new ValidDocumentId(drive, getDocId()));
-        constraints.add(new ValidAudioDirectory(drive, getAudioDirId()));
         constraints.add(new RequiredString(getDeckName(), NO_DECK_NAME));
         constraints.add(new RequiredString(getPublisher(), NO_PUBLISHER));
-        constraints.add(new RequiredString(getDocId(), NO_DOC_ID));
-        constraints.add(new RequiredString(getAudioDirId(), NO_AUDIO_DIR_ID));
+        constraints.add(new ValidDocumentId(drive, getDocId()));
+        constraints.add(new ValidAudioDirectory(drive, getAudioDirId()));
 
         return constraints;
     }
