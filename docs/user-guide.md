@@ -16,5 +16,4 @@ You should have two documents ready before using the TXC Maker:
 
 ##Using TXC Maker
 Navigate to http://translation-cards-dev.appspot.com/DeckImport to get to the deck import page. 
-- Input the name of your deck, and the author name or organization name under publisher. 
-- 
+    - Input the name of your deck, and the author name or organization name under publisher. 
