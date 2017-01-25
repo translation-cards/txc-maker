@@ -17,9 +17,9 @@ You should have two documents ready before using the TXC Maker:
 
 ##Using TXC Maker
 Navigate to http://translation-cards-dev.appspot.com/#!/DeckImport to get to the deck import page. 
-    - Input the name of your deck, and the publisher name (organization name or author of deck). 
-    - Under the document ID input the last part of the URL containing your deck spreadsheet in google drive. For example if the URL with your spreadsheet looks like this https://drive.google.com/drive/u/1/folders/0BzScrGiXtpD_dnBRZ1BOWms5dWM. You just need to input '0BzScrGiXtpD_dnBRZ1BOWms5dWM' under document ID.
-    - Similarly in the audio directory input the last part of the Google Drive URL containing all your recorded audio translation files. Use the example for document ID to as a reference for what part of the URL to enter.
-    - Choose your own license and decide whether you want to lock the deck (which means users will not be allowed to add, change, or remove translations from your deck).
+- Input the name of your deck, and the publisher name (organization name or author of deck). 
+- Under the document ID input the last part of the URL containing your deck spreadsheet in google drive. For example if the URL with your spreadsheet looks like this https://drive.google.com/drive/u/1/folders/0BzScrGiXtpD_dnBRZ1BOWms5dWM. You just need to input '0BzScrGiXtpD_dnBRZ1BOWms5dWM' under document ID.
+- Similarly in the audio directory input the last part of the Google Drive URL containing all your recorded audio translation files. Use the example for document ID to as a reference for what part of the URL to enter.
+- Choose your own license and decide whether you want to lock the deck (which means users will not be allowed to add, change, or remove translations from your deck).
 - Finally submit and wait for the deck maker to compose your deck into a TXC and catch any possible mistakes on the following screens
 - If any errors are caught, they must be resolved before you can publish the deck.
