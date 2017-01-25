@@ -7,9 +7,64 @@
           What is TXCMaker?
         </div>
         <p>
-          TXCMaker is a tool for creating .txc files, which are collections of
-          translations to be used in the <a href="translation-cards.com">Translation
-          Cards</a> mobile app.
+          TXCMaker is a tool for creating .txc files, which are files that can be imported into the
+          <a href="https://play.google.com/store/apps/details?id=org.mercycorps.translationcards&hl=en">Translation Cards mobile app</a>.
+          These files contain the audio recordings and information for displaying translations.
+          For more information on the Translation Cards project check out our public site at translation-cards.com
+        </p>
+        <div class="md-title">
+        Who should use TXC Maker?
+        </div>
+        <p>
+          TXC Maker is a tool for anyone who is interested in creating a translation deck for the Translation Cards mobile application.
+          It is primarily aimed at field workers for use in reception desks in the context of the refugee crisis, however is not limited to these scenarios.
+        </p>
+        <div class="md-title">
+          What should I have ready before using TXC Maker?
+        </div>
+        <p>
+        You should have two documents ready before using the TXC Maker:
+          <ul>
+            <li>An excel template with all the deck content. You can copy
+              <a href="https://docs.google.com/spreadsheets/d/1AZoI5z_BPuJevtmclW0RCMFE4cJnKFvN1nlkpjdZL_k/edit?usp=sharing">this excel template</a>
+              and fill out a line for every translation you'd like to make.
+              <ul>
+                <li>Under the Language heading you should fill out the iso code for the language you'd like to use not the language itself.
+                  Not sure what the iso code is for your language? <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes">Check here</a>.
+                  <br/>For example if the language for my translation is Spanish, I would fill out 'es' under the language column for that translation.
+                </li>
+                <li>Write the english phrase to be translated in the 'label' column</li>
+                <li>The translation column should hold the translated phrase in the language you filled out</li>
+                <li>Finally, put the name of the translation audio recording under the filename column</li>
+                <li> <a href="https://docs.google.com/spreadsheets/d/1ug7jEJB3a0zE3pNdNkE1MIAXS5-3ldBS35hhO-HgYto/edit?usp=sharing">Here</a>
+                  you can view an example of a filled out sheet that is in use for the default deck in the application.
+                </li>
+                <li>Make sure you save your spreadsheet or import it into google drive</li>
+              </ul>
+
+            </li>
+            <li> A folder in your Google drive with all your audio files containing the recorded translations for your deck.</li>
+          </ul>
+
+        </p>
+        <div class="md-title">
+        Using TXC Maker
+        </div>
+        <p>
+          <ol>
+            <li>Navigate to deck import to get to the deck import page.</li>
+            <li>Input the name of your deck, and the publisher name (organization name or author of deck).</li>
+            <li>Under the document ID input the the portion after the last / of the URL containing your deck spreadsheet in google drive.
+              <br/>For example if the URL with your spreadsheet looks like this 'https://drive.google.com/drive/u/1/folders/0BzScrGiXtpD_dnBRZ1BOWms5dWM', you just need to input '0BzScrGiXtpD_dnBRZ1BOWms5dWM' under document ID.
+            </li>
+            <li>Similarly in the audio directory input the portion after the last / of the Google Drive URL containing all your recorded audio translation files.
+            </li>
+            <li>Select the license and whether you want to lock the deck (which means users will NOT be allowed to add, change, or remove translations from your deck).
+            </li>
+            <li>Finally, submit and wait for the deck maker to compose your deck into a TXC. It will catch any possible mistakes and show you on the following screen.
+            </li>
+            <li>If any errors are caught, they must be resolved before you can publish the deck.</li>
+          </ol>
         </p>
       </md-card-content>
     </md-card>
