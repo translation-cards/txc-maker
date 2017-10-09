@@ -1,101 +1,130 @@
 package org.mercycorps.translationcards.txcmaker.model.deck;
 
-import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
-import org.mercycorps.translationcards.txcmaker.model.Language;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Deck {
+    private String sourceLanguage;
+    private String deckLabel;
+    private String publisher;
+    private long timestamp;
+    private boolean locked;
+    private String licenseUrl;
+    private String readme;
+    private transient List<Error> parsingErrors;
+    private List<Error> errors;
+    private List<Translation> translations;
+    private List<String> destinationLanguages;
+    private String id;
 
-    public String deck_label;
-    public String publisher;
-    public String iso_code;
-    public String language_label;
-    public String id;
-    public long timestamp;
-    public String license_url;
-    public boolean locked;
-    public List<Language> languages;
-    public List<Error> errors;
-    public transient List<Error> parseErrors;
-    private transient Map<String, Language> languageLookup;
+    // Required by gson
+    private Deck() {}
 
-    public Deck() {
-        languages = new ArrayList<>();
-        errors = new ArrayList<>();
-        parseErrors = new ArrayList<>();
-        languageLookup = new HashMap<>();
-    }
-
-    public Deck setDeckLabel(String deckLabel) {
-        this.deck_label = deckLabel;
-        return this;
-    }
-
-    public Deck setPublisher(String publisher) {
+    public Deck(String sourceLanguage,
+                String deckLabel,
+                String publisher,
+                long timestamp,
+                boolean locked,
+                String id,
+                String licenseUrl,
+                String readme,
+                List<Error> parsingErrors,
+                List<Translation> translations,
+                List<String> destinationLanguages) {
+        this.sourceLanguage = sourceLanguage;
+        this.deckLabel = deckLabel;
         this.publisher = publisher;
-        return this;
-    }
-
-    public Deck setLanguage(String iso_code) {
-        this.iso_code = iso_code;
-        return this;
-    }
-
-    public Deck setLanguageLabel(String language_label) {
-        this.language_label = language_label;
-        return this;
-    }
-
-    public Deck setDeckId(String deckId) {
-        this.id = deckId;
-        return this;
-    }
-
-    public Deck setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-        return this;
-    }
-
-    public Deck setLicenseUrl(String licenseUrl) {
-        this.license_url = licenseUrl;
-        return this;
-    }
-
-    public Deck setLocked(boolean locked) {
         this.locked = locked;
-        return this;
+        this.id = id;
+        this.licenseUrl = licenseUrl;
+        this.readme = readme;
+        this.parsingErrors = parsingErrors;
+        this.translations = translations;
+        this.destinationLanguages = destinationLanguages;
+        errors = new ArrayList<>();
     }
 
-    public Deck addCard(String iso_code, String language_label, Card card) {
-        if (!languageLookup.containsKey(language_label)) {
-            Language langSpec = new Language(iso_code, language_label);
-            languages.add(langSpec);
-            languageLookup.put(language_label, langSpec);
+    public boolean isValid() {
+        if (!parsingErrors.isEmpty()) {
+            return false;
         }
-        languageLookup.get(language_label).addCard(card);
-        return this;
+
+        for (Translation translation : translations) {
+            if (!translation.isValid()) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public static Deck initializeDeckWithFormData(HttpServletRequest req) {
-        return new Deck()
-                .setDeckLabel(req.getParameter("deckName"))
-                .setPublisher(req.getParameter("publisher"))
-                .setDeckId(req.getParameter("deckId"))
-                .setTimestamp(System.currentTimeMillis())
-                .setLicenseUrl(req.getParameter("licenseUrl"))
-                .setLanguage("en")
-                .setLanguageLabel("English");
+    public void setParsingErrors(List<Error> parsingErrors) {
+        this.parsingErrors = parsingErrors;
     }
 
+    public List<Translation> getTranslations() {
+        return translations;
+    }
+
+    public Translation getTranslationForSourcePhrase(String sourcePhrase) {
+        for (Translation translation : translations) {
+            if (translation.getSourcePhrase().equals(sourcePhrase)) {
+                return translation;
+            }
+        }
+        // TODO: throw?
+        return null;
+    }
+
+    public List<Error> getParsingErrors() {
+        return parsingErrors;
+    }
+
+    public String getDeckLabel() {
+        return deckLabel;
+    }
+
+    public String getSourceLanguage() {
+        return sourceLanguage;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getLicense() {
+        return licenseUrl;
+    }
+
+    public boolean getLocked() {
+        return locked;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getIsoCode() {
+        // TODO: this needs to be an iso code
+        return sourceLanguage;
+    }
+
+    public List<String> getDestinationLanguages() {
+        return destinationLanguages;
+    }
 
     public int getNumberOfErrors() {
         return errors.size();
     }
 
+    public List<Error> getErrors() {
+        return errors;
+    }
 }

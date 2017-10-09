@@ -3,7 +3,7 @@
     <md-card>
       <md-card-title>
         <md-card-title-text>
-          <span class="md-headline">{{deck.deck_label}}</span>
+          <span class="md-headline">{{deck.deckLabel}}</span>
           <span class="md-subhead">{{deck.publisher}}</span>
         </md-card-title-text>
       </md-card-title>
@@ -12,19 +12,19 @@
         <div layout="row" layout-align="start center" class="deck-info_languages" >
           <div>
             <div class="chip">
-              {{sourceLanguage}}
+              {{deck.sourceLanguage}}
             </div>
           </div>
           <md-icon class="icon" md-svg-src="resources/ic_navigate_next_black_48px.svg"></md-icon>
           <div flex>
-            <div class="chip" ng-repeat="language in destinationLanguages">
+            <div class="chip" ng-repeat="language in deck.destinationLanguages">
               {{language}}
             </div>
           </div>
         </div>
       </md-card-content>
     </md-card>
-    <div layout="row" ng-show="deck.numberOfErrors == 0">
+    <div layout="row" ng-show="numberOfErrors == 0">
       <md-card flex="70">
         <md-card-content layout="row" layout-align="space-between center" class="notification-card">
           <img src="resources/check_mark.png" class="notification-card_image"/>
@@ -43,14 +43,14 @@
         </md-card-content>
       </md-card>
     </div>
-    <div layout="row" ng-show="deck.numberOfErrors > 0">
+    <div layout="row" ng-show="numberOfErrors > 0">
       <md-card flex="70">
         <md-card-content layout="row" layout-align="start center" class="notification-card">
           <div class="notification-card_error" layout="row" layout-align="center center">
-            {{deck.numberOfErrors}}
+            {{numberOfErrors}}
           </div>
           <div layout-padding layout-fill>
-            There are {{deck.numberOfErrors}} errors across your deck. Review the cards and resolve the errors before publishing.
+            There are {{numberOfErrors}} parsingErrors across your deck. Review the cards and resolve the parsingErrors before publishing.
           </div>
         </md-card-content>
       </md-card>

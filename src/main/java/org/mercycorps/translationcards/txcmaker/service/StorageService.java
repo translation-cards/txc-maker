@@ -4,7 +4,7 @@ import com.google.api.client.util.IOUtils;
 import com.google.api.services.drive.Drive;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

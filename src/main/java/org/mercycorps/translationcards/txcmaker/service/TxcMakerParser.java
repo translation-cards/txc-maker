@@ -2,17 +2,17 @@ package org.mercycorps.translationcards.txcmaker.service;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.mercycorps.translationcards.txcmaker.language.LanguageService;
 import org.mercycorps.translationcards.txcmaker.model.Card;
 import org.mercycorps.translationcards.txcmaker.model.Error;
+import org.mercycorps.translationcards.txcmaker.model.Language;
+import org.mercycorps.translationcards.txcmaker.model.Translation;
 import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
-import org.mercycorps.translationcards.txcmaker.language.LanguageService;
-import org.mercycorps.translationcards.txcmaker.model.importDeckForm.ImportDeckForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,10 +24,10 @@ public class TxcMakerParser {
     private static final Pattern DIR_URL_MATCHER = Pattern.compile(
             "https?://drive.google.com/drive/(.*)folders/(.*)$");
 
-    private static final String SRC_HEADER_LANGUAGE = "Language";
-    private static final String SRC_HEADER_LABEL = "Label";
-    private static final String SRC_HEADER_TRANSLATION_TEXT = "Translation";
-    private static final String SRC_HEADER_FILENAME = "Filename";
+    private static final String LANGUAGE_HEADER = "Language";
+    private static final String SOURCE_PHRASE_HEADER = "Label";
+    private static final String DESTINATION_PHRASE_HEADER = "Translation";
+    private static final String AUDIO_FILENAME_HEADER = "Filename";
     private final List<String> validHeaders;
 
     private LanguageService languageService;
@@ -35,7 +35,7 @@ public class TxcMakerParser {
     @Autowired
     public TxcMakerParser(LanguageService languageService) {
         this.languageService = languageService;
-        validHeaders = Arrays.asList(SRC_HEADER_FILENAME, SRC_HEADER_LABEL, SRC_HEADER_LANGUAGE, SRC_HEADER_TRANSLATION_TEXT);
+        validHeaders = Arrays.asList(AUDIO_FILENAME_HEADER, SOURCE_PHRASE_HEADER, LANGUAGE_HEADER, DESTINATION_PHRASE_HEADER);
     }
 
     public String parseDocId(String documentIdString) {
@@ -60,23 +60,39 @@ public class TxcMakerParser {
         return audioDirectoryString;
     }
 
-    public void parseCsvIntoDeck(Deck deck, CSVParser parser) {
-        int lineNumber = 2;
+    public Deck parseCsvIntoDeck(CSVParser parser, HttpServletRequest req, String sessionId) {
+        int lineNumber = 1;
+        List<Error> parsingErrors = new ArrayList<>();
+        List<Card> cards = new ArrayList<>();
         validateCSVHeaders(parser);
         for (CSVRecord row : parser) {
-            String languageIso = row.get(SRC_HEADER_LANGUAGE);
-            String languageLabel = languageService.getLanguageDisplayName(languageIso);
-            if("INVALID".equals(languageLabel)) {
-                deck.parseErrors.add(new Error(lineNumber + "", true));
-            }
-            String audioFileName = row.get(SRC_HEADER_FILENAME);
-            Card card = new Card()
-                    .setLabel(row.get(SRC_HEADER_LABEL))
-                    .setFilename(audioFileName)
-                    .setTranslationText(row.get(SRC_HEADER_TRANSLATION_TEXT));
-            deck.addCard(languageIso, languageLabel, card);
             lineNumber++;
+            String languageIso = row.get(LANGUAGE_HEADER);
+            String languageLabel = languageService.getLanguageDisplayName(languageIso);
+
+            if("INVALID".equals(languageLabel)) {
+                parsingErrors.add(new Error(lineNumber + "", true));
+            }
+            String audioFileName = row.get(AUDIO_FILENAME_HEADER);
+            String sourcePhrase = row.get(SOURCE_PHRASE_HEADER);
+            String destinationPhrase = row.get(DESTINATION_PHRASE_HEADER);
+            Language language = new Language(languageIso, languageLabel);
+
+            Card card = new Card(sourcePhrase, audioFileName, destinationPhrase, language);
+            cards.add(card);
         }
+
+        return new Deck("English",
+                req.getParameter("deckName"),
+                req.getParameter("publisher"),
+                System.currentTimeMillis(),
+                false,
+                sessionId,
+                req.getParameter("licenseUrl"),
+                null,
+                parsingErrors,
+                buildTranslationsFromCards(cards),
+                buildDestinationLanguageNames(cards));
     }
 
     private void validateCSVHeaders(CSVParser parser) {
@@ -88,4 +104,32 @@ public class TxcMakerParser {
         }
     }
 
+    public List<String> buildDestinationLanguageNames(List<Card> cards) {
+        List<String> destinationLanguageNames = new ArrayList<>();
+        for (Card card : cards) {
+            if(!destinationLanguageNames.contains(card.getDestinationLanguageName())) {
+                destinationLanguageNames.add(card.getDestinationLanguageName());
+            }
+        }
+        return destinationLanguageNames;
+    }
+
+    public List<Translation> buildTranslationsFromCards(List<Card> cards) {
+        Map<String, Translation> sourcePhraseToTranslation = new HashMap<>();
+        for (Card card : cards) {
+            String sourcePhrase = card.getSourcePhrase();
+            if (sourcePhraseToTranslation.containsKey(sourcePhrase)) {
+                sourcePhraseToTranslation.get(sourcePhrase).addCard(card);
+            } else {
+                sourcePhraseToTranslation.put(sourcePhrase, createTranslationFromCard(card));
+            }
+        }
+        return new ArrayList<>(sourcePhraseToTranslation.values());
+    }
+
+    private Translation createTranslationFromCard(Card card) {
+        List<Card> cardListForTranslation = new ArrayList<>();
+        cardListForTranslation.add(card);
+        return new Translation(cardListForTranslation);
+    }
 }

@@ -1,17 +1,17 @@
 package org.mercycorps.translationcards.txcmaker.response;
 
-import org.mercycorps.translationcards.txcmaker.model.deck.Deck;
+import org.mercycorps.translationcards.txcmaker.model.FinalizedDeck;
 
 public class BuildTxcTaskResponse {
 
-    private Deck deck;
+    private FinalizedDeck deck;
     private String downloadUrl;
 
-    public Deck getDeck() {
+    public FinalizedDeck getDeck() {
         return deck;
     }
 
-    public BuildTxcTaskResponse setDeck(Deck deck) {
+    public BuildTxcTaskResponse setDeck(FinalizedDeck deck) {
         this.deck = deck;
         return this;
     }

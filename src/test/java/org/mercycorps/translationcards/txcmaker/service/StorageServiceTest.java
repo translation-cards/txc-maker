@@ -3,7 +3,7 @@ package org.mercycorps.translationcards.txcmaker.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mercycorps.translationcards.txcmaker.model.deck.DeckMetadata;
-import org.mercycorps.translationcards.txcmaker.wrapper.GsonWrapper;
+import org.mercycorps.translationcards.txcmaker.serializer.GsonWrapper;
 import org.mockito.Mock;
 
 import java.io.ByteArrayInputStream;
